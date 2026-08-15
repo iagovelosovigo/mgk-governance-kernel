@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "artifact": "MGK-AUTOPILOT-BOOTSTRAP RC.2 - PR Gated",
+  "validation_status": "BOOTSTRAP_F00_LOCAL_PASS",
+  "functional_claim": false,
+  "root_manifest_sha256": "6bc16cd3076bf2f5b0a4cd595680de244cdfbccbf3c282b527a411b1f5eb09c8",
+  "clean_cycle": {
+    "patch_sha256": "d5e9e1ebc62c434422044ad16187a21ddc86f929d81c0478e9f072d3885c6a4c",
+    "final_state_sha256": "595303fb86e4919acd756432ced80ef7f34a9219f7d55370a21badb5652047b9",
+    "required_gates_passed": 4,
+    "exact_candidate_commit_attested": true
+  },
+  "reproducibility": {
+    "independent_clean_runs": 2,
+    "candidate_tree_match": true,
+    "final_state_hash_match": true
+  },
+  "red_team": {
+    "rename_allowlist_bypass_blocked": true,
+    "candidate_gate_forgery_blocked_without_execution": true,
+    "pep695_type_parameter_payload_blocked": true,
+    "corrupt_state_blocked": true,
+    "protected_contract_tamper_blocked": true,
+    "patch_digest_tamper_blocked": true,
+    "direct_main_push_or_automated_merge_present": false
+  },
+  "static_checks": {
+    "workflow_yaml": "PASS",
+    "workflow_shell_blocks": "PASS",
+    "github_script_javascript": "PASS",
+    "python_syntax": "PASS",
+    "third_party_actions_pinned_by_commit": 14
+  },
+  "not_executed": [
+    "remote GitHub Actions run",
+    "OpenAI API-backed Codex invocation",
+    "remote branch push and Pull Request creation"
+  ],
+  "external_requirements": [
+    "OPENAI_API_KEY repository secret",
+    "MGK_ROOT_MANIFEST_SHA256 repository variable",
+    "mgk-promotion environment with required reviewer",
+    "protected main rules described in README.md"
+  ],
+  "scope_limit": "This validates the corrected F00 bootstrap; it is not MGK v0.1.0 FUNCTIONAL."
+}

@@ -1,0 +1,7 @@
+version: 1.0
+required_gates:
+  - ROOT_INTEGRITY
+  - STATE_INTEGRITY
+  - PATCH_SCOPE
+  - F00_HELLO_WORLD
+all_required: true

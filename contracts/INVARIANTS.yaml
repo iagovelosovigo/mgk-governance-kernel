@@ -1,0 +1,6 @@
+version: 1.0
+invariants:
+  - id: ROOT_INTEGRITY
+    description: "ROOT_OF_TRUST has not been modified"
+  - id: STATE_INTEGRITY
+    description: "state.json is valid and its hash matches"
