@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools==75.8.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "muda-governance-kernel"
+version = "0.1.0"
+description = "Capability-secured governance kernel preserving Intelligence != Authority"
+requires-python = ">=3.11"
+dependencies = ["cryptography==46.0.0"]
+authors = [
+  {name = "Roberto Iglesias Gonzalez"},
+  {name = "MGK engineering contributors"},
+]
+readme = "README-MGK.md"
+license = {text = "All rights reserved; see NOTICE.md"}
+
+[project.scripts]
+mgk = "mgk.cli:main"
+
+[tool.setuptools]
+package-dir = {"mgk" = "src/mgk"}
+py-modules = ["candidate_adapter", "exam_hypothesis_profile"]
+packages = ["mgk"]
+
+[tool.mutmut]
+paths_to_mutate = ["src/mgk"]
+also_copy = ["contracts", "orchestrator"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers"
+testpaths = ["tests"]
+markers = [
+  "property: property-based tests",
+  "adversarial: hostile-input and red-team tests",
+  "concurrency: race and replay tests",
+  "integration: end-to-end tests",
+]
