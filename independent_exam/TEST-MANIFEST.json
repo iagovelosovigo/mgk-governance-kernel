@@ -1,0 +1,28 @@
+{
+  "schema_version": "mgk.test-manifest.v1",
+  "contract_id": "MGK-v0.1.0-independent-exam-1",
+  "authority_model": "I != A",
+  "cases": [
+    {"id": "CAN-001", "suite": "unit", "property": "canonical map order"},
+    {"id": "CAN-002", "suite": "property", "property": "canonical determinism"},
+    {"id": "SAXP-001", "suite": "unit", "property": "three binding outcomes"},
+    {"id": "SAXP-002", "suite": "unit", "property": "REQUIRE_XEITO execution zero"},
+    {"id": "CAP-001", "suite": "integration", "property": "valid lifecycle"},
+    {"id": "CAP-002", "suite": "adversarial", "property": "signature forgery zero"},
+    {"id": "CAP-003", "suite": "adversarial", "property": "full claim binding"},
+    {"id": "EPOCH-001", "suite": "integration", "property": "stale epoch zero"},
+    {"id": "TIME-001", "suite": "integration", "property": "expiry at use"},
+    {"id": "REPLAY-001", "suite": "replay", "property": "sequential replay zero"},
+    {"id": "REPLAY-002", "suite": "concurrency", "property": "atomic nonce consumption"},
+    {"id": "TOCTOU-001", "suite": "adversarial", "property": "resource replacement zero"},
+    {"id": "AUDIT-001", "suite": "integration", "property": "audited allow and deny"},
+    {"id": "AUDIT-002", "suite": "adversarial", "property": "tamper fail closed"},
+    {"id": "FUZZ-001", "suite": "fuzz", "property": "malformed capability zero"},
+    {"id": "H14-001", "suite": "h14", "property": "planner has no authority primitive"},
+    {"id": "H14-002", "suite": "h14", "property": "forbidden proposal execution zero"},
+    {"id": "CLEAN-001", "suite": "clean-install", "property": "environment A"},
+    {"id": "CLEAN-002", "suite": "clean-install", "property": "environment B"},
+    {"id": "REPRO-001", "suite": "reproducibility", "property": "A/B identity"}
+  ]
+}
+

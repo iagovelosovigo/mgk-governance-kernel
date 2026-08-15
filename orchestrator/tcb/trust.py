@@ -9,13 +9,22 @@ ANCHOR_ENV = "MGK_ROOT_MANIFEST_SHA256"
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 REQUIRED_PROTECTED_PATHS = {
     ".github/workflows/bootstrap-core.yml",
+    ".github/workflows/mgk-protected-gates.yml",
+    "candidate_adapter.py",
     "contracts/FUNCTIONAL_ACCEPTANCE.yaml",
     "contracts/INVARIANTS.yaml",
+    "contracts/MGK-FUNCTIONAL-ACCEPTANCE.yaml",
     "contracts/PHASES.yaml",
     "contracts/ROOT_OF_TRUST",
+    "exam_hypothesis_profile.py",
+    "gates/protected/requirements.lock",
     "gates/protected/run_gates.py",
+    "gates/protected/run_mgk_candidate.py",
     "gates/protected/test_f00.py",
     "gates/protected/test_invariants.py",
+    "gates/protected/verify_bootstrap_cleanup.py",
+    "independent_exam/FROZEN.sha256",
+    "independent_exam/tools/check_frozen.py",
     "orchestrator/tcb/check_candidate.py",
     "orchestrator/tcb/check_gates.py",
     "orchestrator/tcb/contracts.py",
@@ -23,6 +32,9 @@ REQUIRED_PROTECTED_PATHS = {
     "orchestrator/tcb/make_attestation.py",
     "orchestrator/tcb/trust.py",
     "orchestrator/tcb/verify_patch.py",
+    "redteam/SHA256SUMS",
+    "redteam/candidate_attack_adapter.py",
+    "redteam/validate_artifacts.py",
 }
 
 

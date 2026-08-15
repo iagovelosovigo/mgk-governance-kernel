@@ -1,0 +1,138 @@
+{
+  "schema_version": "1.0",
+  "title": "MGK v0.1.0 independent threat model",
+  "review_scope": {
+    "bootstrap_reviewed": "MGK Autopilot Bootstrap RC.2 PR-Gated",
+    "target": "MGK v0.1.0 capability authorization and execution path",
+    "normative_source": "Se ha pegado el markdown(6).md",
+    "out_of_scope": [
+      "scientific validation of the MUDA corpus",
+      "availability against unbounded resource exhaustion",
+      "compromise of the host kernel or hardware root of trust",
+      "a malicious human holding the authority private key"
+    ]
+  },
+  "security_objective": "Compromised Intelligence does not imply Compromised Authority (H14)",
+  "authority_model": {
+    "principle": "I != A",
+    "roles": [
+      {
+        "id": "planner",
+        "trust": "untrusted",
+        "may": ["propose action", "supply untrusted payload", "request capability"],
+        "must_not": ["hold authority private key", "mint capability", "bypass executor"]
+      },
+      {
+        "id": "capability_authority",
+        "trust": "trusted",
+        "may": ["evaluate eligible request", "sign capability"],
+        "must_not": ["execute action", "accept REQUIRE_XEITO as executable"]
+      },
+      {
+        "id": "capability_verifier",
+        "trust": "TCB",
+        "may": ["parse strict envelope", "canonicalize", "verify signature and claims"],
+        "must_not": ["repair malformed input", "default missing authority claims"]
+      },
+      {
+        "id": "capability_executor",
+        "trust": "TCB",
+        "may": ["reserve nonce", "revalidate bound resource", "perform authorized action"],
+        "must_not": ["broaden scope", "execute unverified request", "delegate authority to planner"]
+      },
+      {
+        "id": "audit_ledger",
+        "trust": "protected state",
+        "may": ["record append-only hash-chained evidence"],
+        "must_not": ["silently accept truncation, mutation, reordering or fork"]
+      }
+    ]
+  },
+  "assets": [
+    {"id": "authority_private_key", "criticality": "critical", "property": "confidentiality and exclusive use"},
+    {"id": "trusted_public_keys", "criticality": "critical", "property": "integrity, key-id binding and rotation state"},
+    {"id": "authorization_epoch", "criticality": "critical", "property": "monotonic integrity"},
+    {"id": "nonce_store", "criticality": "critical", "property": "atomic uniqueness and durability"},
+    {"id": "capability_envelope", "criticality": "critical", "property": "unambiguous canonical interpretation"},
+    {"id": "resource_identity", "criticality": "critical", "property": "binding from authorization through use"},
+    {"id": "audit_ledger", "criticality": "critical", "property": "complete, ordered, tamper-evident evidence"},
+    {"id": "failure_ledger", "criticality": "high", "property": "preserved evidence for every failure"},
+    {"id": "saxp_decision", "criticality": "critical", "property": "binding three-valued semantics"}
+  ],
+  "trust_boundaries": [
+    {
+      "id": "TB1_PLANNER_TO_AUTHORITY",
+      "from": "planner",
+      "to": "capability_authority",
+      "untrusted_data": ["proposal", "payload", "resource locator", "requested scope"]
+    },
+    {
+      "id": "TB2_CAPABILITY_INPUT",
+      "from": "external caller",
+      "to": "capability_verifier",
+      "untrusted_data": ["serialized capability", "signature", "key id"]
+    },
+    {
+      "id": "TB3_VERIFIED_TO_EXECUTOR",
+      "from": "capability_verifier",
+      "to": "capability_executor",
+      "untrusted_data": ["caller-supplied runtime payload", "mutable resource namespace"]
+    },
+    {
+      "id": "TB4_EXECUTOR_TO_RESOURCE",
+      "from": "capability_executor",
+      "to": "filesystem or resource backend",
+      "untrusted_data": ["path components", "symlinks", "concurrent replacement"]
+    },
+    {
+      "id": "TB5_TCB_TO_EVIDENCE",
+      "from": "verifier and executor",
+      "to": "audit and failure ledgers",
+      "untrusted_data": ["preexisting ledger bytes", "concurrent writers", "partial writes"]
+    }
+  ],
+  "required_invariants": [
+    {"id": "INV-01", "statement": "No action executes unless a trusted asymmetric signature verifies over the exact canonical capability claims."},
+    {"id": "INV-02", "statement": "Signature coverage includes domain/version, key id, epoch, issued_at, expiry, nonce, action, scope, resource binding, payload digest and constraints."},
+    {"id": "INV-03", "statement": "A capability with unknown fields, duplicate fields, missing fields, invalid types or non-canonical values is rejected."},
+    {"id": "INV-04", "statement": "Current authorization epoch equals capability epoch; stale and future epochs are rejected."},
+    {"id": "INV-05", "statement": "issued_at and expiry are evaluated against an injected monotonic policy clock with closed interval semantics documented and tested."},
+    {"id": "INV-06", "statement": "Nonce reservation and transition to consumed are atomic, durable and scoped to issuer/key/epoch."},
+    {"id": "INV-07", "statement": "A capability is single-use even when execution throws after authorization."},
+    {"id": "INV-08", "statement": "Requested action, scope, resource identity and payload digest equal the signed claims; no subset/superset inference is implicit."},
+    {"id": "INV-09", "statement": "Filesystem resource use is descriptor-bound, rejects traversal and symlinks, and revalidates identity at the point of use."},
+    {"id": "INV-10", "statement": "Audit integrity is verified before execution; inability to durably append required evidence yields execution authority zero."},
+    {"id": "INV-11", "statement": "Every denial and every executor exception preserves machine-readable evidence without secrets."},
+    {"id": "INV-12", "statement": "TEN_XEITO is only eligibility for authorization; REQUIRE_XEITO and NON_TEN_XEITO never execute."},
+    {"id": "INV-13", "statement": "Exceptions, malformed input and unavailable gates fail closed; no broad exception handler converts failure to success."},
+    {"id": "INV-14", "statement": "Planner output is data only and cannot invoke privileged effects except through verifier and executor."},
+    {"id": "INV-15", "statement": "Concurrent verification/execution produces at most one effect for one capability."}
+  ],
+  "attacker_profiles": [
+    {
+      "id": "A1_COMPROMISED_PLANNER",
+      "capabilities": ["knows architecture and schemas", "chooses proposals and payloads", "replays observed capabilities", "triggers concurrent requests"],
+      "exclusions": ["no authority private key", "no TCB write access"]
+    },
+    {
+      "id": "A2_LOCAL_NAMESPACE_ATTACKER",
+      "capabilities": ["creates symlinks", "renames/replaces resources", "races path resolution"],
+      "exclusions": ["no TCB write access"]
+    },
+    {
+      "id": "A3_EVIDENCE_TAMPERER",
+      "capabilities": ["modifies, truncates or reorders ledger bytes before startup"],
+      "exclusions": ["cannot forge a protected ledger authentication key if one exists"]
+    },
+    {
+      "id": "A4_MALFORMED_INPUT_SENDER",
+      "capabilities": ["sends arbitrary bytes and deeply nested structures", "exploits parser differentials"],
+      "exclusions": ["no authority private key"]
+    }
+  ],
+  "security_decision": {
+    "default": "DENY",
+    "critical_uncertainty": "EXECUTION_AUTHORITY_ZERO",
+    "required_denial_observables": ["stable reason code", "audit event", "failure evidence where applicable", "execution_count remains zero"]
+  }
+}

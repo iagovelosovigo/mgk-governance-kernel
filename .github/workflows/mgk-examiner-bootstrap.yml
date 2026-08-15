@@ -1,0 +1,58 @@
+name: MGK Examiner Bootstrap (one-time)
+
+"on":
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+env:
+  MGK_ROOT_MANIFEST_SHA256: ${{ vars.MGK_ROOT_MANIFEST_SHA256 }}
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONHASHSEED: "0"
+
+jobs:
+  examiner-bootstrap:
+    name: mgk/deterministic-gates
+    if: >-
+      github.head_ref == 'mgk-autopilot/protected-examiner-v1' &&
+      github.actor == github.repository_owner
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+          fetch-depth: 1
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify exact candidate checkout
+        env:
+          EXPECTED_CANDIDATE: ${{ github.event.pull_request.head.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_CANDIDATE"
+
+      - name: Verify the new external root and frozen examinations
+        run: |
+          python -B orchestrator/tcb/trust.py
+          python -B independent_exam/tools/check_frozen.py --root independent_exam
+          python -B redteam/validate_artifacts.py
+
+      - name: Run bootstrap regression gates
+        run: |
+          python -m venv "$RUNNER_TEMP/mgk-bootstrap-venv"
+          "$RUNNER_TEMP/mgk-bootstrap-venv/bin/python" -m pip install \
+            --disable-pip-version-check \
+            -r gates/protected/requirements.lock
+          PYTHONPATH=orchestrator/tcb \
+            "$RUNNER_TEMP/mgk-bootstrap-venv/bin/python" -m pytest -q \
+            gates/protected tests/test_bootstrap_tcb.py
+

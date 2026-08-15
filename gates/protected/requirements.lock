@@ -1,0 +1,12 @@
+attrs==26.1.0
+cffi==2.1.1
+cryptography==46.0.0
+hypothesis==6.138.13
+iniconfig==2.3.0
+packaging==26.3
+pluggy==1.6.0
+pycparser==3.0
+pytest==8.4.1
+pytest-timeout==2.4.0
+sortedcontainers==2.4.0
+

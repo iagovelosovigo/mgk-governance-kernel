@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0",
+  "reviewer_role": "independent_security_reviewer",
+  "scope": "Bootstrap RC.2 and security requirements for the MGK v0.1.0 candidate",
+  "candidate_execution_status": "NOT_RUN_YET",
+  "findings": [
+    {
+      "id": "MGK-RT-BOOT-001",
+      "title": "Gate-result subject is not validated or bound by check_gates",
+      "severity": "medium",
+      "confidence": "confirmed",
+      "component": "orchestrator/tcb/check_gates.py",
+      "description": "check_gates requires subject only to be a string. It accepts an all-PASS document whose subject is neither a digest nor the patch/candidate identifier. make_attestation binds the final gate subject to the commit SHA but does not bind the pre-gate subject to PATCH_SHA256.",
+      "impact": "At the TCB API boundary, syntactically valid PASS evidence can be associated with the wrong subject. Current workflow artifact provenance reduces exploitability, but the attestation is not self-proving if evidence is supplied by another caller or the artifact boundary changes.",
+      "evidence": {
+        "proof_file": "proof-unbound-gate-subject.json",
+        "command": "PYTHONPATH=orchestrator/tcb python -B orchestrator/tcb/check_gates.py proof-unbound-gate-subject.json",
+        "exit_code": 0,
+        "output": "All required gates passed.",
+        "source_observation": "make_attestation.py compares final_gates.subject with commit_sha but never compares pre_gates.subject with metadata.PATCH_SHA256"
+      },
+      "recommended_regression": "Make check_gates accept required_subject plus subject_format and compare exactly. In make_attestation call check_gates(pre, required_subject=PATCH_SHA256) and check_gates(final, required_subject=commit_sha).",
+      "release_blocking": false,
+      "rationale": "The frozen F00 workflow supplies artifacts from the same run and performs independent patch verification; this is a hardening defect, not a demonstrated F00 bypass. It must not be copied into the v0.1.0 evidence verifier."
+    },
+    {
+      "id": "MGK-RT-BOOT-002",
+      "title": "Candidate attestation is an unsigned JSON artifact",
+      "severity": "low",
+      "confidence": "confirmed",
+      "component": "orchestrator/tcb/make_attestation.py",
+      "description": "The attestation contains hashes but has no detached signature or transparency-log inclusion. Its SHA-256 is placed in a PR body by the workflow.",
+      "impact": "After GitHub artifact retention expires or outside the authenticated run context, a consumer cannot establish provenance from the JSON alone.",
+      "evidence": {
+        "fields_present": ["candidate_commit_sha", "candidate_tree_sha", "patch_sha256", "pre_gate_results_sha256", "final_gate_results_sha256"],
+        "fields_absent": ["signature", "signing_key_id", "transparency_log_entry"]
+      },
+      "recommended_regression": "For v0.1.0, bind manifest, verdict and evidence archive in a signed release statement or preserve them in an immutable provenance mechanism. At minimum verify all referenced hashes from the release archive.",
+      "release_blocking": false,
+      "rationale": "GitHub run identity and protected human merge provide bootstrap provenance; the standalone release requires stronger portable provenance."
+    },
+    {
+      "id": "MGK-RT-SCOPE-001",
+      "title": "F00 acceptance does not test Governance Kernel security semantics",
+      "severity": "informational",
+      "confidence": "confirmed",
+      "component": "contracts/FUNCTIONAL_ACCEPTANCE.yaml",
+      "description": "The frozen F00 contract requires only ROOT_INTEGRITY, STATE_INTEGRITY, PATCH_SCOPE and F00_HELLO_WORLD.",
+      "impact": "An F00 PASS must never be presented as MGK v0.1.0 FUNCTIONAL=TRUE.",
+      "evidence": {
+        "required_gates": ["ROOT_INTEGRITY", "STATE_INTEGRITY", "PATCH_SCOPE", "F00_HELLO_WORLD"],
+        "bootstrap_readme_acknowledges_scope": true
+      },
+      "recommended_regression": "Use the independent 41-vector corpus and full frozen acceptance for v0.1.0.",
+      "release_blocking": false,
+      "rationale": "The bootstrap documentation already states this limitation; it is recorded to prevent semantic scope escalation."
+    }
+  ],
+  "coverage": {
+    "required_attack_categories": 18,
+    "modeled_attack_categories": 19,
+    "declarative_vectors": 41,
+    "critical_attacks": 18,
+    "h14_vectors": ["RT-038", "RT-039", "RT-040"]
+  },
+  "verdict": {
+    "bootstrap_security_bypass_demonstrated": false,
+    "v0_1_0_security_verdict": "PENDING_CANDIDATE_EXECUTION",
+    "critical_findings": 0,
+    "high_findings": 0,
+    "medium_findings": 1,
+    "low_findings": 1
+  }
+}

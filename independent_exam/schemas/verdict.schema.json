@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mgk.invalid/schemas/verdict-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "contract_id", "contract_sha256", "candidate",
+    "functional", "verdict", "evaluated_at", "failures", "observations_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "mgk.functional-verdict.v1"},
+    "contract_id": {"type": "string"},
+    "contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "candidate": {"type": "object"},
+    "functional": {"type": "boolean"},
+    "verdict": {
+      "enum": ["MGK v0.1.0 — FUNCTIONAL = TRUE", "FUNCTIONAL = FALSE"]
+    },
+    "evaluated_at": {"type": "string", "format": "date-time"},
+    "failures": {"type": "array", "items": {"type": "string"}},
+    "observations_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
+

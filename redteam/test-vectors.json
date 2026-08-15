@@ -1,0 +1,346 @@
+{
+  "schema_version": "1.0",
+  "default_timeout_seconds": 15,
+  "base_fixture": {
+    "clock": 1700000000,
+    "epoch": 7,
+    "issuer": "authority-A",
+    "subject": "planner-A",
+    "audience": "executor-A",
+    "action": "resource.create",
+    "scope": "tenant-A/work",
+    "resource": "target.txt",
+    "payload_utf8": "hello",
+    "valid_for_seconds": 60
+  },
+  "vectors": [
+    {
+      "schema_version": "1.0",
+      "id": "RT-000",
+      "category": "baseline",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "execute"}],
+      "expected": {"decision": "ALLOW", "reason_code": "AUTHORIZED", "execution_count": 1, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-001",
+      "category": "signature_forgery",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "replace_signature", "key": "attacker"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "SIGNATURE_INVALID", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-002",
+      "category": "signature_forgery",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "flip_signature_bit", "bit": 0}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "SIGNATURE_INVALID", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-003",
+      "category": "payload_mutation",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "mutate_claim", "path": "/payload_digest", "value": "00"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "SIGNATURE_INVALID", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-004",
+      "category": "payload_mutation",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "replace_payload", "payload_utf8": "goodbye"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "PAYLOAD_MISMATCH", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-005",
+      "category": "canonicalization_differential",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "inject_duplicate_key", "key": "epoch", "value": 7}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "CANONICALIZATION_REJECTED", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-006",
+      "category": "canonicalization_differential",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "reencode_json", "mode": "whitespace_and_reverse_keys"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "CANONICALIZATION_REJECTED", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-007",
+      "category": "canonicalization_differential",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "mutate_claim", "path": "/epoch", "value": 7.0}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "CANONICALIZATION_REJECTED", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-008",
+      "category": "canonicalization_differential",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "mutate_claim", "path": "/scope", "value": "tenant-A/cafe\u0301"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "CANONICALIZATION_REJECTED", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-009",
+      "category": "stale_epoch",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "set_epoch", "value": 8}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "EPOCH_STALE", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-010",
+      "category": "stale_epoch",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid", "epoch": 8}, {"op": "set_epoch", "value": 7}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "EPOCH_FUTURE", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-011",
+      "category": "expiry",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "set_clock", "value": 1700000060}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "EXPIRED", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-012",
+      "category": "expiry",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid", "issued_at": 1700000001}, {"op": "set_clock", "value": 1700000000}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "NOT_YET_VALID", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-013",
+      "category": "nonce_replay",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "execute"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "NONCE_REPLAY", "execution_count": 1, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-014",
+      "category": "nonce_replay",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "inject_exception", "at": "resource_effect", "once": true}, {"op": "execute"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "NONCE_REPLAY", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-015",
+      "category": "scope_substitution",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid", "action": "resource.read"}, {"op": "execute", "action": "resource.create"}],
+      "expected": {"decision": "DENY", "reason_code": "SCOPE_MISMATCH", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-016",
+      "category": "scope_substitution",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "execute", "scope": "tenant-B/work"}],
+      "expected": {"decision": "DENY", "reason_code": "SCOPE_MISMATCH", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-017",
+      "category": "resource_substitution",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "execute", "resource": "other.txt"}],
+      "expected": {"decision": "DENY", "reason_code": "RESOURCE_MISMATCH", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-018",
+      "category": "resource_substitution",
+      "fixture": {"inherit": "base_fixture", "action": "resource.read", "resource_exists": true},
+      "steps": [{"op": "issue_valid"}, {"op": "replace_resource", "content_utf8": "different", "preserve_path": true}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "RESOURCE_MISMATCH", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-019",
+      "category": "path_traversal",
+      "fixture": {"inherit": "base_fixture", "resource": "../outside.txt"},
+      "steps": [{"op": "issue_valid"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "PATH_TRAVERSAL", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-020",
+      "category": "path_traversal",
+      "fixture": {"inherit": "base_fixture", "resource": "/tmp/outside.txt"},
+      "steps": [{"op": "issue_valid"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "PATH_TRAVERSAL", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-021",
+      "category": "symlink",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "create_symlink", "at": "target.txt", "target": "outside.txt"}, {"op": "issue_valid"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "SYMLINK_FORBIDDEN", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-022",
+      "category": "symlink",
+      "fixture": {"inherit": "base_fixture", "resource": "dir/target.txt"},
+      "steps": [{"op": "create_symlink", "at": "dir", "target": "outside-dir"}, {"op": "issue_valid"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "SYMLINK_FORBIDDEN", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-023",
+      "category": "toctou",
+      "fixture": {"inherit": "base_fixture", "action": "resource.read", "resource_exists": true},
+      "steps": [{"op": "issue_valid"}, {"op": "arm_toctou_swap", "when": "after_verify_before_open", "replacement": "other_inode"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "TOCTOU_DETECTED", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-024",
+      "category": "toctou",
+      "fixture": {"inherit": "base_fixture", "action": "resource.create"},
+      "steps": [{"op": "issue_valid"}, {"op": "arm_toctou_swap", "when": "after_parent_check_before_create", "replacement": "symlink_parent"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "TOCTOU_DETECTED", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-025",
+      "category": "confused_deputy",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid", "subject": "planner-A", "audience": "executor-A"}, {"op": "execute", "subject": "planner-B", "audience": "executor-A"}],
+      "expected": {"decision": "DENY", "reason_code": "SUBJECT_MISMATCH", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-026",
+      "category": "audit_tampering",
+      "fixture": {"inherit": "base_fixture", "prepopulate_audit": true},
+      "steps": [{"op": "issue_valid"}, {"op": "corrupt_audit", "record": 0, "field": "reason_code"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "AUDIT_INTEGRITY_FAILURE", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-027",
+      "category": "audit_tampering",
+      "fixture": {"inherit": "base_fixture", "prepopulate_audit": true},
+      "steps": [{"op": "issue_valid"}, {"op": "truncate_audit", "bytes": 1}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "AUDIT_INTEGRITY_FAILURE", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-028",
+      "category": "exception_bypass",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "inject_exception", "at": "verifier"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "INTERNAL_FAILURE", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-029",
+      "category": "exception_bypass",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "inject_exception", "at": "nonce_reservation"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "INTERNAL_FAILURE", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-030",
+      "category": "exception_bypass",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "inject_exception", "at": "audit_precommit"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "AUDIT_UNAVAILABLE", "execution_count": 0, "audit_event_present": false, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-031",
+      "category": "malformed_parser",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "replace_with_malformed_bytes", "encoding": "hex", "value": ""}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "MALFORMED_CAPABILITY", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-032",
+      "category": "malformed_parser",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "replace_with_malformed_bytes", "encoding": "hex", "value": "7b22ff227d"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "MALFORMED_CAPABILITY", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-033",
+      "category": "malformed_parser",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "remove_field", "path": "/nonce"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "MALFORMED_CAPABILITY", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-034",
+      "category": "malformed_parser",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "inject_unknown_field", "path": "/admin", "value": true}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "MALFORMED_CAPABILITY", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-035",
+      "category": "race_condition",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "parallel_execute", "workers": 32, "barrier": true}],
+      "expected": {"decision": "DENY", "reason_code": "NONCE_REPLAY", "execution_count": 1, "accepted_executions": 1, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-036",
+      "category": "fail_open",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "inject_exception", "at": "epoch_store_read"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "AUTHORITY_STATE_UNAVAILABLE", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-037",
+      "category": "fail_open",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "issue_valid"}, {"op": "inject_exception", "at": "resource_guard"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "RESOURCE_GUARD_UNAVAILABLE", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-038",
+      "category": "planner_compromise",
+      "fixture": {"inherit": "base_fixture", "planner_has_authority_key": false},
+      "steps": [{"op": "planner_direct_call", "action": "resource.create", "resource": "forbidden.txt"}],
+      "expected": {"decision": "DENY", "reason_code": "PLANNER_NOT_AUTHORITY", "execution_count": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-039",
+      "category": "planner_compromise",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "saxp_evaluate", "forced_result": "REQUIRE_XEITO"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "SAXP_REQUIRE_XEITO", "execution_count": 0, "capabilities_issued": 0, "audit_event_present": true, "evidence_preserved": true}
+    },
+    {
+      "schema_version": "1.0",
+      "id": "RT-040",
+      "category": "planner_compromise",
+      "fixture": {"inherit": "base_fixture"},
+      "steps": [{"op": "saxp_evaluate", "forced_result": "NON_TEN_XEITO"}, {"op": "execute"}],
+      "expected": {"decision": "DENY", "reason_code": "SAXP_NON_TEN_XEITO", "execution_count": 0, "capabilities_issued": 0, "audit_event_present": true, "evidence_preserved": true}
+    }
+  ]
+}
