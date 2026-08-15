@@ -120,7 +120,8 @@ jobs:
       - name: Check required gates
         run: |
           python -B orchestrator/tcb/check_gates.py \
-            "$RUNNER_TEMP/mgk-gates/gate-results.json"
+            "$RUNNER_TEMP/mgk-gates/gate-results.json" \
+            --subject "$(jq -r '.PATCH_SHA256' "$RUNNER_TEMP/mgk-candidate/build_metadata.json")"
 
       - name: Upload gate results
         if: always()
@@ -171,7 +172,8 @@ jobs:
             "$RUNNER_TEMP/mgk-candidate/build_metadata.json" \
             "$RUNNER_TEMP/mgk-candidate/codex.patch"
           python -B orchestrator/tcb/check_gates.py \
-            "$RUNNER_TEMP/mgk-gates-pre/gate-results.json"
+            "$RUNNER_TEMP/mgk-gates-pre/gate-results.json" \
+            --subject "$(jq -r '.PATCH_SHA256' "$RUNNER_TEMP/mgk-candidate/build_metadata.json")"
           python -B orchestrator/tcb/verify_patch.py \
             "$RUNNER_TEMP/mgk-candidate/codex.patch"
 
@@ -200,7 +202,8 @@ jobs:
             --subject "$(git rev-parse HEAD)" \
             "$RUNNER_TEMP/mgk-gates-final/gate-results.json"
           python -B orchestrator/tcb/check_gates.py \
-            "$RUNNER_TEMP/mgk-gates-final/gate-results.json"
+            "$RUNNER_TEMP/mgk-gates-final/gate-results.json" \
+            --subject "$(git rev-parse HEAD)"
           if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
             echo "Protected gates modified the exact candidate tree."
             git status --short

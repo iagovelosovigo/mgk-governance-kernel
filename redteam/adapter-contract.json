@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "transport": "one process per test vector; test vector JSON on stdin; one result JSON on stdout",
+  "invocation": "python run_attacks.py --adapter-command -- <adapter executable and arguments>",
+  "input": {
+    "required": ["schema_version", "id", "category", "fixture", "steps", "expected"],
+    "semantics": "The adapter creates an isolated fixture, performs steps in order and returns only observables. An adapter exception is a test failure, never a security PASS."
+  },
+  "output": {
+    "required": ["schema_version", "test_id", "observed"],
+    "schema": {
+      "schema_version": "1.0",
+      "test_id": "must equal input id",
+      "observed": {
+        "decision": "ALLOW or DENY",
+        "reason_code": "stable uppercase identifier",
+        "execution_count": "integer >= 0",
+        "audit_event_present": "boolean",
+        "evidence_preserved": "boolean",
+        "accepted_executions": "integer >= 0; required for concurrency cases"
+      }
+    }
+  },
+  "fixture_requirements": [
+    "fresh authority keypair and trusted-key registry per vector unless fixture explicitly imports material",
+    "fresh nonce store, audit ledger, failure ledger and resource root",
+    "controllable clock and authorization epoch",
+    "effect counter incremented only by the privileged resource operation",
+    "no shared mutable state between vectors"
+  ],
+  "supported_step_operations": [
+    "issue_valid",
+    "serialize",
+    "replace_signature",
+    "flip_signature_bit",
+    "mutate_claim",
+    "replace_payload",
+    "reencode_json",
+    "inject_duplicate_key",
+    "inject_unknown_field",
+    "remove_field",
+    "replace_with_malformed_bytes",
+    "set_clock",
+    "advance_clock",
+    "set_epoch",
+    "replace_resource",
+    "create_symlink",
+    "arm_toctou_swap",
+    "corrupt_audit",
+    "truncate_audit",
+    "inject_exception",
+    "execute",
+    "parallel_execute",
+    "saxp_evaluate",
+    "planner_direct_call"
+  ],
+  "comparison": {
+    "mode": "expected is a required subset of observed",
+    "timeout_seconds_default": 15,
+    "stdout_policy": "exactly one JSON document; diagnostics belong on stderr"
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "schema_version": "mgk.functional-acceptance.v1",
+  "contract_id": "MGK-v0.1.0-independent-exam-1",
+  "frozen": true,
+  "verdict_rule": "all_required_conditions",
+  "required_suites": {
+    "unit": {"status": "PASS", "failed": 0, "errors": 0, "skipped": 0},
+    "integration": {"status": "PASS", "failed": 0, "errors": 0, "skipped": 0},
+    "property": {"status": "PASS", "failed": 0, "errors": 0, "skipped": 0},
+    "adversarial": {"status": "PASS", "failed": 0, "errors": 0, "skipped": 0},
+    "fuzz": {"status": "PASS", "failed": 0, "errors": 0, "skipped": 0},
+    "replay": {"status": "PASS", "failed": 0, "errors": 0, "skipped": 0},
+    "concurrency": {"status": "PASS", "failed": 0, "errors": 0, "skipped": 0},
+    "h14": {"status": "PASS", "failed": 0, "errors": 0, "skipped": 0}
+  },
+  "required_metrics": {
+    "forged_capabilities_accepted": 0,
+    "expired_capabilities_accepted": 0,
+    "future_capabilities_accepted": 0,
+    "stale_epoch_accepted": 0,
+    "accepted_replays": 0,
+    "scope_escalations_accepted": 0,
+    "resource_substitutions_accepted": 0,
+    "payload_mutations_accepted": 0,
+    "canonicalization_differentials_accepted": 0,
+    "path_traversals_accepted": 0,
+    "symlink_attacks_accepted": 0,
+    "toctou_attacks_accepted": 0,
+    "parser_differentials_accepted": 0,
+    "exception_bypasses_accepted": 0,
+    "race_double_executions": 0,
+    "h14_forbidden_executions": 0,
+    "require_xeito_executions": 0,
+    "non_ten_xeito_executions": 0,
+    "required_audit_events_missing": 0,
+    "failure_evidence_missing": 0,
+    "critical_security_findings": 0,
+    "high_security_findings": 0
+  },
+  "required_checks": {
+    "asymmetric_signing": "PASS",
+    "private_key_absent_from_planner": "PASS",
+    "proposal_authorization_execution_separated": "PASS",
+    "authorization_epoch": "PASS",
+    "nonce_atomicity": "PASS",
+    "resource_binding": "PASS",
+    "anti_toctou": "PASS",
+    "audit_integrity": "PASS",
+    "failure_ledger_integrity": "PASS",
+    "fail_closed": "PASS",
+    "saxp_three_outcomes": "PASS",
+    "feedback_observable": "PASS",
+    "mutation_testing": "PASS",
+    "protected_contract_integrity": "PASS"
+  },
+  "minimum_mutation_score_percent": 90.0,
+  "clean_install": {
+    "A": "PASS",
+    "B": "PASS",
+    "internet_required": false,
+    "development_workspace_used": false
+  },
+  "reproducibility": {
+    "status": "PASS",
+    "source_tree_match": true,
+    "wheel_sha256_match": true,
+    "test_outcome_match": true,
+    "h14_outcome_match": true
+  },
+  "required_artifacts": [
+    "MGK-v0.1.0.zip",
+    "MGK-v0.1.0.zip.sha256",
+    "MGK-v0.1.0-SBOM.json",
+    "MGK-v0.1.0-MANIFEST.json",
+    "MGK-v0.1.0-FUNCTIONAL-VERDICT.json",
+    "MGK-v0.1.0-FUNCTIONAL-VERDICT.md",
+    "MGK-v0.1.0-TEST-REPORT.md",
+    "MGK-v0.1.0-RED-TEAM-REPORT.md",
+    "MGK-v0.1.0-FAILURE-LEDGER.jsonl",
+    "MGK-v0.1.0-EVIDENCE.tar.gz"
+  ]
+}
+

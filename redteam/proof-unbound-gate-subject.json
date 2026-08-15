@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "subject": "not-a-digest-and-not-the-candidate",
+  "results": [
+    {"gate_id": "ROOT_INTEGRITY", "status": "PASS", "evidence": "synthetic"},
+    {"gate_id": "STATE_INTEGRITY", "status": "PASS", "evidence": "synthetic"},
+    {"gate_id": "PATCH_SCOPE", "status": "PASS", "evidence": "synthetic"},
+    {"gate_id": "F00_HELLO_WORLD", "status": "PASS", "evidence": "synthetic"}
+  ]
+}

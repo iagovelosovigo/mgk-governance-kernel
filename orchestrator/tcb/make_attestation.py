@@ -23,18 +23,15 @@ def _sha256(path):
 
 def make_attestation(metadata_file, patch_file, pre_gates_file, final_gates_file, output_file):
     metadata = check_candidate(metadata_file, patch_file, require_base_head=False)
-    check_gates(pre_gates_file)
-    check_gates(final_gates_file)
     commit_sha = _git("rev-parse", "HEAD")
     parent_sha = _git("rev-parse", "HEAD^")
     tree_sha = _git("rev-parse", "HEAD^{tree}")
+    check_gates(pre_gates_file, metadata["PATCH_SHA256"])
+    check_gates(final_gates_file, commit_sha)
     if parent_sha != metadata["BASE_SHA"]:
         raise RuntimeError("Candidate commit is not a single child of the verified base")
     if _git("status", "--porcelain", "--untracked-files=all"):
         raise RuntimeError("Candidate workspace is not clean")
-    final_gates = json.loads(Path(final_gates_file).read_text(encoding="utf-8"))
-    if final_gates["subject"] != commit_sha:
-        raise RuntimeError("Final gates are not bound to the exact candidate commit")
     state = verify_state()
     if state["phase"] != "DONE":
         raise RuntimeError("Candidate state is not DONE")

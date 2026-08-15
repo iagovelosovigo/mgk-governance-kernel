@@ -1,0 +1,107 @@
+name: MGK Protected Candidate Gates
+
+"on":
+  pull_request_target:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+  workflow_dispatch:
+
+env:
+  MGK_ROOT_MANIFEST_SHA256: ${{ vars.MGK_ROOT_MANIFEST_SHA256 }}
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONHASHSEED: "0"
+
+concurrency:
+  group: mgk-protected-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deterministic-gates:
+    name: mgk/deterministic-gates
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the trusted base examiner
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          path: trusted
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Check out the exact candidate commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: candidate
+          persist-credentials: false
+          fetch-depth: 1
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+
+      - name: Bind both checkouts to the event SHAs
+        env:
+          EXPECTED_BASE: ${{ github.event.pull_request.base.sha || github.sha }}
+          EXPECTED_CANDIDATE: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          test "$(git -C trusted rev-parse HEAD)" = "$EXPECTED_BASE"
+          test "$(git -C candidate rev-parse HEAD)" = "$EXPECTED_CANDIDATE"
+
+      - name: Verify the externally anchored protected tree
+        working-directory: trusted
+        run: python -B orchestrator/tcb/trust.py
+
+      - name: Verify frozen independent and red-team examinations
+        run: |
+          python -B trusted/independent_exam/tools/check_frozen.py \
+            --root trusted/independent_exam
+          python -B trusted/redteam/validate_artifacts.py
+
+      - name: Build the isolated gate environment
+        run: |
+          python -m venv "$RUNNER_TEMP/mgk-gate-venv"
+          "$RUNNER_TEMP/mgk-gate-venv/bin/python" -m pip install \
+            --disable-pip-version-check \
+            -r trusted/gates/protected/requirements.lock
+
+      - name: Execute the protected candidate examination
+        env:
+          EXPECTED_CANDIDATE: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/mgk-results"
+          if [ -f trusted/.github/workflows/mgk-examiner-bootstrap.yml ] && \
+             [ ! -e candidate/.github/workflows/mgk-examiner-bootstrap.yml ]; then
+            "$RUNNER_TEMP/mgk-gate-venv/bin/python" -B \
+              trusted/gates/protected/verify_bootstrap_cleanup.py \
+              --trusted-root trusted \
+              --candidate-root candidate \
+              --candidate-sha "$EXPECTED_CANDIDATE" \
+              --out "$RUNNER_TEMP/mgk-results/gate-results.json"
+          else
+            "$RUNNER_TEMP/mgk-gate-venv/bin/python" -B \
+              trusted/gates/protected/run_mgk_candidate.py \
+              --trusted-root trusted \
+              --candidate-root candidate \
+              --candidate-sha "$EXPECTED_CANDIDATE" \
+              --out "$RUNNER_TEMP/mgk-results/gate-results.json"
+          fi
+
+      - name: Upload exact-commit gate evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: mgk-protected-gates-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: warn
+          path: ${{ runner.temp }}/mgk-results/
