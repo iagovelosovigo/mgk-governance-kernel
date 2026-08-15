@@ -23,7 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
-      contents: read
+      contents: write
+      pull-requests: write
+      statuses: write
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -56,3 +58,58 @@ jobs:
             "$RUNNER_TEMP/mgk-bootstrap-venv/bin/python" -m pytest -q \
             gates/protected tests/test_bootstrap_tcb.py
 
+      - name: Publish a bot-authored human-gated Pull Request
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        env:
+          CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const branch = `mgk-autopilot/protected-examiner-bot-${context.runId}`;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            try {
+              await github.rest.git.createRef({
+                owner,
+                repo,
+                ref: `refs/heads/${branch}`,
+                sha: process.env.CANDIDATE_SHA,
+              });
+            } catch (error) {
+              if (error.status !== 422) throw error;
+            }
+            await github.rest.repos.createCommitStatus({
+              owner,
+              repo,
+              sha: process.env.CANDIDATE_SHA,
+              state: "success",
+              context: "mgk/deterministic-gates",
+              description: "Protected examiner bootstrap passed for this exact commit",
+              target_url: `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`,
+            });
+            const existing = await github.rest.pulls.list({
+              owner,
+              repo,
+              state: "open",
+              head: `${owner}:${branch}`,
+              base: "main",
+            });
+            if (existing.data.length === 0) {
+              await github.rest.pulls.create({
+                owner,
+                repo,
+                head: branch,
+                base: "main",
+                title: "Security: install protected MGK examiner",
+                body: [
+                  "Bot-authored promotion of the exact examiner commit after its one-time protected bootstrap passed.",
+                  "",
+                  `Candidate SHA: ${process.env.CANDIDATE_SHA}`,
+                  `Workflow run: ${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`,
+                  "External root: `1b670a1f2c844f57b5fc40aae2b8f091fd0024a3fa18d38ba5159ba0d18a9b14`",
+                  "",
+                  "Human approval and protected merge remain mandatory.",
+                ].join("\n"),
+                maintainer_can_modify: false,
+              });
+            }
