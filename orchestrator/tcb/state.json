@@ -1,7 +1,9 @@
 {
   "attempts": 0,
-  "hash": "db207f63406b97ee1f81237b2636d29211272e28d0d642df3c6de6dfca3d94f3",
-  "phase": "F00",
-  "phases_done": [],
+  "hash": "595303fb86e4919acd756432ced80ef7f34a9219f7d55370a21badb5652047b9",
+  "phase": "DONE",
+  "phases_done": [
+    "F00"
+  ],
   "version": 1
 }
