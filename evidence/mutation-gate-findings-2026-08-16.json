@@ -1,0 +1,58 @@
+{
+  "schema_version": "mgk.mutation.v2",
+  "title": "Mutation gate analysis for fixed candidate e319850 (incl. frozen-exam tests experiment)",
+  "candidate_tree": "e3198501c8508b84a5d544d85623eedff4239926",
+  "runner": "mutmut 3.3.1 + setproctitle shim (macOS fork fix) on disposable copies",
+  "scope": "src (mgk)",
+  "testsets": {
+    "candidate_only": "174 candidate tests",
+    "combined": "174 candidate + 59 frozen exam tests (wired via frozen v1 tool's unused --tests arg; merged tests/helpers.py + conftest with hypothesis profile suppressing HealthCheck.function_scoped_fixture; markers registered)"
+  },
+  "candidate_only": {
+    "killed": 1731,
+    "survived": 543,
+    "no_tests": 309,
+    "timeout": 1,
+    "score_percent": 76.1,
+    "reliable": true
+  },
+  "combined_nominal": {
+    "killed": 1654,
+    "survived": 179,
+    "no_tests": 309,
+    "timeout": 442,
+    "score_percent": 90.23,
+    "status": "INVALID - measurement artifact"
+  },
+  "artifact_root_cause": "mutmut 3.3.1 StatsCollector records the LAST pytest hook phase (teardown ~0.00s) for duration_by_test; all duration_by_test = 0.00s, so per-mutant CPU limit = ceil((0+1)*30 + process_time()) ~30-60s; frozen exam property/fuzz covering sets take ~110-240s => 442 spurious timeouts (not kills).",
+  "transition_candidate_only_to_combined": {
+    "killed_to_timeout": 79,
+    "killed_to_survived": 0,
+    "survived_to_killed": 2,
+    "survived_to_timeout": 362,
+    "timeout_to_unknown": 1
+  },
+  "spot_checks": {
+    "method": "MUTANT_UNDER_TEST + PYTHONPATH=mutants/src + full covering set + --timeout=400 per test; activation validated against a known-killed mutant (37 failures)",
+    "timeout_mutants_true_status": {
+      "mgk.models.x__copy_mapping__mutmut_2": "SURVIVED (135 pass)",
+      "mgk.saxp.xǁSAXPEvaluatorǁ__init____mutmut_1": "SURVIVED (187 pass)",
+      "mgk.state.xǁSecurityStateǁ__init____mutmut_1": "SURVIVED (173 pass)",
+      "mgk.ledger.xǁAuditLedgerǁ__init____mutmut_8": "SURVIVED (168 pass)",
+      "mgk.canonical.x__pairs__mutmut_3": "SURVIVED (174 pass)",
+      "mgk.verifier.xǁCapabilityVerifierǁ__init____mutmut_1": "SURVIVED (168 pass)",
+      "mgk.crypto.x_key_id__mutmut_2": "SURVIVED (168 pass)",
+      "mgk.resource.xǁResourceGuardǁ__init____mutmut_3": "SURVIVED (168 pass)",
+      "mgk.canonical.x__validate__mutmut_25": "KILLED (exam property test found counterexample)",
+      "mgk.canonical.x_canonicalize__mutmut_15": "SURVIVED (186 pass)"
+    }
+  },
+  "estimated_true_score_percent": 76.2,
+  "estimate_basis": "killed ~= 1654 + 79 former-killed re-kill = 1733; survived ~= 179 + 362 former-survivors = 541; score = 1733/2274 = 76.2%",
+  "uncertainty": "plausible 73-77%; NEVER >=90%. Exhaustive classification of all 442 timeouts (~30-60 min compute) available if a tighter estimate is required.",
+  "equivalent_mutant_evidence": "survivor profile from candidate-only run: ~30% equivalent (case-only SQL/string ~115, no-body-diff ~15); killable survivors: string constant 140, name 65, stmt add/remove 48, operator 25, number 23, other 6; parse_fail ~106",
+  "conclusion": "The frozen mutation gate (>=90%) is NOT satisfied by fixed candidate e319850 under any measured test set. Including the frozen exam's 59 tests kills ~2 additional former survivors and re-kills former-killed mutants, but does not lift the score over 90%: equivalent mutants alone exceed the <=227 survivor budget. The apparent 90.23% is a mutmut 3.3.1 timeout artifact.",
+  "historical_contrast": "pre-fix base ac283d71 measured 93.02% (1707 killed / 128 survived, FAILURE-LEDGER entry 26). The e319850 fix that passes the frozen exam changed the mutant landscape and dropped the honest score below threshold.",
+  "decision": "HUMAN AUTHORIZED: RECORD FAIL AND PAUSE FINALIZATION. v0.1.0 acceptance sequence paused at the MUTATION gate.",
+  "recorded_at": "2026-08-16T12:47:56Z"
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": "mgk.mutation-gate.v2",
+  "contract_id": "MGK-v0.1.0-mutation-gate-2",
+  "frozen": true,
+  "supersedes": "MGK-v0.1.0-independent-exam-1 (mutation_testing: PASS requirement of the functional acceptance)",
+  "historical_preserved": {
+    "v1_ledger_entry": "evidence/FAILURE-LEDGER.jsonl -> postmerge-acceptance-002 (MUTATION_SCORE FAIL)",
+    "v1_findings": "evidence/mutation-gate-findings-2026-08-16.json",
+    "v1_candidate_only_score": 76.1,
+    "v1_combined_nominal_score": 90.23,
+    "v1_combined_nominal_status": "INVALID (mutmut 3.3.1 timeout artifact)",
+    "v1_estimated_true_score": 76.2,
+    "v1_killed": 1731,
+    "v1_survived": 543,
+    "v1_no_tests": 309,
+    "v1_timeout": 1
+  },
+  "categories": [
+    "KILLED",
+    "SURVIVED_KILLABLE",
+    "EQUIVALENT_PROVEN",
+    "INVALID_MUTANT",
+    "UNREACHABLE_PROVEN",
+    "INDETERMINATE"
+  ],
+  "category_rules": {
+    "every_mutant_exactly_one_category": true,
+    "timeout_never_auto_maps": "TIMEOUT is a measurement status, never a category; each timeout must be re-evaluated (generous per-test timeout) and classified",
+    "exclusion_requires_evidence": {
+      "EQUIVALENT_PROVEN": "reproducible proof of no behavioral difference",
+      "INVALID_MUTANT": "reproducible proof the mutation is not a valid applied mutation (parse failure, un-appliable)",
+      "UNREACHABLE_PROVEN": "reproducible proof the mutated code is unreachable"
+    },
+    "no_convenience_classification": "equivalent/unreachable/invalid must not be declared without evidence",
+    "per_exclusion_record": ["mutant id", "file", "function", "transformation", "classification", "justification", "evidence"]
+  },
+  "metric": {
+    "EVALUABLE": "KILLED + SURVIVED_KILLABLE",
+    "MUTATION_SCORE_V2": "KILLED / EVALUABLE",
+    "threshold": 0.90,
+    "pass_conditions": [
+      "MUTATION_SCORE_V2 >= 0.90",
+      "INDETERMINATE == 0",
+      "EVALUABLE > 0"
+    ],
+    "indeterminate_blocks_pass": "any relevant INDETERMINATE mutant -> FAIL_CLOSED",
+    "no_approximation": "exact per-mutant classification required; no estimates in the gate verdict"
+  },
+  "procedure": {
+    "1_run": "mutmut run over src/mgk scope on a disposable copy (candidate tests + strengthened regression tests)",
+    "2_evaluate_timeouts": "re-run every TIMEOUT against its covering tests with generous per-test timeout; classify as KILLED or SURVIVED",
+    "3_evaluate_no_tests": "no covering test -> add coverage tests and re-run so every mutant is evaluated; un-evaluated mutants are INDETERMINATE",
+    "4_classify_survivors": "apply transformation-family classifier; equivalence/invalid/unreachable only with evidence",
+    "5_compute": "EVALUABLE and MUTATION_SCORE_V2 from exact per-mutant categories",
+    "6_emit": "machine-readable classification + score + verdict"
+  },
+  "measurement_corrections": {
+    "duration_bug": "mutmut 3.3.1 records the teardown hook phase (~0.0s) as duration_by_test, collapsing per-mutant CPU caps; v2 does not derive KILLED from TIMEOUT and re-evaluates every TIMEOUT",
+    "no_auto_timeout_kill_or_survive": true
+  },
+  "outputs": [
+    "mutation-v2-classification.json",
+    "mutation-v2-classification.md",
+    "mutation-v2-report.json"
+  ]
+}
