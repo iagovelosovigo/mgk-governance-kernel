@@ -14,6 +14,7 @@ from .errors import SignatureError
 CAPABILITY_DOMAIN = b"MGK-CAPABILITY-V1\x00"
 AUDIT_DOMAIN = b"MGK-AUDIT-CHECKPOINT-V1\x00"
 EPOCH_DOMAIN = b"MGK-EPOCH-V1\x00"
+HUMAN_GATE_DOMAIN = b"MGK-HUMAN-GATE-V1\x00"
 
 
 def generate_private_key() -> Ed25519PrivateKey:

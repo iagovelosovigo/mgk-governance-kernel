@@ -101,6 +101,23 @@ class CapabilityExecutor:
                 data = b64u_decode(dict(request.parameters)["content_b64"])
                 output_digest = self.resource_guard.create_bound(payload["resource_binding"], data)
                 output = None
+            elif request.action in {"sandbox.read_file", "sandbox.read_record"}:
+                output = self.resource_guard.read_bound(payload["resource_binding"])
+                import hashlib
+
+                output_digest = hashlib.sha256(output).hexdigest()
+            elif request.action == "sandbox.write_file":
+                data = b64u_decode(dict(request.parameters)["content_b64"])
+                output_digest = self.resource_guard.write_bound(payload["resource_binding"], data)
+                output = None
+            elif request.action == "sandbox.append_file":
+                data = b64u_decode(dict(request.parameters)["content_b64"])
+                output_digest = self.resource_guard.append_bound(payload["resource_binding"], data)
+                output = None
+            elif request.action == "sandbox.create_record":
+                data = b64u_decode(dict(request.parameters)["content_b64"])
+                output_digest = self.resource_guard.create_bound(payload["resource_binding"], data)
+                output = None
             else:
                 raise ValueError("unsupported executor action")
 
@@ -109,7 +126,7 @@ class CapabilityExecutor:
             try:
                 self.audit_ledger.append("EXECUTION_COMPLETED", completed, self.clock.now())
             except BaseException:
-                if request.action == "resource.create":
+                if request.action in {"resource.create", "sandbox.create_record"}:
                     self.resource_guard.remove_created(payload["resource_binding"], output_digest)
                 raise
             return ExecutionResult(

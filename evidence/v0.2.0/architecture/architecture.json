@@ -1,0 +1,147 @@
+{
+  "schema_version": "mgk.v0.2.0.architecture.v1",
+  "phase": "architecture",
+  "generated_at": "2026-08-16T22:40:00Z",
+  "generator": "mgk-autopilot/v0.2.0-functional-runtime",
+  "design_constraints": [
+    "Reuse src/mgk kernel as the authority core (no weakening of v0.1.0 behavior).",
+    "Default AuthorityPolicy.allowed_actions stays exactly {resource.read, resource.create} (test_mutation_v2_contracts.py:227).",
+    "No new runtime dependencies: stdlib http.server, sqlite3, fcntl only.",
+    "Loopback-only web server bound to 127.0.0.1.",
+    "Closed actuator registry: sandbox.read_file, sandbox.write_file, sandbox.append_file, sandbox.create_record, sandbox.read_record. No shell/network/arbitrary-fs actuators.",
+    "PROPOSAL IS NOT AUTHORITY: no governed side effect without a valid, scoped, single-use capability issued by the kernel authority.",
+    "Decision states: ALLOW, DENY, REQUIRE_HUMAN, INDETERMINATE (fail-closed => no side effect).",
+    "Capability binds: request_id (request_digest), action (scope), resource (scope+resource_binding), constraints (TTL), issued_at, expires_at, nonce (single-use), authorization_epoch.",
+    "Human gate decisions are signed by an operator key and recorded in the ledger.",
+    "Secrets (authority/audit/operator private keys) are runtime-generated in a gitignored workspace; never committed.",
+    "No eval/exec of untrusted content; proposals are data-only."
+  ],
+  "components": {
+    "kernel_reuse": {
+      "authority": "CapabilityAuthority.issue (SAXP-gated mintage; extended additively for sandbox action bindings)",
+      "verifier": "CapabilityVerifier.verify (strict canonical, epoch, nonce, scope; extended additively for sandbox binding shapes)",
+      "executor": "CapabilityExecutor.execute (extended additively to dispatch the 5 sandbox actuators)",
+      "resource_guard": "ResourceGuard extended additively with bind_write/bind_append/write_bound/append_bound (descriptor-based anti-TOCTOU)",
+      "saxp": "SAXPEvaluator three-valued decision (unchanged)",
+      "ledger": "AuditLedger/FailureLedger (unchanged)",
+      "state": "SecurityState epoch+nonce (unchanged)",
+      "crypto": "Ed25519 domain-separated (unchanged); new HUMAN_GATE_DOMAIN for operator decisions",
+      "canonical": "MGK Canonical JSON v1 (unchanged)"
+    },
+    "runtime_package": {
+      "path": "runtime/",
+      "modules": {
+        "runtime/__init__.py": "public API",
+        "runtime/config.py": "RuntimeConfig (workdir, port, mode, sensitive actions, context policy)",
+        "runtime/workspace.py": "workspace initialization: keys, dirs, seed files",
+        "runtime/policy.py": "RuntimePolicy: allow_safe / deny_all mode + sensitive-action -> REQUIRE_HUMAN context provider",
+        "runtime/decision.py": "DecisionPipeline: propose -> SAXP -> ALLOW/DENY/REQUIRE_HUMAN/INDETERMINATE",
+        "runtime/human_gate.py": "HumanGate: pending queue, signed APPROVE/DENY, persistence",
+        "runtime/flight.py": "FlightRecorder: append-only hash-chained JSONL of runtime events + checkpoint + integrity verify",
+        "runtime/runtime_ledger.py": "RuntimeLedger: proposals, decisions, capabilities, human actions (SQLite or derived from flight)",
+        "runtime/server.py": "mgk start/stop/status/doctor/test orchestration + pid/port management",
+        "runtime/web.py": "stdlib http.server app: status, propose form, decision view, human gate, flight recorder, evidence",
+        "runtime/sandbox/__init__.py": "sandbox actuator registry (closed set)",
+        "runtime/sandbox/actions.py": "ACTUATOR registry: read_file, write_file, append_file, create_record, read_record"
+      }
+    },
+    "cli": {
+      "existing": "mgk h14-smoke (unchanged behavior)",
+      "new": "mgk start|stop|status|doctor|test (added to src/mgk/cli.py additively, lazy imports of runtime)",
+      "launcher": "./mgk repo-root executable script (PYTHONPATH=src)"
+    },
+    "web_routes": {
+      "GET /": "system status HTML",
+      "GET /api/status": "JSON status",
+      "GET /propose": "proposal form HTML",
+      "POST /api/propose": "submit proposal -> decision JSON",
+      "GET /decision/<id>": "decision view HTML",
+      "GET /human-gate": "pending REQUIRE_HUMAN queue HTML",
+      "POST /api/human-gate/<id>/approve|deny": "signed human decision",
+      "GET /flight-recorder": "flight recorder HTML",
+      "GET /evidence": "evidence view HTML (ledger integrity, capabilities, audit)",
+      "GET /api/evidence": "evidence JSON",
+      "GET /api/health": "health check"
+    }
+  },
+  "sandbox_actions": {
+    "sandbox.read_file": {
+      "resource": "files/<path>",
+      "binding": "present {path,sha256,size}",
+      "execute": "read_bound -> content bytes + output_digest",
+      "confines": ["..", "absolute", "symlink", "TOCTOU via descriptor revalidation"]
+    },
+    "sandbox.write_file": {
+      "resource": "files/<path>",
+      "binding": "write {path, pre_state present|absent, pre_sha256, pre_size, post_sha256, post_size}",
+      "execute": "verify pre-state unchanged -> create (O_EXCL) or truncate+write -> fsync -> verify post-state",
+      "confines": ["..", "absolute", "symlink", "TOCTOU"]
+    },
+    "sandbox.append_file": {
+      "resource": "files/<path>",
+      "binding": "append {path, pre_sha256, pre_size, append_sha256, append_size, post_sha256, post_size}",
+      "execute": "verify pre-state -> append at descriptor -> fsync -> verify post-state",
+      "confines": ["..", "absolute", "symlink", "TOCTOU"]
+    },
+    "sandbox.create_record": {
+      "resource": "records/<id>",
+      "binding": "absent {path, post_sha256, post_size}",
+      "execute": "validate canonical JSON content -> create_bound (O_EXCL) -> rollback on audit failure",
+      "confines": ["..", "absolute", "symlink", "TOCTOU"]
+    },
+    "sandbox.read_record": {
+      "resource": "records/<id>",
+      "binding": "present {path,sha256,size}",
+      "execute": "read_bound -> record content + output_digest",
+      "confines": ["..", "absolute", "symlink", "TOCTOU"]
+    }
+  },
+  "decision_flow": {
+    "propose": [
+      "validate request schema (principal/audience/action/resource/parameters)",
+      "RuntimePolicy context_provider -> SAXPContext",
+      "SAXPEvaluator.evaluate",
+      "NON_TEN_XEITO -> DENY (no capability, no effect); flight + audit record",
+      "REQUIRE_XEITO -> REQUIRE_HUMAN (enqueue pending, no capability); flight + audit record",
+      "TEN_XEITO -> CapabilityAuthority.issue",
+      "issue fails -> DENY; issue succeeds -> executor.execute(envelope, request)",
+      "executor success -> ALLOW (output/effect recorded); executor denial -> DENY",
+      "any unexpected exception / integrity failure -> INDETERMINATE -> fail-closed DENY, no side effect"
+    ],
+    "human_gate": [
+      "operator reviews pending proposal (proposal data is data-only)",
+      "APPROVE: sign human decision (HUMAN_GATE_DOMAIN, operator key) -> re-issue capability for the SAME request_digest -> execute -> record",
+      "DENY: sign human decision -> record denial, discard proposal",
+      "human decision appended to flight recorder + runtime ledger"
+    ]
+  },
+  "persistence": {
+    "workspace_root": "<workdir>/.mgk (gitignored)",
+    "keys": "authority.key, audit.key, operator.key + public (mode 0600)",
+    "state": "security.sqlite (epoch + nonce)",
+    "ledgers": "audit.jsonl/.checkpoint.json, failures.jsonl/.checkpoint.json",
+    "flight": "flight.jsonl + flight.checkpoint.json",
+    "runtime_ledger": "runtime.sqlite (proposals, decisions, human actions)",
+    "sandbox_root": "sandbox/files/, sandbox/records/",
+    "pid_port": "runtime.pid, runtime.port"
+  },
+  "integrity_model": {
+    "kernel_audit": "AuditLedger hash-chain + signed checkpoint (unchanged)",
+    "failure_ledger": "FailureLedger (unchanged)",
+    "flight_recorder": "hash-chained JSONL with verified checkpoint (mgk doctor verifies)",
+    "runtime_ledger": "rows mirror flight events; integrity re-verifiable from flight",
+    "doctor": "verify root-of-trust anchor, key presence, state integrity, ledger + flight integrity, sandbox confinement probe, h14-smoke"
+  },
+  "security_controls": [
+    "loopback-only binding",
+    "closed actuator registry (no shell/network/arbitrary fs)",
+    "capability single-use (atomic nonce consumption)",
+    "authorization_epoch checked at mintage, verify, and pre-commit",
+    "resource binding revalidated at point of use (anti-TOCTOU)",
+    "human gate signed and bound to proposal digest",
+    "no secrets committed; keys runtime-generated + gitignored",
+    "fail-closed on INDETERMINATE",
+    "CSRF-safe: state-changing API requires explicit JSON body + Content-Type; loopback-only origin"
+  ],
+  "status": "ARCHITECTURE_APPROVED"
+}

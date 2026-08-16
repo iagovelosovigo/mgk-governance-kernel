@@ -176,6 +176,185 @@ class ResourceGuard:
         finally:
             os.close(parent)
 
+    def bind_write(self, relative: str, data: bytes) -> dict[str, object]:
+        if type(data) is not bytes or len(data) > MAX_RESOURCE_BYTES:
+            raise ResourceError("invalid write payload size")
+        parent, name = self._open_parent(relative)
+        descriptor: int | None = None
+        try:
+            try:
+                descriptor = os.open(name, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0), dir_fd=parent)
+                info = os.fstat(descriptor)
+                if not stat.S_ISREG(info.st_mode):
+                    raise ResourceError("write target is not a regular file")
+                pre = self._read_descriptor(descriptor)
+            except FileNotFoundError:
+                pre = None
+            finally:
+                if descriptor is not None:
+                    os.close(descriptor)
+        finally:
+            os.close(parent)
+        post = hashlib.sha256(data).hexdigest()
+        if pre is None:
+            return {
+                "path": relative,
+                "post_sha256": post,
+                "post_size": len(data),
+                "pre_sha256": "",
+                "pre_size": 0,
+                "pre_state": "absent",
+                "state": "write",
+            }
+        return {
+            "path": relative,
+            "post_sha256": post,
+            "post_size": len(data),
+            "pre_sha256": hashlib.sha256(pre).hexdigest(),
+            "pre_size": len(pre),
+            "pre_state": "present",
+            "state": "write",
+        }
+
+    def write_bound(self, binding: dict[str, object], data: bytes) -> str:
+        expected = {
+            "path",
+            "post_sha256",
+            "post_size",
+            "pre_sha256",
+            "pre_size",
+            "pre_state",
+            "state",
+        }
+        if set(binding) != expected or binding["state"] != "write":
+            raise ResourceError("invalid write-resource binding")
+        if binding["pre_state"] not in {"present", "absent"}:
+            raise ResourceError("invalid write pre-state")
+        if type(data) is not bytes or len(data) > MAX_RESOURCE_BYTES:
+            raise ResourceError("write payload exceeds size limit")
+        post = hashlib.sha256(data).hexdigest()
+        if len(data) != binding["post_size"] or post != binding["post_sha256"]:
+            raise ResourceError("write payload does not match capability binding")
+        parent, name = self._open_parent(binding["path"])
+        descriptor: int | None = None
+        created = False
+        try:
+            if binding["pre_state"] == "absent":
+                try:
+                    os.stat(name, dir_fd=parent, follow_symlinks=False)
+                except FileNotFoundError:
+                    pass
+                else:
+                    raise ResourceError("write target appeared after authorization")
+                flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
+                descriptor = os.open(name, flags, 0o600, dir_fd=parent)
+                created = True
+            else:
+                flags = os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0)
+                descriptor = os.open(name, flags, dir_fd=parent)
+                info = os.fstat(descriptor)
+                if not stat.S_ISREG(info.st_mode):
+                    raise ResourceError("write target is not a regular file")
+                current = self._read_descriptor(descriptor)
+                current_hash = hashlib.sha256(current).hexdigest()
+                if (
+                    len(current) != binding["pre_size"]
+                    or current_hash != binding["pre_sha256"]
+                ):
+                    raise ResourceError("write target changed after authorization")
+                os.ftruncate(descriptor, 0)
+                os.lseek(descriptor, 0, os.SEEK_SET)
+            view = memoryview(data)
+            while view:
+                written = os.write(descriptor, view)
+                if written <= 0:
+                    raise ResourceError("short write while writing resource")
+                view = view[written:]
+            os.fsync(descriptor)
+            info = os.fstat(descriptor)
+            if not stat.S_ISREG(info.st_mode) or info.st_size != len(data):
+                raise ResourceError("written resource verification failed")
+            os.close(descriptor)
+            descriptor = None
+            os.fsync(parent)
+            return post
+        except FileExistsError as exc:
+            raise ResourceError("write target appeared after authorization") from exc
+        except BaseException:
+            if descriptor is not None:
+                os.close(descriptor)
+            if created:
+                try:
+                    os.unlink(name, dir_fd=parent)
+                    os.fsync(parent)
+                except OSError:
+                    pass
+            raise
+        finally:
+            os.close(parent)
+
+    def bind_append(self, relative: str, data: bytes) -> dict[str, object]:
+        if type(data) is not bytes or len(data) > MAX_RESOURCE_BYTES:
+            raise ResourceError("invalid append payload size")
+        descriptor = self._open_file(relative)
+        try:
+            pre = self._read_descriptor(descriptor)
+        finally:
+            os.close(descriptor)
+        if len(pre) + len(data) > MAX_RESOURCE_BYTES:
+            raise ResourceError("append result exceeds size limit")
+        post = hashlib.sha256(pre + data).hexdigest()
+        return {
+            "path": relative,
+            "post_sha256": post,
+            "post_size": len(pre) + len(data),
+            "pre_sha256": hashlib.sha256(pre).hexdigest(),
+            "pre_size": len(pre),
+            "state": "append",
+        }
+
+    def append_bound(self, binding: dict[str, object], data: bytes) -> str:
+        expected = {"path", "post_sha256", "post_size", "pre_sha256", "pre_size", "state"}
+        if set(binding) != expected or binding["state"] != "append":
+            raise ResourceError("invalid append-resource binding")
+        if type(data) is not bytes or len(data) > MAX_RESOURCE_BYTES:
+            raise ResourceError("append payload exceeds size limit")
+        parent, name = self._open_parent(binding["path"])
+        descriptor: int | None = None
+        try:
+            flags = os.O_RDWR | getattr(os, "O_NOFOLLOW", 0)
+            descriptor = os.open(name, flags, dir_fd=parent)
+            info = os.fstat(descriptor)
+            if not stat.S_ISREG(info.st_mode):
+                raise ResourceError("append target is not a regular file")
+            current = self._read_descriptor(descriptor)
+            current_hash = hashlib.sha256(current).hexdigest()
+            if len(current) != binding["pre_size"] or current_hash != binding["pre_sha256"]:
+                raise ResourceError("append target changed after authorization")
+            os.lseek(descriptor, 0, os.SEEK_END)
+            view = memoryview(data)
+            while view:
+                written = os.write(descriptor, view)
+                if written <= 0:
+                    raise ResourceError("short write while appending resource")
+                view = view[written:]
+            os.fsync(descriptor)
+            info = os.fstat(descriptor)
+            if not stat.S_ISREG(info.st_mode) or info.st_size != binding["post_size"]:
+                raise ResourceError("appended resource verification failed")
+            os.close(descriptor)
+            descriptor = None
+            os.fsync(parent)
+            return binding["post_sha256"]
+        except FileNotFoundError as exc:
+            raise ResourceError("append target is missing") from exc
+        except BaseException:
+            if descriptor is not None:
+                os.close(descriptor)
+            raise
+        finally:
+            os.close(parent)
+
     def remove_created(self, binding: dict[str, object], digest: str) -> bool:
         """Rollback a just-created target only if it is still the bound regular file."""
         if binding.get("state") != "absent" or binding.get("post_sha256") != digest:
