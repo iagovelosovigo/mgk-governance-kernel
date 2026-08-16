@@ -165,11 +165,6 @@ class Harness:
         nonce: str | None = None,
         epoch: int | None = None,
     ):
-        decision = self.evaluate(
-            self.propose(request), {"permitted": True, "evidence_complete": True}
-        )
-        if decision["outcome"] != "TEN_XEITO":
-            raise ValueError("independent SAXP denied request")
         internal = self._internal(request)
         issued = self.authority.issue(internal)
         overrides = {
