@@ -1,0 +1,269 @@
+{
+  "all_passed": true,
+  "doctor": {
+    "checks": {
+      "actuator_registry": "PASS",
+      "audit_integrity": "PASS",
+      "epoch_initialized": "PASS",
+      "failure_ledger_integrity": "PASS",
+      "flight_integrity": "PASS",
+      "state_integrity": "PASS",
+      "workspace_initialized": "PASS"
+    },
+    "findings": [],
+    "status": "PASS"
+  },
+  "scenarios": [
+    {
+      "passed": true,
+      "scenario": "A-lifecycle",
+      "steps": [
+        {
+          "detail": "mgk start becomes healthy",
+          "key": "start",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "passed": true,
+      "scenario": "B-safe-read",
+      "steps": [
+        {
+          "detail": "HTTP 200",
+          "key": "status_200",
+          "ok": true
+        },
+        {
+          "detail": "state is ALLOW",
+          "key": "allowed",
+          "ok": true
+        },
+        {
+          "detail": "executor ran",
+          "key": "executed",
+          "ok": true
+        },
+        {
+          "detail": "single-use capability issued",
+          "key": "capability",
+          "ok": true
+        },
+        {
+          "detail": "output recorded",
+          "key": "output_digest",
+          "ok": true
+        },
+        {
+          "detail": "flight anchor present",
+          "key": "flight_hash",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "passed": true,
+      "scenario": "C-sensitive-gated",
+      "steps": [
+        {
+          "detail": "state is REQUIRE_HUMAN",
+          "key": "require_human",
+          "ok": true
+        },
+        {
+          "detail": "no side effect yet",
+          "key": "not_executed",
+          "ok": true
+        },
+        {
+          "detail": "no capability issued",
+          "key": "no_capability",
+          "ok": true
+        },
+        {
+          "detail": "target absent",
+          "key": "no_file",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "passed": true,
+      "scenario": "D-human-approve",
+      "steps": [
+        {
+          "detail": "state is ALLOW",
+          "key": "allowed",
+          "ok": true
+        },
+        {
+          "detail": "executor ran",
+          "key": "executed",
+          "ok": true
+        },
+        {
+          "detail": "operator approved",
+          "key": "human_decision",
+          "ok": true
+        },
+        {
+          "detail": "human decision signed",
+          "key": "signed",
+          "ok": true
+        },
+        {
+          "detail": "governed side effect",
+          "key": "file_written",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "passed": true,
+      "scenario": "E-human-deny",
+      "steps": [
+        {
+          "detail": "state is DENY",
+          "key": "denied",
+          "ok": true
+        },
+        {
+          "detail": "no side effect",
+          "key": "not_executed",
+          "ok": true
+        },
+        {
+          "detail": "record absent",
+          "key": "no_record",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "passed": true,
+      "scenario": "F-traversal-denied",
+      "steps": [
+        {
+          "detail": "not ALLOW/executed",
+          "key": "scn-f1",
+          "ok": true
+        },
+        {
+          "detail": "not ALLOW/executed",
+          "key": "scn-f2",
+          "ok": true
+        },
+        {
+          "detail": "not ALLOW/executed",
+          "key": "scn-f3",
+          "ok": true
+        },
+        {
+          "detail": "not ALLOW/executed",
+          "key": "scn-f4",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "passed": true,
+      "scenario": "G-malformed-fail-closed",
+      "steps": [
+        {
+          "detail": "fail closed",
+          "key": "scn-g1",
+          "ok": true
+        },
+        {
+          "detail": "fail closed",
+          "key": "scn-g2",
+          "ok": true
+        },
+        {
+          "detail": "fail closed",
+          "key": "scn-g3",
+          "ok": true
+        },
+        {
+          "detail": "fail closed",
+          "key": "scn-g4",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "passed": true,
+      "scenario": "H-integrity-evidence",
+      "steps": [
+        {
+          "detail": "audit chain head",
+          "key": "audit_head",
+          "ok": true
+        },
+        {
+          "detail": "flight chain head",
+          "key": "flight_head",
+          "ok": true
+        },
+        {
+          "detail": "authorization epoch",
+          "key": "epoch",
+          "ok": true
+        },
+        {
+          "detail": "consumed nonces recorded",
+          "key": "nonces",
+          "ok": true
+        },
+        {
+          "detail": "authority identity published",
+          "key": "authority_id",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "passed": true,
+      "scenario": "I-flight-integrity",
+      "steps": [
+        {
+          "detail": "flight events recorded",
+          "key": "events",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "passed": true,
+      "scenario": "J-persistence-restart",
+      "steps": [
+        {
+          "detail": "server stopped cleanly",
+          "key": "stopped",
+          "ok": true
+        },
+        {
+          "detail": "server restarted",
+          "key": "restarted",
+          "ok": true
+        },
+        {
+          "detail": "prior decisions survive restart",
+          "key": "decisions_persist",
+          "ok": true
+        },
+        {
+          "detail": "keys survive restart",
+          "key": "identity_persist",
+          "ok": true
+        }
+      ]
+    }
+  ],
+  "test": {
+    "results": {
+      "h14_proposal_is_not_authority": true
+    },
+    "status": "PASS"
+  }
+}
