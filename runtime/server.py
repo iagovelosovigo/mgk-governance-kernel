@@ -82,7 +82,7 @@ def start(config: RuntimeConfig, foreground: bool = False) -> dict[str, Any]:
     health = None
     while time.time() < deadline:
         current = status(config)
-        if current.get("status") == "running":
+        if current.get("status") == "running" and current.get("pid") == process.pid:
             health = current
             break
         time.sleep(0.25)

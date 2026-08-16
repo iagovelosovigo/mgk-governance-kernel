@@ -76,6 +76,22 @@ class RuntimeHandler(BaseHTTPRequestHandler):
             return {}
         return value if isinstance(value, dict) else {}
 
+    def _origin_allowed(self) -> bool:
+        """Block cross-origin state-changing requests (CSRF defence).
+
+        A malicious web page loaded in the same user's browser could otherwise
+        submit proposals to the loopback runtime. Requests carrying an Origin or
+        Referer that does not match this server are rejected.
+        """
+        origin = self.headers.get("Origin")
+        referer = self.headers.get("Referer")
+        allowed = {f"http://{self.server.server_address[0]}:{self.server.server_address[1]}"}
+        if origin is not None:
+            return origin in allowed
+        if referer is not None:
+            return any(referer.startswith(candidate) for candidate in allowed)
+        return True
+
     # ------------------------------------------------------------------ routes
     def do_GET(self) -> None:
         path = self.path.split("?", 1)[0]
@@ -99,6 +115,9 @@ class RuntimeHandler(BaseHTTPRequestHandler):
             self._html("<p>Not found. Try <a href='/'>/</a>.</p>", title="404", status=404)
 
     def do_POST(self) -> None:
+        if not self._origin_allowed():
+            self._json({"state": "DENY", "error": "cross-origin request rejected"}, 403)
+            return
         path = self.path.split("?", 1)[0]
         if path == "/api/propose":
             self._api_propose()
@@ -264,9 +283,18 @@ async function decide(requestId, decision) {{
 
     def _evidence(self) -> None:
         bundle = self.bundle
-        audit_count, audit_head = bundle.audit.verify_integrity()
-        failure_count, failure_head = bundle.failures.verify_integrity()
-        flight_count, flight_head = bundle.flight.verify_integrity()
+        try:
+            audit_count, audit_head = bundle.audit.verify_integrity()
+            failure_count, failure_head = bundle.failures.verify_integrity()
+            flight_count, flight_head = bundle.flight.verify_integrity()
+        except BaseException as exc:
+            self._html(
+                f"<h2>Evidence</h2><p><strong>Integrity verification failed.</strong></p>"
+                f"<pre>{html.escape(type(exc).__name__)}: {html.escape(str(exc))}</pre>",
+                title="Evidence — integrity failure",
+                status=500,
+            )
+            return
         status = bundle.status()
         body = f"""
 <h2>Evidence</h2>
@@ -297,9 +325,20 @@ async function decide(requestId, decision) {{
 
     def _evidence_json(self) -> None:
         bundle = self.bundle
-        audit_count, audit_head = bundle.audit.verify_integrity()
-        failure_count, failure_head = bundle.failures.verify_integrity()
-        flight_count, flight_head = bundle.flight.verify_integrity()
+        try:
+            audit_count, audit_head = bundle.audit.verify_integrity()
+            failure_count, failure_head = bundle.failures.verify_integrity()
+            flight_count, flight_head = bundle.flight.verify_integrity()
+        except BaseException as exc:
+            self._json(
+                {
+                    "state": DecisionState.INDETERMINATE.value,
+                    "error": "integrity verification failed",
+                    "detail": type(exc).__name__,
+                },
+                500,
+            )
+            return
         self._json(
             {
                 "audit": {"count": audit_count, "head": audit_head},
