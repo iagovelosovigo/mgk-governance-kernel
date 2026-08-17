@@ -250,7 +250,7 @@ class ResourceGuard:
                 descriptor = os.open(name, flags, 0o600, dir_fd=parent)
                 created = True
             else:
-                flags = os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0)
+                flags = os.O_RDWR | getattr(os, "O_NOFOLLOW", 0)
                 descriptor = os.open(name, flags, dir_fd=parent)
                 info = os.fstat(descriptor)
                 if not stat.S_ISREG(info.st_mode):

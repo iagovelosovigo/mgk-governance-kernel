@@ -80,6 +80,46 @@ def test_sensitive_write_requires_human_then_approve_executes(workspace):
     assert human_actions[0]["signature"]
 
 
+def test_append_requires_human_then_approve_appends(workspace):
+    bundle = workspace.create_runtime()
+    (bundle.workspace.files_root / "log.txt").write_bytes(b"line1\n")
+    decision = bundle.pipeline.propose(
+        make_request(
+            "ap1",
+            "sandbox.append_file",
+            "files/log.txt",
+            {"content_b64": b64u_encode(b"line2\n")},
+        )
+    )
+    assert decision.state is DecisionState.REQUIRE_HUMAN
+    assert decision.executed is False
+    approved = bundle.pipeline.human_approve("ap1", "operator-alice")
+    assert approved.state is DecisionState.ALLOW
+    assert approved.executed is True
+    assert (bundle.workspace.files_root / "log.txt").read_bytes() == b"line1\nline2\n"
+    assert bundle.pipeline.pending() == []
+    human_actions = bundle.ledger.human_actions()
+    assert [row["request_id"] for row in human_actions] == ["ap1"]
+
+
+def test_create_record_requires_human_then_approve_creates(workspace):
+    bundle = workspace.create_runtime()
+    decision = bundle.pipeline.propose(
+        make_request(
+            "cr1",
+            "sandbox.create_record",
+            "records/rec1",
+            {"content_b64": b64u_encode(b'{"a": 1}')},
+        )
+    )
+    assert decision.state is DecisionState.REQUIRE_HUMAN
+    assert decision.executed is False
+    approved = bundle.pipeline.human_approve("cr1", "operator-alice")
+    assert approved.state is DecisionState.ALLOW
+    assert approved.executed is True
+    assert (bundle.workspace.records_root / "rec1").read_bytes() == b'{"a": 1}'
+
+
 def test_human_deny_records_deny_and_no_side_effect(workspace):
     bundle = workspace.create_runtime()
     decision = bundle.pipeline.propose(

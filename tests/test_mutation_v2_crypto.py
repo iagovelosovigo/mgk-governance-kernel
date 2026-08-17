@@ -63,6 +63,10 @@ def test_b64u_encode_strips_padding():
     assert b64u_encode(b"\x00\x01\x02") == "AAEC"
 
 
+def test_b64u_encode_does_not_strip_trailing_alphabet_byte():
+    assert b64u_encode(b"\x00\x00\x17") == "AAAX"
+
+
 def test_b64u_decode_rejects_each_invalid_form():
     cases = [
         (None, "invalid base64url value"),

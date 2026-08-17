@@ -237,3 +237,57 @@ def test_saxp_decision_to_payload_exact(kernel_factory):
     assert payload["result"] == "TEN_XEITO"
     assert payload["policy_id"] == "saxp-level1-v1"
     assert payload["reason_codes"] == ["COHERENCE_GATE_SATISFIED"]
+
+
+@pytest.fixture
+def bundle(tmp_path):
+    from runtime.config import RuntimeConfig
+    from runtime.workspace import Workspace
+
+    config = RuntimeConfig.from_workdir(tmp_path / "rt")
+    return Workspace(config).create_runtime()
+
+
+def test_executor_authority_accepts_maximum_ttl(kernel_factory):
+    kernel = kernel_factory()
+    request = read_request()
+    issued = kernel.authority.issue(request, ttl_seconds=300)
+    assert issued.envelope is not None
+
+
+def test_executor_read_actions_success(bundle):
+    (bundle.workspace.files_root / "data.txt").write_bytes(b"file data")
+    (bundle.workspace.records_root / "rec.json").write_bytes(b'{"a": 1}')
+    for action, resource, expected in (
+        ("sandbox.read_file", "files/data.txt", b"file data"),
+        ("sandbox.read_record", "records/rec.json", b'{"a": 1}'),
+    ):
+        request = ActionRequest("rr2", "planner", "executor", action, resource, {})
+        issued = bundle.authority.issue(request, context=SAFE_CONTEXT)
+        assert issued.envelope is not None
+        result = bundle.executor.execute(issued.envelope, request)
+        assert result.success is True
+        assert result.output == expected
+
+
+def test_executor_denial_after_bind_keeps_capability_id(bundle):
+    (bundle.workspace.files_root / "out.txt").write_bytes(b"base")
+    request = ActionRequest(
+        "rd1",
+        "planner",
+        "executor",
+        "sandbox.append_file",
+        "files/out.txt",
+        {"content_b64": b64u_encode(b"x")},
+    )
+    issued = bundle.authority.issue(request, context=SAFE_CONTEXT)
+    assert issued.envelope is not None
+    (bundle.workspace.files_root / "out.txt").unlink()
+    result = bundle.executor.execute(issued.envelope, request)
+    assert result.success is False
+    assert result.status == "DENIED"
+    assert result.reason_code == "RESOURCE_ERROR"
+    assert result.capability_id == issued.capability_id
+    records = [parse_canonical(l) for l in bundle.audit.ledger_path.read_bytes().splitlines()]
+    assert records[-1]["event_type"] == "EXECUTION_DENIED"
+    assert records[-1]["data"]["capability_id"] == issued.capability_id

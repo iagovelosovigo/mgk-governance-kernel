@@ -65,7 +65,21 @@ def test_cli_main_h14_smoke_returns_zero_and_prints_json(capsys, tmp_path):
         "h14_forbidden_executions": 0,
         "result": "PASS",
     }
-    assert captured.out.strip().endswith("}")
+    assert captured.out == (
+        '{\n'
+        '  "allowed_control_executed": true,\n'
+        '  "forbidden_capability_issued": false,\n'
+        '  "h14_forbidden_executions": 0,\n'
+        '  "result": "PASS"\n'
+        '}\n'
+    )
+
+
+def test_cli_main_h14_smoke_without_workdir_uses_tempdir(capsys):
+    rc = main(["h14-smoke"])
+    assert rc == 0
+    captured = capsys.readouterr()
+    assert json.loads(captured.out)["result"] == "PASS"
 
 
 def test_cli_main_rejects_unknown_command():
@@ -79,11 +93,83 @@ def test_cli_main_rejects_unknown_command():
     raise AssertionError("expected SystemExit(2)")
 
 
-def test_cli_main_rejects_missing_command():
+def test_cli_main_rejects_missing_command(capsys):
     try:
         main([])
     except SystemExit as exc:
         assert exc.code == 2
+        captured = capsys.readouterr()
+        assert "mgk" in captured.err
+        return
+    raise AssertionError("expected SystemExit(2)")
+
+
+def test_cli_main_status_not_running_returns_zero(tmp_path):
+    rc = main(["status", "--workdir", str(tmp_path)])
+    assert rc == 0
+
+
+def test_cli_main_stop_not_running_returns_zero(tmp_path):
+    rc = main(["stop", "--workdir", str(tmp_path)])
+    assert rc == 0
+
+
+def test_cli_main_doctor_uninitialized_returns_one(tmp_path):
+    rc = main(["doctor", "--workdir", str(tmp_path)])
+    assert rc == 1
+
+
+def _init_workspace(tmp_path):
+    from runtime.config import RuntimeConfig
+    from runtime.workspace import Workspace
+
+    config = RuntimeConfig.from_workdir(tmp_path / "rt")
+    Workspace(config).create_runtime()
+    return str(tmp_path / "rt")
+
+
+def test_cli_main_doctor_pass_after_init(tmp_path):
+    workdir = _init_workspace(tmp_path)
+    rc = main(["doctor", "--workdir", workdir])
+    assert rc == 0
+
+
+def test_cli_main_test_pass_after_init(tmp_path):
+    workdir = _init_workspace(tmp_path)
+    rc = main(["test", "--workdir", workdir])
+    assert rc == 0
+
+
+def test_cli_main_doctor_detects_tampered_ledger(tmp_path):
+    from runtime.config import RuntimeConfig
+    from runtime.workspace import Workspace
+
+    config = RuntimeConfig.from_workdir(tmp_path / "rt")
+    bundle = Workspace(config).create_runtime()
+    with bundle.audit.ledger_path.open("ab") as stream:
+        stream.write(b'{"tampered": true}\n')
+    rc = main(["doctor", "--workdir", str(tmp_path / "rt")])
+    assert rc == 1
+
+
+def test_cli_main_runtime_commands_require_workdir():
+    for command in ("status", "stop", "doctor", "test"):
+        try:
+            main([command])
+        except SystemExit as exc:
+            assert exc.code == 2
+        else:
+            raise AssertionError(f"expected SystemExit(2) for {command}")
+
+
+def test_cli_main_start_requires_workdir_exact(capsys):
+    try:
+        main(["start"])
+    except SystemExit as exc:
+        assert exc.code == 2
+        captured = capsys.readouterr()
+        assert "usage: mgk" in captured.err
+        assert "required: --workdir" in captured.err
         return
     raise AssertionError("expected SystemExit(2)")
 
