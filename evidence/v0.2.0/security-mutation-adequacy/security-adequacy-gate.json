@@ -1,0 +1,35 @@
+{
+ "schema_version": "mgk.security-mutation-adequacy.v1",
+ "kind": "security-mutation-adequacy-gate",
+ "recorded_at": "2026-08-17",
+ "GLOBAL_MUTATION_SCORE": 0.908844,
+ "GLOBAL_MUTATION_SCORE_SOURCE": "phase-8-fresh",
+ "GLOBAL_MUTATION_THRESHOLD": 0.9,
+ "GLOBAL_MUTATION_GATE": "PASS",
+ "SECURITY_MUTATION_ADEQUACY": "PASS",
+ "SECURITY_SENSITIVE_SURVIVORS": 93,
+ "UNRESOLVED_HIGH": 0,
+ "UNRESOLVED_CRITICAL": 0,
+ "SECURITY_SENSITIVE_INDETERMINATE": 0,
+ "FINAL_CODE_REPRODUCIBLE_SECURITY_BYPASSES": 0,
+ "phase4_dispositions": {
+  "EQUIVALENT_PROVEN": 32,
+  "KILLED": 59,
+  "AVAILABILITY_ONLY": 1,
+  "TEST_GAP_ONLY": 1
+ },
+ "gate_result": "PASS",
+ "unresolved_high_ids": [],
+ "unresolved_critical_ids": [],
+ "final_bypass_ids": [],
+ "population": {
+  "total": 3313,
+  "killed": 3011,
+  "survived": 302,
+  "timeout": 0
+ },
+ "baseline": {
+  "test_count": 363,
+  "official_score": 0.905072
+ }
+}
