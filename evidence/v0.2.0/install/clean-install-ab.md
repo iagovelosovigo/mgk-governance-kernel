@@ -3,8 +3,12 @@
 Date: 2026-08-17
 Interpreter: CPython 3.12.13 (Python.framework 3.12.13_2)
 Build backend: setuptools==75.8.0, wheel==0.45.1 (as pinned in pyproject.toml)
-Source tree: byte-identical copy of the repo working tree
-  (`mgk-verify/ab-check/repo`, rsync excluding `.git`, `__pycache__`, `*.pyc`).
+Source tree: byte-identical copy of the repo working tree at commit
+  `a29e785` (`mgk-verify/ab-check/repo`, rsync excluding `.git`, `__pycache__`, `*.pyc`).
+Full suite at the time of this run: **407 tests** (incl. the 43 Phase-4
+discriminating tests and the Phase-9 symlink-swap regression test), against
+the Phase-9-remediated `src/mgk` (authority `OSError -> ResourceError`
+hardening).
 
 ## Procedure
 
@@ -22,17 +26,19 @@ Source tree: byte-identical copy of the repo working tree
 
 | Check | Result |
 |---|---|
-| Suite in venv A | 363 passed |
-| Suite in venv B | 363 passed |
-| Suite in venv A, top-level `runtime/` source removed (installed-only) | 363 passed |
+| Suite in venv A | 407 passed |
+| Suite in venv B | 407 passed |
+| Suite in venv A, top-level `runtime/` source removed (installed-only) | 407 passed |
 | `import mgk` resolves to site-packages | yes (venv-a/.../site-packages/mgk/__init__.py) |
 | site-packages `mgk` tree hashes A vs B | identical (17 files) |
 | site-packages `runtime` tree hashes A vs B | identical (10 files) |
 | Installed dependency versions A vs B | identical (cryptography 46.0.0) |
+| pytest / hypothesis / pytest-timeout A vs B | identical (8.4.1 / 6.138.13 / 2.4.0) |
 
 ## Conclusion
 
-A clean, non-editable install of the candidate tree is reproducible: two
-independent fresh environments produce byte-identical installed packages and
-identical full-suite outcomes (363 passed), with no dependency on the source
-tree at runtime.
+A clean, non-editable install of the candidate tree at `a29e785` is
+reproducible: two independent fresh environments produce byte-identical
+installed packages and identical full-suite outcomes (407 passed), with no
+dependency on the source tree at runtime. This supersedes the earlier 363-test
+A/B record and covers the remediated Phase-9 code.

@@ -1,0 +1,33 @@
+{
+ "schema_version": "mgk.install-verification.v1",
+ "kind": "clean-install-ab",
+ "phase": 10,
+ "recorded_at": "2026-08-17",
+ "repo_commit": "a29e785",
+ "interpreter": "CPython 3.12.13 (Python.framework 3.12.13_2)",
+ "build_backend": "setuptools==75.8.0, wheel==0.45.1",
+ "procedure": [
+  "two fresh venvs from same interpreter (venv-a, venv-b)",
+  "non-editable pip install of the copied repo tree plus pinned test deps",
+  "full suite run from repo tree in each venv",
+  "top-level runtime/ moved aside, full suite re-run against installed runtime only",
+  "installed site-packages mgk and runtime trees hashed (sha256, .py only) and compared"
+ ],
+ "results": {
+  "suite_venv_a": 407,
+  "suite_venv_b": 407,
+  "suite_venv_a_installed_only": 407,
+  "suite_total": 407,
+  "mgk_import_resolves_to_site_packages": true,
+  "mgk_tree_hash_identical": true,
+  "mgk_tree_file_count": 17,
+  "runtime_tree_hash_identical": true,
+  "runtime_tree_file_count": 10,
+  "dependency_versions_identical": true,
+  "cryptography_version": "46.0.0",
+  "pytest_version": "8.4.1",
+  "hypothesis_version": "6.138.13",
+  "pytest_timeout_version": "2.4.0"
+ },
+ "conclusion": "clean non-editable install of a29e785 is reproducible across two fresh environments (byte-identical installed trees, identical 407-test outcomes), with no runtime dependency on the source tree. Supersedes the earlier 363-test A/B record."
+}
