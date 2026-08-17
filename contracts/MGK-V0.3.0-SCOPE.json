@@ -1,0 +1,79 @@
+{
+  "schema_version": "mgk.scope-contract.v1",
+  "contract_id": "MGK-V0.3.0-SCOPE",
+  "frozen": false,
+  "target_version": "0.3.0",
+  "base_version": "0.2.0",
+  "base_commit": "90b84bc8cd53489351a33412411c8030082f1d43",
+  "purpose": "ARCHITECTURAL_RECONCILIATION + AUTHORITY_BOUNDARY_HARDENING + INTEGRATION_READINESS",
+  "architecture_boundary_document": "ARCHITECTURE-MUDA-MGK-BOUNDARY.md",
+  "what_it_changes": {
+    "architecture_documentation": "Adds ARCHITECTURE-MUDA-MGK-BOUNDARY.md: the canonical boundary between the MUDA conceptual/formal kernel, the MUDA operational kernel, the wider Malla MUDA, the MGK governance kernel, external intelligence systems, actuators/executors, and human authority; every concept carries explicit status labels (CONCEPTUAL/FORMALIZED/OPERATIONALIZED/IMPLEMENTED/TESTED/FALSIFIABLE/INFERRED/NOT_IMPLEMENTED/NOT_INDEPENDENTLY_VALIDATED).",
+    "scope_contract": "Adds this machine-readable scope contract.",
+    "version": "Bumps package version to 0.3.0 and updates version identifiers in pyproject.toml, src/mgk/__init__.py, runtime/__init__.py, README-MGK.md.",
+    "authority_boundary_hardening": "runtime/decision.py human-gate state machine hardening: a human DENY becomes a durable terminal state; approve-after-deny, approve-after-execute, and any human-gate transition on a non-REQUIRE_HUMAN proposal is refused fail-closed with evidence event HUMAN_GATE_TRANSITION_DENIED. This removes the previously possible 'unauthorized human-gate transition' (approve-after-deny could execute).",
+    "tests": "Adds permanent discriminating regression tests for the durable human-gate state machine; adds adversarial red-team probes for unauthorized human-gate transitions.",
+    "evidence": "Adds evidence/v0.3.0/ including autopilot state, gap analysis, claim audit, mutation/redteam/install/release evidence, final candidate manifest."
+  },
+  "what_it_does_not_change": {
+    "kernel_authority_code": "src/mgk/* (authority, verifier, executor, canonical, crypto, state, ledger, resource, saxp, cha, arrow, feedback, models, errors, clock, cli) is NOT changed in v0.3.0.",
+    "capability_model": "The capability envelope schema, scope model, TTL bounds, nonce/replay protection, epoch handling, resource binding and digest identity are unchanged.",
+    "actuator_registry": "The closed 5-action actuator registry (runtime/sandbox/__init__.py) is unchanged.",
+    "threat_model": "The documented threat model is unchanged; no new authority surface is introduced.",
+    "protected_tcb": "The protected root-of-trust tree (contracts/ROOT_MANIFEST.sha256, orchestrator/tcb/*, gates/protected/*, .github/workflows/*) is NOT modified in v0.3.0. NEXT_ROOT_MANIFEST_SHA256=UNCHANGED.",
+    "independent_exam": "The frozen independent examination (independent_exam/) is unchanged.",
+    "contracts": "Existing contracts (MGK-FUNCTIONAL-ACCEPTANCE, MGK-MUTATION-GATE-V2, MGK-SECURITY-MUTATION-ADEQUACY-V1, PHASES, INVARIANTS) are unchanged."
+  },
+  "authority_invariants": [
+    "INTELLIGENCE != AUTHORITY (I != A); proposal != authorization != execution",
+    "NO GOVERNED SIDE EFFECT WITHOUT VALID AUTHORITY",
+    "A proposal, model output, LLM response, or planner result is data; none is authority",
+    "Execution authority depends on the deterministic MGK control plane: scoped, short-lived, single-use, Ed25519-signed capability",
+    "REQUIRE_XEITO / human-review states must NOT execute directly",
+    "NON_TEN_XEITO / DENY must NOT execute",
+    "Critical uncertainty must fail closed",
+    "Human DENY is durable and terminal; no later approve may execute the same request",
+    "Fail-closed behavior, signature verification, epoch handling, nonce handling, resource binding, SAXP binding, and evidence persistence are preserved or strengthened, never weakened"
+  ],
+  "threat_model": {
+    "in_scope_attacker": "An attacker who fully controls the planner/intelligence (compromised proposal source), can submit arbitrary proposals over the loopback API, can attempt replay/reuse/forgery/scope-confusion/TOCTOU/path-traversal/ledger-tamper/human-gate-transition attacks, and can attempt to obtain execution authority without a valid capability.",
+    "outside_scope": "Attacker with direct access to the operator's machine outside the local threat boundary; filesystem-wide rollback of state and the external root anchor; compromise of the kernel's private signing keys; physical access. These are outside the local threat boundary and never treated as authorized.",
+    "authority_boundary": "The MGK control plane is the only source of execution authority. The human gate is an authority-adjacent review step whose decisions are signed evidence and whose transitions are state-machine constrained."
+  },
+  "backward_compatibility": {
+    "api": "The runtime HTTP/JSON API surface and proposal schema are unchanged.",
+    "capability": "The capability envelope schema mgk-capability/v1 is unchanged.",
+    "cli": "The mgk CLI surface is unchanged.",
+    "behavioral_note": "One deliberate, documented behavior change: previously a human DENY could be overridden by a later APPROVE of the same request_id; in v0.3.0 the DENY is terminal. This is an authority-boundary hardening, not a feature regression. It is tested by new discriminating tests and adversarial probes.",
+    "evidence": "All v0.2.0 evidence directories are historical and unchanged; v0.3.0 evidence is stored under evidence/v0.3.0/."
+  },
+  "architecture_boundary": {
+    "document": "ARCHITECTURE-MUDA-MGK-BOUNDARY.md",
+    "kernel_of_software": "MGK governance kernel only (capability authority, verification, execution, evidence).",
+    "not_implemented_here": [
+      "MUDA conceptual kernel (h x K = C0 equilibrium): CONCEPTUAL, NOT_IMPLEMENTED, NOT_INDEPENDENTLY_VALIDATED",
+      "Rrep / Rlim / Rcog / CCI as named capacities: CONCEPTUAL, NOT_IMPLEMENTED",
+      "Malla MUDA as a whole: NOT_IMPLEMENTED; only the governance sub-layer is implemented",
+      "UCH, Afouteza, Latexo, Fractura de Campo: NOT_IMPLEMENTED",
+      "Full scientific validation of MUDA: NOT_INDEPENDENTLY_VALIDATED"
+    ]
+  },
+  "acceptance_gates": {
+    "regression": "Full existing suite must pass (408 tests at baseline; all must remain green; new tests are additive).",
+    "adversarial": "Existing red-team corpus plus new human-gate transition probes must all PASS.",
+    "mutation": "Full-population mutation over src/mgk (no do_not_mutate) must score >= 0.90, UNRESOLVED_HIGH=0, UNRESOLVED_CRITICAL=0, INDETERMINATE=0.",
+    "root_of_trust": "Protected tree verification must PASS; protected paths must remain unmodified.",
+    "reproducibility": "Clean install A/B + reproducibility must PASS.",
+    "independent_exam": "Independent examination must PASS.",
+    "claim_audit": "Claim audit must PASS; no unsupported universal claims.",
+    "package": "wheel + sdist build, installed-wheel smoke, artifact SHA-256 recorded."
+  },
+  "release_gates": {
+    "merge_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "package_publication_authorized": false,
+    "gate_owner": "HUMAN",
+    "note": "Technical publishability of the candidate does not grant release authority."
+  }
+}
