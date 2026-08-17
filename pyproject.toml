@@ -25,7 +25,7 @@ packages = ["mgk", "runtime", "runtime.sandbox"]
 
 [tool.mutmut]
 paths_to_mutate = ["src/mgk"]
-also_copy = ["contracts", "orchestrator"]
+also_copy = ["contracts", "orchestrator", "runtime", "candidate_adapter.py"]
 
 [tool.pytest.ini_options]
 addopts = "-ra --strict-markers"

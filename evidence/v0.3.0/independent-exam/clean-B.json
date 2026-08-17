@@ -1,0 +1,28 @@
+{
+  "h14": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "status": "PASS",
+    "tests": 6
+  },
+  "h14_exit_code": 0,
+  "install_exit_code": 0,
+  "install_output_sha256": "a4475054d76e3799663c2abc1a66b5db915ff9f502a5b8b40a9bcbebff11595e",
+  "label": "B",
+  "schema_version": "mgk.clean-install.v1",
+  "source_sha256": "4fc99f24428e479c1a0500a7fd59c1e76070c03dabeb9ddef452c0ab8edb2533",
+  "source_tree_sha256": "14e49668df15dd6aa5db23a4a53f2c223f4676a83ad0ae0f922b91884cb649b4",
+  "status": "PASS",
+  "test_exit_code": 0,
+  "test_output_sha256": "fa6bc2b050bced1f3c450dafd10319597824cf4ef6c205344472f010b07efd13",
+  "tests": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "status": "PASS",
+    "tests": 59
+  },
+  "wheel_exit_code": 0,
+  "wheel_sha256": "c7793c6cf238331a548acd6138b5edaa4c48f7ff8af9a9b1d018e388d37ba7d2"
+}
