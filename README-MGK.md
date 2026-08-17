@@ -1,4 +1,4 @@
-# MUDA Governance Kernel v0.1.0
+# MUDA Governance Kernel v0.2.0
 
 MGK is a capability-secured local governance kernel whose executable invariant is:
 
