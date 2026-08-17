@@ -65,6 +65,8 @@ class Workspace:
             self.records_root,
         ):
             directory.mkdir(parents=True, exist_ok=True)
+        for directory in (self.root, self.keys_dir):
+            os.chmod(directory, 0o700)
 
     @property
     def initialized(self) -> bool:
@@ -156,6 +158,8 @@ class Workspace:
         executor = CapabilityExecutor("executor", verifier, guard, audit, failures, clock)
         flight = FlightRecorder(self.flight_path, self.flight_checkpoint)
         ledger = RuntimeLedger(self.ledger_path)
+        for path in (self.state_path, self.ledger_path):
+            os.chmod(path, 0o600)
         pipeline = DecisionPipeline(
             authority,
             verifier,

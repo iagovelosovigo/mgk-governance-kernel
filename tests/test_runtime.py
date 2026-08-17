@@ -45,6 +45,14 @@ def test_workspace_initializes_keys_and_state(workspace):
     assert bundle.identity["authority"] == (workspace.keys_dir / "authority.pub").read_text().strip()
 
 
+def test_workspace_hardens_directory_and_sqlite_permissions(workspace):
+    workspace.create_runtime()
+    assert (os.stat(workspace.root).st_mode & 0o777) == 0o700
+    assert (os.stat(workspace.keys_dir).st_mode & 0o777) == 0o700
+    assert (os.stat(workspace.state_path).st_mode & 0o777) == 0o600
+    assert (os.stat(workspace.ledger_path).st_mode & 0o777) == 0o600
+
+
 def test_safe_read_is_allowed_and_executed(workspace):
     bundle = workspace.create_runtime()
     (bundle.workspace.files_root / "hello.txt").write_bytes(b"hello\n")
