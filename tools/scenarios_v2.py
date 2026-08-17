@@ -1,4 +1,4 @@
-"""Scenario A-J runner for the MGK v0.2.0 Functional Governance Runtime.
+"""Scenario A-J runner for the MGK v0.3.0 Functional Governance Runtime.
 
 Drives a real runtime server (start/stop via the runtime package) over its JSON
 API and the public CLI commands, and writes machine-readable evidence to
@@ -211,7 +211,7 @@ def run(workdir: Path, port: int, scenario_names: list[str] | None = None) -> li
 
 def main() -> int:
     parser = __import__("argparse").ArgumentParser()
-    parser.add_argument("--out", default=REPO_ROOT / "evidence/v0.2.0/integration/scenarios.json")
+    parser.add_argument("--out", default=REPO_ROOT / "evidence/v0.3.0/integration/scenarios.json")
     parser.add_argument("--port", type=int, default=8811)
     parser.add_argument("--scenarios", default=None, help="comma-separated subset A..J")
     args = parser.parse_args()

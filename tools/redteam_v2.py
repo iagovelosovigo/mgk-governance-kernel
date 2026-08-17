@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Red team harness for the MGK v0.2.0 Functional Governance Runtime.
+"""Red team harness for the MGK v0.3.0 Functional Governance Runtime.
 
-Targets the runtime attack surface added in v0.2.0: web API (CSRF/origin),
+  Targets the runtime attack surface added in v0.2.0: web API (CSRF/origin),
 sandbox actuators (TOCTOU/symlinks/size), the human gate, capability
 nonce/TTL handling across restart, ledger/recorder tamper detection, key
 material hygiene, and the fail-closed decision states.
@@ -248,7 +248,7 @@ def main() -> int:
     import socket
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--out", default=REPO_ROOT / "evidence/v0.2.0/redteam/redteam.json")
+    parser.add_argument("--out", default=REPO_ROOT / "evidence/v0.3.0/redteam/redteam.json")
     parser.add_argument("--port", type=int, default=0)
     args = parser.parse_args()
 

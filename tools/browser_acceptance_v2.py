@@ -1,4 +1,4 @@
-"""Browser acceptance for the MGK v0.2.0 runtime web UI (playwright, headless).
+"""Browser acceptance for the MGK v0.3.0 runtime web UI (playwright, headless).
 
 Captures screenshots and verifies each page renders. Run with the framework
 Python that has playwright + chromium installed.

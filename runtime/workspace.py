@@ -206,7 +206,7 @@ class RuntimeBundle:
     def status(self) -> dict[str, Any]:
         return {
             "workdir": str(self.workspace.workdir),
-            "version": "0.2.0",
+            "version": "0.3.0",
             "epoch": self.state.current_epoch(),
             "nonce_count": self.state.nonce_count(),
             "audit_head": self.audit.verify_integrity()[1],

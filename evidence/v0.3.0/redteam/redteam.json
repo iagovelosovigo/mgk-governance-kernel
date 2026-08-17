@@ -1,0 +1,114 @@
+{
+  "all_pass": true,
+  "findings": [
+    {
+      "attack_id": "R1-csrf",
+      "description": "cross-origin proposal rejected",
+      "detail": "got {'error': 'cross-origin request rejected', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "R1-sameorigin",
+      "description": "same-origin proposal accepted for gating",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': '4ef7759219a4c676f31321cccd8228803c92388416fdc7d0b1b3c7c686a295ec', 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['CRITICAL_UNCERTAINTY', 'INFORMATION_INCOMPLETE'], 'request': {'action': 'sandbox.write_file', 'audience': 'executor', 'parameters': {'content_b64': 'eA'}, 'principal': 'planner', 'request_id': 'r1b', 'resource': 'files/x.txt'}, 'request_digest': 'c733be8487d1a0fb511093dc8612f87444f1fa6a2a5b448240d67544c9de67ba', 'state': 'REQUIRE_HUMAN'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "R2-symlink",
+      "description": "symlink escape blocked (no ALLOW)",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': '4419817bc2250fb24736bdc85d359c04d8cabaa1fc80158f27993ca91b1c9b6f', 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['COHERENCE_GATE_SATISFIED', 'RESOURCE_ERROR'], 'request': {'action': 'sandbox.read_file', 'audience': 'executor', 'parameters': {}, 'principal': 'planner', 'request_id': 'r2', 'resource': 'files/link.txt'}, 'request_digest': '453f27161a6de410499e617280d005cac83732250830f501258e5235c10dd2a6', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "R3-append-gate",
+      "description": "append is gated (sensitive)",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': 'd824d2beb717280dd8de3472af09f88a18a91604e7dbc8e55ff13a6e206d9028', 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['CRITICAL_UNCERTAINTY', 'INFORMATION_INCOMPLETE'], 'request': {'action': 'sandbox.append_file', 'audience': 'executor', 'parameters': {'content_b64': 'YS1nYWluZWQ'}, 'principal': 'planner', 'request_id': 'r3', 'resource': 'files/t.txt'}, 'request_digest': '46bd4c15452f9f1ae902f6dbd3dcd7171d2e0246f31031fcecd6f94d71a8e988', 'state': 'REQUIRE_HUMAN'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "R4-approve-missing",
+      "description": "approving a missing proposal fails closed",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': None, 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['PROPOSAL_NOT_FOUND'], 'request': {'request_id': 'no-such-proposal'}, 'request_digest': '', 'state': 'INDETERMINATE'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "R5-double-approve",
+      "description": "second approve does not double-execute",
+      "detail": "first=ALLOW second=DENY",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "R6-nonce-replay",
+      "description": "single-use capabilities, no capability reuse",
+      "detail": "distinct_ids=True nonces=3",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "R7-flight-tamper",
+      "description": "flight recorder tamper detected by /api/evidence",
+      "detail": "http=500 got={'detail': 'AuditIntegrityError', 'error': 'integrity verification failed', 'state': 'INDETERMINATE'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "R8-audit-tamper",
+      "description": "audit tamper detected by doctor",
+      "detail": "doctor=FAIL checks=None",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "R9-key-perms",
+      "description": "private key is mode 0600",
+      "detail": "mode=0o600",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "R10-oversize",
+      "description": "oversize payload fails closed",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': '4b8c70306ac82e069137eccde9afdc90375df85aac2b5f0f042858f06e39d56a', 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['CANONICALIZATION_ERROR'], 'request': {'request_id': 'r10'}, 'request_digest': '', 'state': 'INDETERMINATE'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "R11-unknown-action",
+      "description": "unknown action denied",
+      "detail": "got {'error': 'action is not a governed sandbox actuator', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "R12-deny-mode",
+      "description": "deny_all mode verified in test suite (test_runtime)",
+      "detail": null,
+      "status": "PASS"
+    },
+    {
+      "attack_id": "R13-absolute",
+      "description": "absolute path denied",
+      "detail": "got {'error': \"resource must live under 'files/'\", 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "R14-malformed-body",
+      "description": "non-mapping parameters handled fail-closed",
+      "detail": "http=400 got={'error': 'parameters must be a mapping', 'state': 'DENY'}",
+      "status": "PASS"
+    }
+  ],
+  "post_attack_doctor": {
+    "checks": {
+      "actuator_registry": "PASS",
+      "audit_integrity": "PASS",
+      "epoch_initialized": "PASS",
+      "failure_ledger_integrity": "PASS",
+      "flight_integrity": "PASS",
+      "state_integrity": "PASS",
+      "workspace_initialized": "PASS"
+    },
+    "findings": [],
+    "status": "PASS"
+  },
+  "post_attack_test": {
+    "results": {
+      "h14_proposal_is_not_authority": true
+    },
+    "status": "PASS"
+  }
+}
