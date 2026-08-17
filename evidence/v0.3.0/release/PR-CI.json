@@ -1,0 +1,35 @@
+{
+  "schema_version": "mgk.pr-ci.v1",
+  "phase": "16-17",
+  "branch": "mgk-autopilot/v0.3.0-publishable-candidate",
+  "pushed": true,
+  "upstream": "origin/mgk-autopilot/v0.3.0-publishable-candidate",
+  "commits_ahead_of_main": 8,
+  "pr": {
+    "number": 9,
+    "url": "https://github.com/iagovelosovigo/mgk-governance-kernel/pull/9",
+    "base": "main",
+    "head": "mgk-autopilot/v0.3.0-publishable-candidate",
+    "state": "OPEN",
+    "isDraft": false,
+    "mergeable": "MERGEABLE",
+    "mergeStateStatus": "BLOCKED",
+    "blocked_reason": "branch protection requires review/approval which is intentionally withheld — human release gate"
+  },
+  "ci": {
+    "workflow": "MGK Protected Candidate Gates (mgk-protected-gates.yml)",
+    "event": "pull_request_target",
+    "check": "mgk/deterministic-gates",
+    "status": "PASS",
+    "run_id": 32075688680,
+    "duration_seconds": 392
+  },
+  "non_actions": {
+    "merged": false,
+    "auto_merge": false,
+    "tagged": false,
+    "released": false,
+    "published": false,
+    "main_modified": false
+  }
+}
