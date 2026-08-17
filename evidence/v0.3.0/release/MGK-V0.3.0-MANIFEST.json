@@ -1,0 +1,46 @@
+{
+  "artifacts": {
+    "CLAIM-AUDIT.json": {
+      "bytes": 1086,
+      "sha256": "7f6e49a8fe7946765a860028faf5faf5328b249f344d7c679cc723eff309d86e"
+    },
+    "CLAIM-AUDIT.md": {
+      "bytes": 3428,
+      "sha256": "ae45d0048f95b4e781bf3ee7a84370c34954779834baf76ebdb389263aff044d"
+    },
+    "FINAL-CANDIDATE.json": {
+      "bytes": 1996,
+      "sha256": "a470c21644feb1d6728ef0d373f679270c57f9122a2295d1adb0de37f1018082"
+    },
+    "HUMAN-RELEASE-GATE-FINAL.json": {
+      "bytes": 1692,
+      "sha256": "5766210a5d863a0bbd9d11d1a321734b5951792e042c29f038d6e6f534b8a830"
+    },
+    "HUMAN-RELEASE-GATE-FINAL.md": {
+      "bytes": 2518,
+      "sha256": "284c6917c38a2162845b566ff2b2cec8c6417a81ee238077d0b6fdfb28655859"
+    },
+    "MGK-V0.3.0-MANIFEST.json": {
+      "bytes": 1023,
+      "sha256": "7ed80da23ec212651d79d7d1c88f7d3758181efe97fb41cc3947e9b4a2aa52c8"
+    },
+    "PR-CI.json": {
+      "bytes": 1056,
+      "sha256": "b13b5e67cec7f0f63dc84c21298c3e70f27b17eef7797a35422d45c5f64097f8"
+    },
+    "RELEASE-NOTES-v0.3.0.md": {
+      "bytes": 2233,
+      "sha256": "a31c9bb4669f7fb31112fbb993fc53212dd1ec30b80cbd8caf361da5425912b8"
+    }
+  },
+  "candidate_version": "0.3.0",
+  "evidence_directories": {
+    "independent-exam": "evidence/v0.3.0/independent-exam/",
+    "install": "evidence/v0.3.0/install/",
+    "redteam": "evidence/v0.3.0/redteam/",
+    "release": "evidence/v0.3.0/release/",
+    "security-mutation-adequacy": "evidence/v0.3.0/security-mutation-adequacy/"
+  },
+  "head_commit": "855c99c",
+  "schema_version": "mgk.release-manifest.v1"
+}

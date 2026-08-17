@@ -1,0 +1,33 @@
+{
+  "schema_version": "mgk.final-candidate.v1",
+  "candidate_version": "0.3.0",
+  "campaign": "MGK v0.3.0 publishable-candidate",
+  "branch": "mgk-autopilot/v0.3.0-publishable-candidate",
+  "head_commit": "c444762940d67f70b953a287c9e70a5742744da6",
+  "head_tree_sha256": "709895090bd35bac49455ad7f086f1b44a273072",
+  "baseline": {
+    "version": "v0.2.0",
+    "commit": "90b84bc8cd53489351a33412411c8030082f1d43",
+    "tree": "64c8b266f13d280865f832eaf5c3b5c5d1d5c323",
+    "protected_tcb_root_of_trust": "UNCHANGED"
+  },
+  "gates": {
+    "test_suite": {"status": "PASS", "tests": 415},
+    "security_mutation_adequacy": {"status": "PASS", "score": 0.909502, "threshold": 0.9, "population": 3315, "killed": 3015, "survived": 300},
+    "security_sensitive_survivors_dispositioned": {"status": "PASS", "count": 104, "missing": 0},
+    "secret_scan": {"status": "CLEAN", "files_scanned": 112},
+    "root_of_trust": {"status": "PASS", "anchor": "4c309aad3d8983dcb930eb6a4808df0bb93fdd04ce2bebd191fc7b624f2e480f"},
+    "clean_install_ab": {"status": "PASS", "internet_required": false},
+    "reproducibility": {"status": "PASS"},
+    "independent_exam": {"status": "PASS", "verdict": "MGK v0.1.0 — FUNCTIONAL = TRUE", "mutation_percent": 90.9502, "redteam_open_critical": 0, "redteam_open_high": 0},
+    "claim_audit": {"status": "PASS", "claims": "9/9 VERIFIED"}
+  },
+  "artifacts": {
+    "candidate_zip": {"name": "MGK-v0.1.0.zip", "sha256": "4fc99f24428e479c1a0500a7fd59c1e76070c03dabeb9ddef452c0ab8edb2533"},
+    "wheel": {"name": "muda_governance_kernel-0.3.0-py3-none-any.whl", "sha256": "c7793c6cf238331a548acd6138b5edaa4c48f7ff8af9a9b1d018e388d37ba7d2"},
+    "sdist": {"name": "muda_governance_kernel-0.3.0.tar.gz", "sha256": "f0a3297d9be18df2612999b92b8de1b6ad8d99ef50f9382f626883c11426637a"}
+  },
+  "readiness": "TECHNICALLY_READY_FOR_HUMAN_RELEASE_REVIEW",
+  "human_release_gate": "CLOSED — merge/tag/release/publish reserved for human decision",
+  "evidence_root": "evidence/v0.3.0/"
+}

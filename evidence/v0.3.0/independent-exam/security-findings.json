@@ -1,0 +1,9 @@
+{
+  "schema_version": "mgk.security-findings.v1",
+  "source": "evidence/v0.3.0/redteam/redteam.json",
+  "total_findings": 15,
+  "critical_open": 0,
+  "high_open": 0,
+  "all_pass": true,
+  "status": "PASS"
+}

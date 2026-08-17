@@ -340,6 +340,44 @@ class DecisionPipeline:
             if row["state"] == DecisionState.REQUIRE_HUMAN.value
         ]
 
+    def _decision_state(self, request_id: str) -> str | None:
+        for row in self.ledger.decisions():
+            if row["request_id"] == request_id:
+                return row["state"]
+        return None
+
+    def _gate_transition_denied(
+        self, request_id: str, proposal: dict[str, Any], current: str | None
+    ) -> Decision:
+        codes = ["HUMAN_GATE_TRANSITION_DENIED"]
+        try:
+            bound = self._request(proposal)
+        except (KeyError, TypeError, ValueError):
+            return Decision(
+                DecisionState.DENY,
+                {"request_id": request_id},
+                "",
+                codes,
+            )
+        try:
+            flight_hash = self._flight(
+                "HUMAN_GATE_DENIED",
+                {
+                    "request_id": request_id,
+                    "current_state": current,
+                    "reason_codes": codes,
+                },
+            )
+        except BaseException:
+            flight_hash = None
+        return Decision(
+            DecisionState.DENY,
+            bound.to_payload(),
+            bound.digest(),
+            codes,
+            flight_hash=flight_hash,
+        )
+
     def human_approve(self, request_id: str, operator: str) -> Decision:
         proposal = self.ledger.proposal(request_id)
         if proposal is None:
@@ -349,6 +387,9 @@ class DecisionPipeline:
                 "",
                 ["PROPOSAL_NOT_FOUND"],
             )
+        current = self._decision_state(request_id)
+        if current != DecisionState.REQUIRE_HUMAN.value:
+            return self._gate_transition_denied(request_id, proposal, current)
         bound = self._request(proposal)
         decision = "APPROVE"
         signature = self._sign_human(proposal, decision, operator)
@@ -381,6 +422,9 @@ class DecisionPipeline:
                 "",
                 ["PROPOSAL_NOT_FOUND"],
             )
+        current = self._decision_state(request_id)
+        if current != DecisionState.REQUIRE_HUMAN.value:
+            return self._gate_transition_denied(request_id, proposal, current)
         bound = self._request(proposal)
         decision = "DENY"
         signature = self._sign_human(proposal, decision, operator)

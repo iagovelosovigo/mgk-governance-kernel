@@ -1,0 +1,15 @@
+{
+  "candidate": {
+    "commit_sha": "37dd880cf6872132c560178890dd2c8a5b7be560",
+    "source_sha256": "4fc99f24428e479c1a0500a7fd59c1e76070c03dabeb9ddef452c0ab8edb2533",
+    "version": "0.1.0"
+  },
+  "contract_id": "MGK-v0.1.0-independent-exam-1",
+  "contract_sha256": "b596e9b4bd26941deaf7d9a38bc775081462002ebd58213e5c5acf76ce39c3bd",
+  "evaluated_at": "2026-08-17T22:06:22.566270Z",
+  "failures": [],
+  "functional": true,
+  "observations_sha256": "4663af69e84b5c8ee28e20cafdc6815809e706b981e33f7e7d812a86dca96496",
+  "schema_version": "mgk.functional-verdict.v1",
+  "verdict": "MGK v0.1.0 \u2014 FUNCTIONAL = TRUE"
+}

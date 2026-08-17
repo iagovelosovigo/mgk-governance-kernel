@@ -1,0 +1,11 @@
+{
+  "both_clean_pass": true,
+  "h14_outcome_match": true,
+  "independent_labels": true,
+  "schema_version": "mgk.reproducibility.v1",
+  "source_sha256_match": true,
+  "source_tree_match": true,
+  "status": "PASS",
+  "test_outcome_match": true,
+  "wheel_sha256_match": true
+}

@@ -1,0 +1,39 @@
+{
+ "schema_version": "mgk.install-verification.v1",
+ "kind": "clean-install-ab",
+ "phase": 10,
+ "recorded_at": "2026-08-17",
+ "repo_commit": "0058512",
+ "interpreter": "CPython 3.12.13 (/opt/homebrew/Cellar/python@3.12/3.12.13_2)",
+ "build_backend": "setuptools==75.8.0, wheel==0.45.1",
+ "source_copy": "/var/folders/bf/7f75557n44s0d89v_dx0l7cr0000gn/T/opencode/mgk-verify/ab-v03/repo (rsync of working tree excluding .git, __pycache__, *.pyc, .mgk, /dist, /*.egg-info, /mgk)",
+ "procedure": [
+  "two fresh venvs from same interpreter (venv-a, venv-b)",
+  "non-editable pip install of the copied repo tree plus pinned test deps (pytest 8.4.1, hypothesis 6.138.13, pytest-timeout 2.4.0)",
+  "full suite run from repo tree in each venv",
+  "top-level runtime/ moved aside, full suite re-run against installed runtime only",
+  "installed site-packages mgk and runtime trees hashed (sha256, .py only) and compared"
+ ],
+ "results": {
+  "suite_venv_a": 415,
+  "suite_venv_b": 415,
+  "suite_venv_a_installed_only": 415,
+  "suite_total": 415,
+  "mgk_import_resolves_to_site_packages": true,
+  "mgk_tree_hash_identical": true,
+  "mgk_tree_file_count": 17,
+  "runtime_tree_hash_identical": true,
+  "runtime_tree_file_count": 10,
+  "dependency_versions_identical": true,
+  "installed_version": "0.3.0",
+  "cryptography_version": "46.0.0",
+  "pytest_version": "8.4.1",
+  "hypothesis_version": "6.138.13",
+  "pytest_timeout_version": "2.4.0"
+ },
+ "artifacts": {
+  "installed_tree_A": "evidence/v0.3.0/install/installed-tree-A.sha",
+  "installed_tree_B": "evidence/v0.3.0/install/installed-tree-B.sha"
+ },
+ "conclusion": "clean non-editable install of the v0.3.0 candidate is reproducible across two fresh environments (byte-identical installed mgk/runtime trees, identical 415-test outcomes), with no runtime dependency on the source tree."
+}

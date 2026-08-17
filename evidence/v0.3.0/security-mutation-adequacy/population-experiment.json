@@ -1,0 +1,37 @@
+{
+ "schema_version": "mgk.security-mutation-adequacy.v1",
+ "kind": "population-experiment",
+ "recorded_at": "2026-08-17",
+ "target_candidate": "MGK v0.3.0 publishable-candidate",
+ "objective": "measure mutation score over the FULL src/mgk population (no do_not_mutate exclusions) with the final v0.3.0 test suite (415 tests, including the 2 v0.3.0 discriminating tests)",
+ "experiment_root": "/var/folders/bf/7f75557n44s0d89v_dx0l7cr0000gn/T/opencode/mgk-verify/mutmut-v03",
+ "mutator": "mutmut 3.3.1",
+ "config": "paths_to_mutate=[\"src/mgk\"]; no do_not_mutate; also_copy=[contracts, orchestrator, runtime, candidate_adapter.py]; max_children=8",
+ "population_total": 3315,
+ "killed": 3015,
+ "survived": 300,
+ "timeout": 0,
+ "MUTATION_SCORE_V2": 0.909502,
+ "threshold": 0.9,
+ "meets_threshold": true,
+ "classification_counts": {
+  "KILLED": 3015,
+  "SURVIVED_KILLABLE": 209,
+  "EQUIVALENT_PROVEN": 91
+ },
+ "vs_v0_2_0_security_adequacy": {
+  "v0_2_0_population": 3313,
+  "v0_2_0_score": 0.882246,
+  "v0_3_0_population_delta": 2,
+  "v0_3_0_score_delta": 0.027256,
+  "note": "score computed over KILLED/(KILLED+SURVIVED_KILLABLE+EQUIVALENT_PROVEN+timeout) on the same full src/mgk population; v0.3.0 gains come from the pre-existing discriminating tests plus the 2 new v0.3.0 tests"
+ },
+ "security_sensitive_survivors": 104,
+ "high_critical_survivors": 33,
+ "phase4_dispositions": {
+  "EQUIVALENT_PROVEN": 31,
+  "AVAILABILITY_ONLY": 1,
+  "TEST_GAP_ONLY": 1
+ },
+ "conclusion": "The full-population mutation gate for v0.3.0 MEETS the 0.90 threshold (0.9095). All 33 HIGH/CRITICAL security-sensitive survivors are deterministically resolved (31 equivalent-proven, 1 availability-only, 1 test-gap-only), all with evidence carried from the diff-identical v0.2.0 phase-4 analysis; the 2 new v0.3.0 survivors were killed by permanent discriminating tests (phase4-discriminating-test-verification.json)."
+}

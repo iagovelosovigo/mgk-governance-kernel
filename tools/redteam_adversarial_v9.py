@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase 9: adversarial red-team against the running MGK v0.2.0 runtime.
+"""Phase 9: adversarial red-team against the running MGK v0.3.0 runtime.
 
 Probes go beyond the Phase-7 baseline (R1-R14) and target the specific
 security surfaces surfaced by the Phase 4 mutation classification and the
@@ -11,6 +11,8 @@ Phase 6 source audit:
   - cross-namespace resource binding (files/ vs records/)
   - capability nonce single-use (replay after execution)
   - human-gate tamper: approve/deny integrity, flight chaining, signature
+  - unauthorized human-gate transition: approve-after-deny, deny-after-execute,
+    approve on auto-allowed proposal (durable deny state machine)
   - canonicalization limits and malformed payloads -> fail closed
   - ledger integrity (flight + audit) under adversarial mutation
   - key material secrecy / permissions
@@ -36,6 +38,8 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+
+from mgk.crypto import b64u_encode
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PYTHONPATH = f"{REPO_ROOT}:{REPO_ROOT / 'src'}:{REPO_ROOT / 'runtime'}"
@@ -412,7 +416,7 @@ def run(workdir: Path, port: int, findings: Findings) -> None:
     _, decision = propose(
         {"request_id": "a20", "principal": "planner", "audience": "executor",
          "action": "sandbox.create_record", "resource": "records/existing.json",
-         "parameters": {"content_b64": base64.b64encode(b"{}").decode()}},
+         "parameters": {"content_b64": b64u_encode(b"{}")}},
     )
     _, decision_h = human("a20", "APPROVE", "op")
     ok = decision_h and decision_h.get("state") in {"DENY", "INDETERMINATE"} and not executed(decision_h)
@@ -438,10 +442,62 @@ def run(workdir: Path, port: int, findings: Findings) -> None:
     findings.record("A22-api-health", "PASS" if ok else "FAIL",
                     "/api/health returns 200", f"http={status}")
 
+    # ------------------------------------------------------------------ A23
+    # unauthorized human-gate transition: APPROVE after a human DENY must not
+    # execute any side effect (human DENY is a durable terminal state).
+    a23_target = records_dir / "a23.json"
+    _, _ = propose(
+        {"request_id": "a23", "principal": "planner", "audience": "executor",
+         "action": "sandbox.create_record", "resource": "records/a23.json",
+         "parameters": {"content_b64": b64u_encode(b'{"a": 1}')}},
+    )
+    denied = human("a23", "DENY", "op-deny")
+    approved = human("a23", "APPROVE", "op-approve")
+    ok = denied[1] and denied[1].get("state") == "DENY" and not executed(denied[1]) and \
+         approved[1] and approved[1].get("state") == "DENY" and not executed(approved[1]) and \
+         not a23_target.exists()
+    findings.record("A23-approve-after-deny", "PASS" if ok else "FAIL",
+                    "APPROVE after human DENY does not execute",
+                    f"deny={denied[1].get('state')} approve={approved[1].get('state')} target={a23_target.exists()}")
+
+    # ------------------------------------------------------------------ A24
+    # unauthorized human-gate transition: DENY after an executed APPROVE must
+    # be refused and must not alter evidence or the executed artifact.
+    a24_target = files_dir / "a24.txt"
+    a24_target.write_bytes(b"original")
+    _, _ = propose(
+        {"request_id": "a24", "principal": "planner", "audience": "executor",
+         "action": "sandbox.write_file", "resource": "files/a24.txt",
+         "parameters": {"content_b64": b64u_encode(b"modified")}},
+    )
+    first = human("a24", "APPROVE", "op1")
+    denied = human("a24", "DENY", "op2")
+    ok = first[1] and first[1].get("state") == "ALLOW" and executed(first[1]) and \
+         denied[1] and denied[1].get("state") == "DENY" and not executed(denied[1]) and \
+         a24_target.read_bytes() == b"modified"
+    findings.record("A24-deny-after-execute", "PASS" if ok else "FAIL",
+                    "DENY after executed APPROVE is refused, artifact unchanged",
+                    f"approve={first[1].get('state')} deny={denied[1].get('state')} content={a24_target.read_bytes()}")
+
+    # ------------------------------------------------------------------ A25
+    # unauthorized human-gate transition: APPROVE on an auto-ALLOWED proposal
+    # must be refused and must not re-execute.
+    (files_dir / "a25.txt").write_bytes(b"seed\n")
+    _, auto = propose(
+        {"request_id": "a25", "principal": "planner", "audience": "executor",
+         "action": "sandbox.read_file", "resource": "files/a25.txt", "parameters": {}},
+    )
+    gated = human("a25", "APPROVE", "op")
+    ok = auto and auto.get("state") == "ALLOW" and \
+         gated[1] and gated[1].get("state") == "DENY" and not executed(gated[1])
+    findings.record("A25-approve-auto-allowed", "PASS" if ok else "FAIL",
+                    "APPROVE on auto-ALLOWED proposal is refused",
+                    f"auto={auto.get('state')} approve={gated[1].get('state')}")
+
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--out", default=REPO_ROOT / "evidence/v0.2.0/redteam/redteam-adversarial.json")
+    parser.add_argument("--out", default=REPO_ROOT / "evidence/v0.3.0/redteam/redteam-adversarial.json")
     parser.add_argument("--port", type=int, default=0)
     args = parser.parse_args()
 

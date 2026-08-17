@@ -41,7 +41,7 @@ def _badge(state: str) -> str:
 
 class RuntimeHandler(BaseHTTPRequestHandler):
     bundle: RuntimeBundle
-    server_version = "MGK-Runtime/0.2.0"
+    server_version = "MGK-Runtime/0.3.0"
 
     def log_message(self, fmt: str, *args: object) -> None:
         return
@@ -108,7 +108,7 @@ class RuntimeHandler(BaseHTTPRequestHandler):
         elif path == "/api/evidence":
             self._evidence_json()
         elif path == "/api/health":
-            self._json({"status": "ok", "version": "0.2.0"})
+            self._json({"status": "ok", "version": "0.3.0"})
         elif path.startswith("/decision/"):
             self._decision(path)
         else:

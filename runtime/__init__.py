@@ -1,4 +1,4 @@
-"""MGK v0.2.0 Functional Governance Runtime public API."""
+"""MGK v0.3.0 Functional Governance Runtime public API."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from .decision import Decision, DecisionPipeline, DecisionState
 from .runtime_ledger import RuntimeLedger
 from .workspace import Workspace
 
-RUNTIME_VERSION = "0.2.0"
+RUNTIME_VERSION = "0.3.0"
 
 __all__ = [
     "Decision",

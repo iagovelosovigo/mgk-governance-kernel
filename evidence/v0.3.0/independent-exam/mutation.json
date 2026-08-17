@@ -1,0 +1,22 @@
+{
+  "schema_version": "mgk.mutation.v1",
+  "status": "PASS",
+  "score_percent": 90.95022624434389,
+  "counts": {
+    "killed": 3015,
+    "survived": 300,
+    "timeout": 0,
+    "suspicious": 0,
+    "skipped": 0
+  },
+  "runner_exit_code": 0,
+  "notes": [
+    "Execution: mutmut 3.3.1 (pinned in independent_exam/requirements-exam.txt) `mutmut run --max-children 8` run in the candidate root.",
+    "The frozen tool tools/mutation_check.py is internally incompatible with the frozen-pinned mutmut 3.3.1 in two ways: (1) its `mutmut run --paths-to-mutate src` CLI flag does not exist in mutmut 3.x; (2) its `mutmut results` parser expects the mutmut 2.x 'killed: N' summary line that 3.3.1 does not emit (3.3.1 lists surviving/no-test mutants per line only).",
+    "Equivalent intent executed: paths_to_mutate = [\"src\"] (the tool's explicit `--paths-to-mutate src` argument) expressed via the candidate root [tool.mutmut] pyproject config, which is the only channel mutmut 3.3.1 accepts.",
+    "Counts derived from the run's per-mutant result records (mutants/**/*.meta exit_code_by_key): exit 1 = killed (3015), exit 0 = survived (300), exit 33 = no tests (3, all in src/generated/hello.py). score = 100 * 3015 / (3015 + 300) = 90.950226%.",
+    "Candidate pyproject [tool.mutmut] also_copy required expansion from [\"contracts\", \"orchestrator\"] to include \"runtime\" and \"candidate_adapter.py\": mutmut removes the original project root from sys.path (src/mgk mutation workspace), and the candidate tests import these top-level modules, so they must be present in the mutation workspace.",
+    "Exam venv required pytest-timeout (used by candidate tests via @pytest.mark.timeout under --strict-markers) and a no-op setproctitle shim: the real setproctitle 1.3.7 segfaults mutmut's os.fork() workers on macOS."
+  ],
+  "workspace": "mutants/**/*.meta result records preserved in evidence"
+}

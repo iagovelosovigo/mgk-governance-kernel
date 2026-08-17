@@ -137,12 +137,12 @@ def apply_mutation(src_file: Path, fn: str, old_fragment: str, new_fragment: str
     src_file.write_text("\n".join(lines[:start]) + "\n" + body + "\n" + "\n".join(lines[end:]) + "\n")
 
 
-def run_tests(copy_root: Path | None, tmp_dir: Path) -> dict:
+def run_tests(copy_root: Path | None, tmp_dir: Path, test_file: str = TEST_FILE) -> dict:
     env = dict(__import__("os").environ)
     if copy_root is not None:
         env["PYTHONPATH"] = str(copy_root / "src")
     proc = subprocess.run(
-        [str(VENV_PY), "-m", "pytest", TEST_FILE, "-q"],
+        [str(VENV_PY), "-m", "pytest", test_file, "-q"],
         capture_output=True,
         text=True,
         timeout=600,
@@ -156,15 +156,19 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--classification", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--test-file", default=TEST_FILE, help="test file that must kill the targets")
+    parser.add_argument("--ids", default=None, help="comma-separated subset of mutant ids to verify")
     args = parser.parse_args()
 
     data = json.loads(args.classification.read_text())
+    ids_subset = set(args.ids.split(",")) if args.ids else None
     targets = [
         m
         for m in data["mutants"]
         if m["classification"] == "SURVIVED_KILLABLE"
         and m["security_class"] in HIGH_CRITICAL
         and m.get("diff")
+        and (ids_subset is None or m["id"] in ids_subset)
     ]
     if not targets:
         print("PHASE_4=NO_TARGETS")
@@ -173,7 +177,7 @@ def main() -> int:
     tmp = Path(tempfile.mkdtemp(prefix="mgk-v4-"))
     pristine = tmp / "pristine"
     shutil.copytree(SRC, pristine / "src")
-    baseline = run_tests(pristine, REPO_ROOT)
+    baseline = run_tests(pristine, REPO_ROOT, args.test_file)
     if baseline["exit_code"] != 0:
         print("FAIL_CLOSED: pristine copy fails the new tests")
         print(baseline["stdout"][-2000:])
@@ -200,7 +204,7 @@ def main() -> int:
             continue
         for old_fragment, new_fragment in parse_diff(mutant["diff"]):
             apply_mutation(src_file, unmangle(mutant["function"]), old_fragment, new_fragment)
-        result = run_tests(copy, REPO_ROOT)
+        result = run_tests(copy, REPO_ROOT, args.test_file)
         killed = result["exit_code"] != 0
         records.append(
             {

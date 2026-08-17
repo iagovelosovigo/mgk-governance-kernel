@@ -1,0 +1,29 @@
+{
+  "schema_version": "mgk.human-release-gate.v1",
+  "candidate_version": "0.3.0",
+  "functional": true,
+  "branch": "mgk-autopilot/v0.3.0-publishable-candidate",
+  "final_commit_sha": "d472ac9",
+  "frozen_commit_sha": "c444762940d67f70b953a287c9e70a5742744da6",
+  "final_tree_sha": "709895090bd35bac49455ad7f086f1b44a273072",
+  "gates": {
+    "regression": {"status": "PASS", "tests": 415},
+    "mutation_gate": {"status": "PASS", "score": 0.909502, "population": 3315, "killed": 3015, "survived": 300},
+    "root_of_trust": {"status": "UNCHANGED", "anchor": "4c309aad3d8983dcb930eb6a4808df0bb93fdd04ce2bebd191fc7b624f2e480f"},
+    "secret_scan": {"status": "CLEAN", "files_scanned": 112},
+    "clean_install": {"status": "PASS", "internet_required": false},
+    "reproducibility": {"status": "PASS"},
+    "independent_exam": {"status": "PASS", "verdict": "MGK v0.1.0 — FUNCTIONAL = TRUE"},
+    "claim_audit": {"status": "PASS", "claims_verified": "9/9"},
+    "ci": {"status": "PASS", "check": "mgk/deterministic-gates", "run_id": 32075688680}
+  },
+  "pr": {"number": 9, "state": "OPEN", "mergeable": "MERGEABLE", "merge_state_status": "BLOCKED", "auto_merge": false},
+  "non_actions": {"merged": false, "tagged": false, "released": false, "published": false, "main_modified": false},
+  "artifacts": {
+    "wheel": "c7793c6cf238331a548acd6138b5edaa4c48f7ff8af9a9b1d018e388d37ba7d2",
+    "sdist": "f0a3297d9be18df2612999b92b8de1b6ad8d99ef50f9382f626883c11426637a",
+    "exam_candidate_zip": "4fc99f24428e479c1a0500a7fd59c1e76070c03dabeb9ddef452c0ab8edb2533"
+  },
+  "readiness": "TECHNICALLY_READY_FOR_HUMAN_RELEASE_REVIEW",
+  "human_release_gate": "CLOSED — decision reserved for human"
+}

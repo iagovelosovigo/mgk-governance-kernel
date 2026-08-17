@@ -1,0 +1,26 @@
+{
+  "schema_version": "mgk.claim-audit.v1",
+  "phase": 13,
+  "candidate": "MGK v0.3.0 publishable-candidate",
+  "audited_commit": "c444762",
+  "all_claims_verified": true,
+  "claims": {
+    "C1_mutation_recomputed": "VERIFIED",
+    "C2_phase4_dispositions_consistent": "VERIFIED",
+    "C3_redteam_all_pass": "VERIFIED",
+    "C4_clean_install_ab_reproducible": "VERIFIED",
+    "C5_permission_hardening": "VERIFIED",
+    "C6_security_adequacy_gate": "VERIFIED",
+    "C7_root_of_trust_unchanged_secret_scan_clean": "VERIFIED",
+    "C8_independent_exam_functional_true": "VERIFIED",
+    "C9_delivery_package": "VERIFIED"
+  },
+  "cross_checks": {
+    "source_sha256_consistent": "4fc99f24428e479c1a0500a7fd59c1e76070c03dabeb9ddef452c0ab8edb2533",
+    "dist_wheel_equals_clean_install_wheel": "c7793c6cf238331a548acd6138b5edaa4c48f7ff8af9a9b1d018e388d37ba7d2",
+    "exam_mutation_recompute_matches_population_experiment": "3015/300",
+    "classification_survivors_sum": "209+91=300=survived",
+    "phase4_dispositions_sum": "71+31+1+1=104=security_sensitive_survivors"
+  },
+  "failures": []
+}

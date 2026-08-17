@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "muda-governance-kernel"
-version = "0.2.0"
+version = "0.3.0"
 description = "Capability-secured governance kernel preserving Intelligence != Authority"
 requires-python = ">=3.11"
 dependencies = ["cryptography==46.0.0"]
@@ -25,7 +25,7 @@ packages = ["mgk", "runtime", "runtime.sandbox"]
 
 [tool.mutmut]
 paths_to_mutate = ["src/mgk"]
-also_copy = ["contracts", "orchestrator"]
+also_copy = ["contracts", "orchestrator", "runtime", "candidate_adapter.py"]
 
 [tool.pytest.ini_options]
 addopts = "-ra --strict-markers"

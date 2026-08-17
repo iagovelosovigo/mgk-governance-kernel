@@ -1,0 +1,62 @@
+{
+ "schema_version": "mgk.phase-evidence.v1",
+ "kind": "delivery-package-and-smoke",
+ "phase": 11,
+ "recorded_at": "2026-08-17",
+ "repo_commit": "0058512",
+"artifacts": {
+   "wheel": {
+    "path": "dist/muda_governance_kernel-0.3.0-py3-none-any.whl",
+    "sha256": "c7793c6cf238331a548acd6138b5edaa4c48f7ff8af9a9b1d018e388d37ba7d2",
+    "bytes": 51529
+   },
+   "sdist": {
+    "path": "dist/muda_governance_kernel-0.3.0.tar.gz",
+    "sha256": "f0a3297d9be18df2612999b92b8de1b6ad8d99ef50f9382f626883c11426637a",
+    "bytes": 76295
+   },
+   "build_backend": "setuptools==75.8.0, wheel==0.45.1",
+   "builder": "python -m build 1.2.2.post1 (build isolation using pinned backend), SOURCE_DATE_EPOCH=1700000000",
+   "wheel_workspace_sha256_matches_source": true,
+   "wheel_mgk_init_sha256_matches_source": true,
+   "stale_v020_dist_artifacts_removed": true,
+   "rebuild_v032": {
+    "reason": "pyproject.toml [tool.mutmut] also_copy expanded with runtime + candidate_adapter (candidate mutation workspace completeness); sdist embeds pyproject.toml",
+    "wheel_content_identical_to_v031": true,
+    "wheel_unzipped_diff": "empty (only zip-level timestamps differ)",
+    "wheel_matches_clean_install_wheel_sha256": "c7793c6cf238331a548acd6138b5edaa4c48f7ff8af9a9b1d018e388d37ba7d2 (equals independent-exam clean-A/clean-B wheel_sha256)",
+    "sdist_pyproject_also_copy": "[\"contracts\", \"orchestrator\", \"runtime\", \"candidate_adapter.py\"]",
+    "rebuild_commit": "37dd880"
+   }
+  },
+ "delivery_smoke": {
+  "fresh_venv_python": "CPython 3.12.13",
+  "install_method": "pip install dist/muda_governance_kernel-0.3.0-py3-none-any.whl",
+  "installed_dependency_cryptography": "46.0.0",
+  "installed_package": "muda-governance-kernel 0.3.0",
+  "mgk_help": "PASS",
+  "mgk_start": "PASS (version 0.3.0)",
+  "mgk_doctor": "PASS (7/7 checks)",
+  "mgk_test": "PASS (h14_proposal_is_not_authority: true)",
+  "mgk_h14_smoke": "PASS (0 forbidden executions)",
+  "mgk_stop": "PASS",
+  "live_perms": {
+   "mk_root": "0700",
+   "keys_dir": "0700",
+   "key_and_state_files": "0600"
+  },
+  "rebuild_recheck": {
+   "venv_python": "CPython 3.12.13 (mgk-verify venv)",
+   "mgk_start": "PASS (version 0.3.0)",
+   "mgk_doctor": "PASS (7/7 checks)",
+   "mgk_h14_smoke": "PASS (0 forbidden executions)",
+   "mgk_stop": "PASS"
+  }
+ },
+ "installed_wheel_suite": {
+  "mode": "installed-only (top-level runtime/ absent; mgk and runtime resolved from the installed wheel)",
+  "tests": 415,
+  "passed": 415
+ },
+ "conclusion": "delivery package builds from the v0.3.0 candidate tree, installs with pinned deps, passes the full CLI smoke (help/start/doctor/test/h14-smoke/stop, live permission hardening 0700/0700/0600) and the 415-test suite from the installed wheel, with installed content byte-identical to source."
+}

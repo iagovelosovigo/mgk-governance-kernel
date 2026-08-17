@@ -145,6 +145,104 @@ def test_human_deny_records_deny_and_no_side_effect(workspace):
     assert not (bundle.workspace.records_root / "1").exists()
     row = [r for r in bundle.ledger.decisions() if r["request_id"] == "r3"][0]
     assert row["state"] == "DENY"
+    assert bundle.pipeline.pending() == []
+
+
+def test_approve_after_deny_is_refused_fail_closed(workspace):
+    bundle = workspace.create_runtime()
+    decision = bundle.pipeline.propose(
+        make_request(
+            "ad1",
+            "sandbox.create_record",
+            "records/denied-by-human",
+            {"content_b64": b64u_encode(b'{"x": 1}')},
+        )
+    )
+    assert decision.state is DecisionState.REQUIRE_HUMAN
+    denied = bundle.pipeline.human_deny("ad1", "operator-bob")
+    assert denied.state is DecisionState.DENY
+    approved = bundle.pipeline.human_approve("ad1", "operator-alice")
+    assert approved.state is DecisionState.DENY
+    assert approved.executed is False
+    assert "HUMAN_GATE_TRANSITION_DENIED" in approved.reason_codes
+    assert not (bundle.workspace.records_root / "denied-by-human").exists()
+    row = [r for r in bundle.ledger.decisions() if r["request_id"] == "ad1"][0]
+    assert row["state"] == "DENY"
+
+
+def test_approve_after_execute_is_refused_fail_closed(workspace):
+    bundle = workspace.create_runtime()
+    decision = bundle.pipeline.propose(
+        make_request(
+            "ae1",
+            "sandbox.write_file",
+            "files/once.txt",
+            {"content_b64": b64u_encode(b"first")},
+        )
+    )
+    assert decision.state is DecisionState.REQUIRE_HUMAN
+    approved = bundle.pipeline.human_approve("ae1", "operator-alice")
+    assert approved.state is DecisionState.ALLOW
+    assert approved.executed is True
+    target = bundle.workspace.files_root / "once.txt"
+    assert target.read_bytes() == b"first"
+    second = bundle.pipeline.human_approve("ae1", "operator-alice")
+    assert second.state is DecisionState.DENY
+    assert second.executed is False
+    assert "HUMAN_GATE_TRANSITION_DENIED" in second.reason_codes
+    assert target.read_bytes() == b"first"
+
+
+def test_deny_after_execute_is_refused_fail_closed(workspace):
+    bundle = workspace.create_runtime()
+    decision = bundle.pipeline.propose(
+        make_request(
+            "de1",
+            "sandbox.write_file",
+            "files/keep.txt",
+            {"content_b64": b64u_encode(b"kept")},
+        )
+    )
+    assert decision.state is DecisionState.REQUIRE_HUMAN
+    approved = bundle.pipeline.human_approve("de1", "operator-alice")
+    assert approved.state is DecisionState.ALLOW
+    target = bundle.workspace.files_root / "keep.txt"
+    assert target.exists()
+    denied = bundle.pipeline.human_deny("de1", "operator-bob")
+    assert denied.state is DecisionState.DENY
+    assert denied.executed is False
+    assert "HUMAN_GATE_TRANSITION_DENIED" in denied.reason_codes
+    assert target.exists()
+
+
+def test_double_deny_is_refused_fail_closed(workspace):
+    bundle = workspace.create_runtime()
+    decision = bundle.pipeline.propose(
+        make_request(
+            "dd1",
+            "sandbox.create_record",
+            "records/double-deny",
+            {"content_b64": b64u_encode(b'{"x": 1}')},
+        )
+    )
+    assert decision.state is DecisionState.REQUIRE_HUMAN
+    first = bundle.pipeline.human_deny("dd1", "operator-bob")
+    assert first.state is DecisionState.DENY
+    second = bundle.pipeline.human_deny("dd1", "operator-bob")
+    assert second.state is DecisionState.DENY
+    assert second.executed is False
+    assert "HUMAN_GATE_TRANSITION_DENIED" in second.reason_codes
+    assert not (bundle.workspace.records_root / "double-deny").exists()
+
+
+def test_human_approve_of_policy_denied_proposal_is_refused(workspace):
+    bundle = workspace.create_runtime()
+    decision = bundle.pipeline.propose(make_request("pd1", "process.exec", "files/x", {"command": "id"}))
+    assert decision.state is DecisionState.DENY
+    approved = bundle.pipeline.human_approve("pd1", "operator-alice")
+    assert approved.state is DecisionState.DENY
+    assert approved.executed is False
+    assert "HUMAN_GATE_TRANSITION_DENIED" in approved.reason_codes
 
 
 def test_path_escape_is_clean_deny(workspace):

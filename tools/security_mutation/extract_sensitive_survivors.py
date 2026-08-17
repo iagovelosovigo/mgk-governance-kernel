@@ -21,6 +21,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 
 # Security-sensitive src/mgk population, normative from MGK-SECURITY-MUTATION-ADEQUACY-V1.yaml
@@ -163,6 +164,13 @@ def main() -> int:
         raise SystemExit("FAIL_CLOSED: JSON and Markdown mutant id sets diverge")
     doc["integrity"]["JSON_MD_ID_EQUALITY"] = True
     args.out_json.write_text(json.dumps(doc, indent=1) + "\n")
+
+    sha = hashlib.sha256(args.out_json.read_bytes()).hexdigest()
+    sha_path.write_text(sha + "\n")
+    md_text = args.out_md.read_text()
+    if "- SHA-256: `" in md_text:
+        md_text = re.sub(r"- SHA-256: `[0-9a-f]{64}`", f"- SHA-256: `{sha}`", md_text)
+        args.out_md.write_text(md_text)
 
     print(json.dumps(doc["counts"], indent=1))
     print(json.dumps(doc["integrity"], indent=1))

@@ -1,0 +1,128 @@
+{
+  "artifacts": {
+    "MGK-v0.1.0-MANIFEST.json": "fc0f533e397f4e86341dd8a411482a1d298bf8bc796b89e91d41a786cfa957ad",
+    "MGK-v0.1.0-SBOM.json": "e7a386f4ce91c7e6b14343c24e255be5eb352cac8a3f3234d11690c0287768f1",
+    "MGK-v0.1.0-TEST-REPORT.md": "3fae39e527f61056bf2f608f1c7478c2e27c89fd4266121fdf918e6d489f2422",
+    "MGK-v0.1.0.zip": "4fc99f24428e479c1a0500a7fd59c1e76070c03dabeb9ddef452c0ab8edb2533",
+    "MGK-v0.1.0.zip.sha256": "eba64971fd0cde7fd9c251f61d2213ade46eb6fe4ab963ca5e8aa21a27852bfe"
+  },
+  "candidate": {
+    "commit_sha": "37dd880cf6872132c560178890dd2c8a5b7be560",
+    "source_sha256": "4fc99f24428e479c1a0500a7fd59c1e76070c03dabeb9ddef452c0ab8edb2533",
+    "version": "0.1.0"
+  },
+  "checks": {
+    "anti_toctou": "PASS",
+    "asymmetric_signing": "PASS",
+    "audit_integrity": "PASS",
+    "authorization_epoch": "PASS",
+    "fail_closed": "PASS",
+    "failure_ledger_integrity": "PASS",
+    "feedback_observable": "PASS",
+    "mutation_testing": "PASS",
+    "nonce_atomicity": "PASS",
+    "private_key_absent_from_planner": "PASS",
+    "proposal_authorization_execution_separated": "PASS",
+    "protected_contract_integrity": "PASS",
+    "resource_binding": "PASS",
+    "saxp_three_outcomes": "PASS"
+  },
+  "clean_install": {
+    "A": "PASS",
+    "B": "PASS",
+    "development_workspace_used": false,
+    "internet_required": false
+  },
+  "contract_sha256": "b596e9b4bd26941deaf7d9a38bc775081462002ebd58213e5c5acf76ce39c3bd",
+  "metrics": {
+    "accepted_replays": 0,
+    "canonicalization_differentials_accepted": 0,
+    "critical_security_findings": 0,
+    "exception_bypasses_accepted": 0,
+    "expired_capabilities_accepted": 0,
+    "failure_evidence_missing": 0,
+    "forged_capabilities_accepted": 0,
+    "future_capabilities_accepted": 0,
+    "h14_forbidden_executions": 0,
+    "high_security_findings": 0,
+    "non_ten_xeito_executions": 0,
+    "parser_differentials_accepted": 0,
+    "path_traversals_accepted": 0,
+    "payload_mutations_accepted": 0,
+    "race_double_executions": 0,
+    "require_xeito_executions": 0,
+    "required_audit_events_missing": 0,
+    "resource_substitutions_accepted": 0,
+    "scope_escalations_accepted": 0,
+    "stale_epoch_accepted": 0,
+    "symlink_attacks_accepted": 0,
+    "toctou_attacks_accepted": 0
+  },
+  "mutation_score_percent": 90.9502262443439,
+  "reproducibility": {
+    "h14_outcome_match": true,
+    "source_tree_match": true,
+    "status": "PASS",
+    "test_outcome_match": true,
+    "wheel_sha256_match": true
+  },
+  "schema_version": "mgk.observations.v1",
+  "suites": {
+    "adversarial": {
+      "errors": 0,
+      "failed": 0,
+      "skipped": 0,
+      "status": "PASS",
+      "total": 28
+    },
+    "concurrency": {
+      "errors": 0,
+      "failed": 0,
+      "skipped": 0,
+      "status": "PASS",
+      "total": 3
+    },
+    "fuzz": {
+      "errors": 0,
+      "failed": 0,
+      "skipped": 0,
+      "status": "PASS",
+      "total": 4
+    },
+    "h14": {
+      "errors": 0,
+      "failed": 0,
+      "skipped": 0,
+      "status": "PASS",
+      "total": 6
+    },
+    "integration": {
+      "errors": 0,
+      "failed": 0,
+      "skipped": 0,
+      "status": "PASS",
+      "total": 7
+    },
+    "property": {
+      "errors": 0,
+      "failed": 0,
+      "skipped": 0,
+      "status": "PASS",
+      "total": 4
+    },
+    "replay": {
+      "errors": 0,
+      "failed": 0,
+      "skipped": 0,
+      "status": "PASS",
+      "total": 7
+    },
+    "unit": {
+      "errors": 0,
+      "failed": 0,
+      "skipped": 0,
+      "status": "PASS",
+      "total": 13
+    }
+  }
+}
