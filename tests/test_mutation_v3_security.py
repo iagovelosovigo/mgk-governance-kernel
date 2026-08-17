@@ -589,3 +589,49 @@ def test_audit_ledger_append_timestamp_zero(tmp_path, ledger_key):
 # The MAX_RESOURCE_BYTES boundary in _bind_resource is therefore unreachable via
 # the public flow; the resource-level exact-boundary test above is the guard.
 # ---------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------
+# v0.3.0 additions: exact-MAX authority binding and CWD-independent absent-write
+# ---------------------------------------------------------------------------
+
+
+def test_authority_bind_accepts_exactly_max_resource_bytes(kernel_factory):
+    # Pins `if len(data) > MAX_RESOURCE_BYTES` (mutmut_29): the exact boundary
+    # must still be bindable at the authority layer. A mutant changing the
+    # comparison to `>=` rejects it with SchemaError.
+    kernel = kernel_factory()
+    data = b"x" * MAX_RESOURCE_BYTES
+    request = ActionRequest(
+        request_id="max-1",
+        principal="planner",
+        audience="executor",
+        action="resource.create",
+        resource="workspace/max.bin",
+        parameters={"content_b64": b64u_encode(data)},
+    )
+    binding = kernel.authority._bind_resource_dispatch(request)
+    assert binding["post_size"] == MAX_RESOURCE_BYTES
+
+
+def test_resource_write_bound_absent_ignores_cwd_decoy(tmp_path):
+    # Pins `os.stat(name, dir_fd=parent, follow_symlinks=False)` in write_bound
+    # (mutmut_69): the absent-target revalidation must resolve relative to the
+    # guarded parent directory, never the process CWD. A mutant using
+    # `dir_fd=None` is distracted by a same-named file in the CWD and raises a
+    # spurious "appeared after authorization" rejection.
+    guard, root = make_guard(tmp_path)
+    decoy_dir = tmp_path / "decoy"
+    decoy_dir.mkdir()
+    (decoy_dir / "t.txt").write_bytes(b"decoy")
+    cwd_before = os.getcwd()
+    os.chdir(decoy_dir)
+    try:
+        data = b"payload"
+        binding = guard.bind_write("workspace/t.txt", data)
+        returned = guard.write_bound(binding, data)
+    finally:
+        os.chdir(cwd_before)
+    assert returned == sha(data)
+    assert (root / "workspace" / "t.txt").read_bytes() == data
+    assert (decoy_dir / "t.txt").read_bytes() == b"decoy"

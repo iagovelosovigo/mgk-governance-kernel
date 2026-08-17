@@ -1,0 +1,27 @@
+{
+ "schema_version": "mgk.security-mutation-adequacy.v1",
+ "kind": "phase-4-discriminating-test-verification",
+ "baseline_pass": true,
+ "targets": 2,
+ "killed": 2,
+ "test_gap": 0,
+ "unresolved_ids": [],
+ "records": [
+  {
+   "id": "mgk.authority.x\u01c1CapabilityAuthority\u01c1_bind_resource_dispatch__mutmut_29",
+   "module": "authority",
+   "function": "x\u01c1CapabilityAuthority\u01c1_bind_resource_dispatch",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_69",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  }
+ ]
+}

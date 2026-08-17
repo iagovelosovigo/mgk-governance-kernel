@@ -1,0 +1,30 @@
+{
+  "candidate": "MGK v0.3.0 Functional Governance Runtime (publishable-candidate)",
+  "phase": "security-mutation-adequacy — v0.3.0 baseline",
+  "recorded_at": "2026-08-17",
+  "baseline_version": "0.3.0",
+  "baseline_branch": "mgk-autopilot/v0.3.0-publishable-candidate",
+  "baseline_results": {
+    "test_count": 415,
+    "mutation_score": 0.909502,
+    "mutation_total": 3315,
+    "mutation_killed": 3015,
+    "mutation_survived_killable": 209,
+    "mutation_equivalent_proven": 91,
+    "mutation_indeterminate": 0,
+    "mutation_source_equivalence": "PASS",
+    "security_sensitive_survivors": 104,
+    "high_critical_survivors": 33,
+    "high_critical_resolved": 33,
+    "root_of_trust": "PENDING",
+    "secret_scan": "PENDING",
+    "clean_install": "PENDING",
+    "reproducibility": "PENDING",
+    "independent_exam": "PENDING",
+    "technical_candidate_ready": false,
+    "release_authorized": false
+  },
+  "baseline_verified_mechanically": true,
+  "worktree_clean_at_branch_creation": true,
+  "evidence_source": "Fresh full-population mutmut 3.3.1 run on disposable copy mutmut-v03 (415 tests)."
+}
