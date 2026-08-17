@@ -12,7 +12,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from .canonical import canonicalize, digest
 from .clock import SystemClock
 from .crypto import CAPABILITY_DOMAIN, b64u_decode, key_id, sign
-from .errors import AuthorizationDenied, SchemaError
+from .errors import AuthorizationDenied, ResourceError, SchemaError
 from .models import ActionRequest, IssueResult, SAXPContext
 from .resource import MAX_RESOURCE_BYTES, ResourceGuard
 from .saxp import SAXPEvaluator, SAXPResult
@@ -96,6 +96,12 @@ class CapabilityAuthority:
             raise AuthorizationDenied("resource is outside authority policy")
 
     def _bind_resource(self, request: ActionRequest) -> dict[str, object]:
+        try:
+            return self._bind_resource_dispatch(request)
+        except OSError as exc:
+            raise ResourceError(f"resource unavailable: {exc}") from exc
+
+    def _bind_resource_dispatch(self, request: ActionRequest) -> dict[str, object]:
         parameters = dict(request.parameters)
         if request.action == "resource.read":
             if parameters:

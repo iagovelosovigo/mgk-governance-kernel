@@ -158,6 +158,25 @@ def test_missing_resource_read_is_deny_not_indeterminate(workspace):
     assert "RESOURCE_ERROR" in decision.reason_codes
 
 
+def test_symlink_swap_before_approve_is_clean_deny(workspace):
+    bundle = workspace.create_runtime()
+    decision = bundle.pipeline.propose(
+        make_request(
+            "swap1",
+            "sandbox.write_file",
+            "files/swap.txt",
+            {"content_b64": b64u_encode(b"malicious")},
+        )
+    )
+    assert decision.state is DecisionState.REQUIRE_HUMAN
+    target = bundle.workspace.files_root / "swap.txt"
+    target.symlink_to("/etc/passwd")
+    approved = bundle.pipeline.human_approve("swap1", "operator-alice")
+    assert approved.state is DecisionState.DENY
+    assert approved.executed is False
+    assert "RESOURCE_ERROR" in approved.reason_codes
+
+
 def test_non_canonical_content_is_denied_at_issue_time(workspace):
     bundle = workspace.create_runtime()
     decision = bundle.pipeline.propose(
