@@ -1,0 +1,790 @@
+{
+ "schema_version": "mgk.security-mutation-adequacy.v1",
+ "kind": "phase-4-discriminating-test-verification",
+ "baseline_pass": true,
+ "targets": 93,
+ "killed": 59,
+ "test_gap": 34,
+ "unresolved_ids": [
+  "mgk.authority.x\u01c1CapabilityAuthority\u01c1_bind_resource__mutmut_29",
+  "mgk.canonical.x_parse_canonical__mutmut_14",
+  "mgk.executor.x\u01c1CapabilityExecutor\u01c1execute__mutmut_12",
+  "mgk.ledger.x\u01c1AuditLedger\u01c1__init____mutmut_28",
+  "mgk.ledger.x\u01c1AuditLedger\u01c1__init____mutmut_30",
+  "mgk.ledger.x\u01c1AuditLedger\u01c1__init____mutmut_32",
+  "mgk.ledger.x\u01c1AuditLedger\u01c1_write_checkpoint__mutmut_57",
+  "mgk.ledger.x\u01c1AuditLedger\u01c1_write_checkpoint__mutmut_58",
+  "mgk.ledger.x\u01c1AuditLedger\u01c1_write_checkpoint__mutmut_64",
+  "mgk.ledger.x\u01c1AuditLedger\u01c1_write_checkpoint__mutmut_65",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1_open_parent__mutmut_17",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1_open_parent__mutmut_20",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1_open_parent__mutmut_23",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1append_bound__mutmut_109",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1append_bound__mutmut_99",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1bind_absent__mutmut_20",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_46",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_47",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_52",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_58",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_59",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_89",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_97",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_170",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_178",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_61",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_70",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_73",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_74",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_82",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_88",
+  "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_89",
+  "mgk.state.x\u01c1SecurityState\u01c1_connect__mutmut_5",
+  "mgk.state.x\u01c1SecurityState\u01c1_connect__mutmut_7"
+ ],
+ "records": [
+  {
+   "id": "mgk.authority.x\u01c1CapabilityAuthority\u01c1_bind_resource__mutmut_29",
+   "module": "authority",
+   "function": "x\u01c1CapabilityAuthority\u01c1_bind_resource",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.canonical.x__normalize__mutmut_9",
+   "module": "canonical",
+   "function": "x__normalize",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.canonical.x__validate__mutmut_1",
+   "module": "canonical",
+   "function": "x__validate",
+   "security_class": "PERMISSION_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.canonical.x__validate__mutmut_10",
+   "module": "canonical",
+   "function": "x__validate",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.canonical.x__validate__mutmut_14",
+   "module": "canonical",
+   "function": "x__validate",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.canonical.x__validate__mutmut_7",
+   "module": "canonical",
+   "function": "x__validate",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.canonical.x__validate__mutmut_9",
+   "module": "canonical",
+   "function": "x__validate",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.canonical.x_canonicalize__mutmut_30",
+   "module": "canonical",
+   "function": "x_canonicalize",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.canonical.x_parse_canonical__mutmut_14",
+   "module": "canonical",
+   "function": "x_parse_canonical",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.executor.x\u01c1CapabilityExecutor\u01c1execute__mutmut_12",
+   "module": "executor",
+   "function": "x\u01c1CapabilityExecutor\u01c1execute",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.executor.x\u01c1CapabilityExecutor\u01c1execute__mutmut_143",
+   "module": "executor",
+   "function": "x\u01c1CapabilityExecutor\u01c1execute",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.executor.x\u01c1CapabilityExecutor\u01c1execute__mutmut_144",
+   "module": "executor",
+   "function": "x\u01c1CapabilityExecutor\u01c1execute",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.ledger.x\u01c1AuditLedger\u01c1__init____mutmut_12",
+   "module": "ledger",
+   "function": "x\u01c1AuditLedger\u01c1__init__",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.ledger.x\u01c1AuditLedger\u01c1__init____mutmut_14",
+   "module": "ledger",
+   "function": "x\u01c1AuditLedger\u01c1__init__",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.ledger.x\u01c1AuditLedger\u01c1__init____mutmut_18",
+   "module": "ledger",
+   "function": "x\u01c1AuditLedger\u01c1__init__",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.ledger.x\u01c1AuditLedger\u01c1__init____mutmut_28",
+   "module": "ledger",
+   "function": "x\u01c1AuditLedger\u01c1__init__",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.ledger.x\u01c1AuditLedger\u01c1__init____mutmut_30",
+   "module": "ledger",
+   "function": "x\u01c1AuditLedger\u01c1__init__",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.ledger.x\u01c1AuditLedger\u01c1__init____mutmut_31",
+   "module": "ledger",
+   "function": "x\u01c1AuditLedger\u01c1__init__",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.ledger.x\u01c1AuditLedger\u01c1__init____mutmut_32",
+   "module": "ledger",
+   "function": "x\u01c1AuditLedger\u01c1__init__",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.ledger.x\u01c1AuditLedger\u01c1__init____mutmut_8",
+   "module": "ledger",
+   "function": "x\u01c1AuditLedger\u01c1__init__",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.ledger.x\u01c1AuditLedger\u01c1_write_checkpoint__mutmut_57",
+   "module": "ledger",
+   "function": "x\u01c1AuditLedger\u01c1_write_checkpoint",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.ledger.x\u01c1AuditLedger\u01c1_write_checkpoint__mutmut_58",
+   "module": "ledger",
+   "function": "x\u01c1AuditLedger\u01c1_write_checkpoint",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.ledger.x\u01c1AuditLedger\u01c1_write_checkpoint__mutmut_64",
+   "module": "ledger",
+   "function": "x\u01c1AuditLedger\u01c1_write_checkpoint",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.ledger.x\u01c1AuditLedger\u01c1_write_checkpoint__mutmut_65",
+   "module": "ledger",
+   "function": "x\u01c1AuditLedger\u01c1_write_checkpoint",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.ledger.x\u01c1AuditLedger\u01c1append__mutmut_18",
+   "module": "ledger",
+   "function": "x\u01c1AuditLedger\u01c1append",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.ledger.x\u01c1AuditLedger\u01c1append__mutmut_19",
+   "module": "ledger",
+   "function": "x\u01c1AuditLedger\u01c1append",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1_open_parent__mutmut_17",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1_open_parent",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1_open_parent__mutmut_20",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1_open_parent",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1_open_parent__mutmut_23",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1_open_parent",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1append_bound__mutmut_109",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1append_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1append_bound__mutmut_116",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1append_bound",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1append_bound__mutmut_36",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1append_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1append_bound__mutmut_39",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1append_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1append_bound__mutmut_45",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1append_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1append_bound__mutmut_46",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1append_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1append_bound__mutmut_66",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1append_bound",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1append_bound__mutmut_90",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1append_bound",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1append_bound__mutmut_95",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1append_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1append_bound__mutmut_99",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1append_bound",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1bind_absent__mutmut_20",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1bind_absent",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_102",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_105",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_37",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_45",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_46",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_47",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_52",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_58",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_59",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_68",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_70",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_71",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_72",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_80",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_81",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_85",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_89",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_97",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1create_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1remove_created__mutmut_25",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1remove_created",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1remove_created__mutmut_26",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1remove_created",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1remove_created__mutmut_32",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1remove_created",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1remove_created__mutmut_33",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1remove_created",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_101",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_102",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_105",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_111",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_112",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_132",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_161",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_166",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_170",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_178",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_186",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_61",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_70",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_73",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_74",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_79",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_82",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_88",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_89",
+   "module": "resource",
+   "function": "x\u01c1ResourceGuard\u01c1write_bound",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.saxp.x\u01c1SAXPEvaluator\u01c1__init____mutmut_13",
+   "module": "saxp",
+   "function": "x\u01c1SAXPEvaluator\u01c1__init__",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.saxp.x\u01c1SAXPEvaluator\u01c1__init____mutmut_14",
+   "module": "saxp",
+   "function": "x\u01c1SAXPEvaluator\u01c1__init__",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.saxp.x\u01c1SAXPEvaluator\u01c1evaluate__mutmut_10",
+   "module": "saxp",
+   "function": "x\u01c1SAXPEvaluator\u01c1evaluate",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.saxp.x\u01c1SAXPEvaluator\u01c1evaluate__mutmut_11",
+   "module": "saxp",
+   "function": "x\u01c1SAXPEvaluator\u01c1evaluate",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.saxp.x\u01c1SAXPEvaluator\u01c1evaluate__mutmut_15",
+   "module": "saxp",
+   "function": "x\u01c1SAXPEvaluator\u01c1evaluate",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.saxp.x\u01c1SAXPEvaluator\u01c1evaluate__mutmut_27",
+   "module": "saxp",
+   "function": "x\u01c1SAXPEvaluator\u01c1evaluate",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.state.x\u01c1SecurityState\u01c1__init____mutmut_4",
+   "module": "state",
+   "function": "x\u01c1SecurityState\u01c1__init__",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.state.x\u01c1SecurityState\u01c1__init____mutmut_8",
+   "module": "state",
+   "function": "x\u01c1SecurityState\u01c1__init__",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.state.x\u01c1SecurityState\u01c1_connect__mutmut_5",
+   "module": "state",
+   "function": "x\u01c1SecurityState\u01c1_connect",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.state.x\u01c1SecurityState\u01c1_connect__mutmut_6",
+   "module": "state",
+   "function": "x\u01c1SecurityState\u01c1_connect",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  },
+  {
+   "id": "mgk.state.x\u01c1SecurityState\u01c1_connect__mutmut_7",
+   "module": "state",
+   "function": "x\u01c1SecurityState\u01c1_connect",
+   "security_class": "INTEGRITY_WEAKENING",
+   "killed_by_new_tests": false,
+   "test_exit_code": 0
+  },
+  {
+   "id": "mgk.state.x\u01c1SecurityState\u01c1bump_epoch__mutmut_36",
+   "module": "state",
+   "function": "x\u01c1SecurityState\u01c1bump_epoch",
+   "security_class": "SECURITY_BYPASS",
+   "killed_by_new_tests": true,
+   "test_exit_code": 1
+  }
+ ]
+}

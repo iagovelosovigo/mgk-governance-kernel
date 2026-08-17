@@ -75,7 +75,8 @@ def main() -> int:
     data = json.loads(args.survivors.read_text())
     rows = []
     for m in data["mutants"]:
-        cat, just, labels = classify_mutant(m["id"], "survived", m["diff"])
+        diff = m.get("diff") or m.get("evidence", "")
+        cat, just, labels = classify_mutant(m["id"], "survived", diff)
         fam = labels[0] if labels else "UNKNOWN"
         if cat == "EQUIVALENT_PROVEN":
             sec = EQUIV_CLASS
@@ -93,7 +94,7 @@ def main() -> int:
                 "classification": cat,
                 "security_class": sec,
                 "justification": just,
-                "diff": m["diff"],
+                "diff": diff,
             }
         )
 
