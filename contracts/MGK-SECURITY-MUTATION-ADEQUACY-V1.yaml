@@ -1,0 +1,72 @@
+{
+  "schema_version": "mgk.security-mutation-adequacy.v1",
+  "contract_id": "MGK-SECURITY-MUTATION-ADEQUACY-V1",
+  "frozen": false,
+  "target_candidate": "MGK v0.2.0 Functional Governance Runtime (1327e5e/71652708)",
+  "supersedes": "none (adds Security Mutation Adequacy on top of MGK-v0.1.0-mutation-gate-2)",
+  "motivation": "Baseline v0.1.0-mutation-gate-2 evidence (mutation-v2-* ) reports population 2189 over src/mgk with MUTATION_SCORE_V2=0.905072, but the disposable run copy (mutmut-v2/pyproject.toml) carried a do_not_mutate list excluding 11 src/mgk files (__init__, arrow, canonical, cha, clock, errors, feedback, ledger, models, saxp, state) that is absent from the repo pyproject.toml and undisclosed in gate evidence. Over the FULL src/mgk population (no exclusions) the true population is 3313 mutants (killed 2922, survived 390, timeout 1) -> MUTATION_SCORE ~= 0.8821 < 0.90. Security-critical modules state/canonical/ledger/saxp/cha were therefore never mutation-evaluated in the v0.2.0 gate.",
+  "population": {
+    "basis": "FULL src/mgk (no do_not_mutate exclusions) plus security-critical runtime modules",
+    "src_mgk_included": [
+      "authority", "canonical", "cha", "clock", "crypto", "executor",
+      "ledger", "models", "resource", "saxp", "state", "verifier",
+      "errors", "feedback", "arrow", "__init__"
+    ],
+    "runtime_included": [
+      "runtime/policy.py (policy evaluation + enforcement)",
+      "runtime/sandbox/__init__.py (ACTUATOR_ACTIONS actuator registry)",
+      "runtime/decision.py (human-approval pipeline)",
+      "runtime/web.py, runtime/server.py (HTTP/CLI API surface)",
+      "runtime/runtime_ledger.py (flight evidence ledger)",
+      "runtime/flight.py, runtime/workspace.py, runtime/config.py"
+    ],
+    "justification": "Security adequacy must measure every module that can grant, verify, evaluate, persist, or transmit a capability decision. Excluding binding/evaluation (saxp, canonical, state, ledger) or enforcement/persistence (policy, sandbox, decision, runtime ledger) from mutation leaves the strongest invariants untested.",
+    "verification": "mechanically verified 2026-08-17: mutmut 3.3.1 run over src/mgk with do_not_mutate removed yields 3313 mutants (vs 2189 with exclusions); module survivor detail in evidence/v0.2.0/security-mutation-adequacy/population-experiment.json"
+  },
+  "conditions": {
+    "A_global_score": {
+      "metric": "MUTATION_SCORE_V2 = KILLED / (KILLED + SURVIVED_KILLABLE) over the FULL population defined above",
+      "threshold": 0.90,
+      "note": "Equivalent-proven, invalid, unreachable exclusions allowed ONLY with the same per-exclusion evidence rules as MGK-v0.1.0-mutation-gate-2; they are removed from both numerator and denominator and must be listed per mutant"
+    },
+    "B_security_adequacy": {
+      "requirement": "every SECURITY_SENSITIVE survivor must be deterministically resolved to one of: SECURITY_BYPASS (must add discriminating test or harden), FAIL_CLOSED, AVAILABILITY_ONLY, PERMISSION_WEAKENING, INTEGRITY_WEAKENING, TEST_GAP_ONLY, EQUIVALENT_PROVEN, INDETERMINATE",
+      "HIGH_CRITICAL_rule": "any survivor classified SECURITY_BYPASS, PERMISSION_WEAKENING, or INTEGRITY_WEAKENING that is not already covered by a permanent discriminating regression test -> FAIL_CLOSED",
+      "indeterminate_rule": "any SECURITY_SENSITIVE survivor classified INDETERMINATE -> FAIL_CLOSED",
+      "reproducible_bypass_rule": "any survivor for which a reproducing PoC demonstrates an actual privilege/authority/intent violation in the candidate -> FAIL_CLOSED until hardened and the discriminating test added",
+      "no_llm_classification": "survivor classification and evidence are produced by deterministic tools; the classifier MAY be LLM-assisted for justification text but every classification decision and evidence byte must be reproducible by a deterministic procedure"
+    }
+  },
+  "security_sensitive_modules": [
+    "authority", "crypto", "executor", "resource", "saxp", "state", "verifier",
+    "canonical", "ledger", "models",
+    "runtime/policy.py", "runtime/sandbox/__init__.py", "runtime/decision.py",
+    "runtime/runtime_ledger.py", "runtime/flight.py"
+  ],
+  "non_sensitive_modules": [
+    "cli", "errors", "feedback", "arrow", "clock", "cha",
+    "runtime/web.py", "runtime/server.py", "runtime/workspace.py", "runtime/config.py"
+  ],
+  "procedure": {
+    "1_population": "fresh mutmut 3.3.1 run on a disposable copy whose pyproject matches the repo [tool.mutmut] exactly (paths_to_mutate=[\"src/mgk\"], also_copy=[\"contracts\",\"orchestrator\",\"runtime\",\"candidate_adapter.py\"]) with NO do_not_mutate; runtime modules added via also_copy or explicit path mutation as mutmut supports",
+    "2_extract": "deterministic tool extracts every SECURITY_SENSITIVE survivor with its mutant id, module, function, transformation diff, covering tests",
+    "3_harness": "survivor harness applies each sensitive survivor to an isolated disposable copy and runs the covering test subset to reproduce survival",
+    "4_classify": "each sensitive survivor classified by deterministic procedure; HIGH/CRITICAL bypass classes require a permanent discriminating regression test in tests/",
+    "5_gate": "gate tool (tools/security_mutation/security_mutation_gate.py) evaluates conditions A and B against classification + regression-test coverage + fresh full-population run; emits machine-readable report",
+    "6_evidence": "all artifacts (population-experiment, sensitive-survivors, classifications, gate report, SHA-256 manifest) stored under evidence/v0.2.0/security-mutation-adequacy/"
+  },
+  "fail_conditions": [
+    "MUTATION_SCORE_V2 < 0.90 over the full population",
+    "any SECURITY_SENSITIVE survivor classified INDETERMINATE",
+    "any HIGH/CRITICAL security survivor without a permanent discriminating regression test",
+    "any survivor with a reproducing PoC demonstrating a security violation",
+    "malformed or missing evidence artifacts or SHA-256 mismatches",
+    "gate tool cannot re-derive the survivor set deterministically from the classification evidence"
+  ],
+  "outputs": [
+    "evidence/v0.2.0/security-mutation-adequacy/population-experiment.json",
+    "evidence/v0.2.0/security-mutation-adequacy/sensitive-survivors.json",
+    "evidence/v0.2.0/security-mutation-adequacy/sensitive-survivors.md",
+    "evidence/v0.2.0/security-mutation-adequacy/security-mutation-gate-report.json"
+  ]
+}

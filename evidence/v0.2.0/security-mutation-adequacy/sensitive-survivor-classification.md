@@ -1,0 +1,71 @@
+# Sensitive Survivor Security Classification
+
+- source: `evidence/v0.2.0/security-mutation-adequacy/sensitive-survivors.json`
+- total: **276**
+- SHA-256: `565ddd8a3d7ba8f9653730dd4e9cc0fb695fe3429cd8c520bbf569f69ee7b12b`
+
+## Counts by security class
+
+| class | count |
+|---|---|
+| AVAILABILITY_ONLY | 61 |
+| EQUIVALENT_PROVEN | 82 |
+| INTEGRITY_WEAKENING | 65 |
+| PERMISSION_WEAKENING | 1 |
+| SECURITY_BYPASS | 29 |
+| TEST_GAP_ONLY | 38 |
+
+### authority
+
+- AVAILABILITY_ONLY: 2
+- EQUIVALENT_PROVEN: 1
+- SECURITY_BYPASS: 1
+
+### canonical
+
+- AVAILABILITY_ONLY: 7
+- EQUIVALENT_PROVEN: 5
+- INTEGRITY_WEAKENING: 5
+- PERMISSION_WEAKENING: 1
+- SECURITY_BYPASS: 5
+- TEST_GAP_ONLY: 19
+
+### crypto
+
+- EQUIVALENT_PROVEN: 5
+
+### executor
+
+- AVAILABILITY_ONLY: 9
+- INTEGRITY_WEAKENING: 1
+- SECURITY_BYPASS: 2
+
+### ledger
+
+- AVAILABILITY_ONLY: 3
+- EQUIVALENT_PROVEN: 11
+- INTEGRITY_WEAKENING: 11
+- SECURITY_BYPASS: 2
+- TEST_GAP_ONLY: 6
+
+### resource
+
+- AVAILABILITY_ONLY: 28
+- EQUIVALENT_PROVEN: 28
+- INTEGRITY_WEAKENING: 43
+- SECURITY_BYPASS: 12
+- TEST_GAP_ONLY: 9
+
+### saxp
+
+- SECURITY_BYPASS: 6
+- TEST_GAP_ONLY: 1
+
+### state
+
+- AVAILABILITY_ONLY: 12
+- EQUIVALENT_PROVEN: 32
+- INTEGRITY_WEAKENING: 5
+- SECURITY_BYPASS: 1
+- TEST_GAP_ONLY: 3
+
