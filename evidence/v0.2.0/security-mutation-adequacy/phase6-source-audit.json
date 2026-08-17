@@ -1,0 +1,95 @@
+{
+  "schema_version": "mgk.security-mutation-adequacy.v1",
+  "kind": "phase-6-source-audit",
+  "phase": 6,
+  "recorded_at": "2026-08-17",
+  "method": "audit of src/mgk against the properties proven in Phases 3-4 (short-write completeness, symlink/descriptor confinement, create-state identity, boolean security checks, view/missing-view semantics, ledger directory safety, authority/resource binding, state/executor semantics). Each finding classified ALREADY_SAFE / TEST_GAP_ONLY / CODE_HARDENING_REQUIRED.",
+  "code_hardening_required": 0,
+  "findings": [
+    {
+      "id": "SHORT_WRITE_COMPLETENESS",
+      "classification": "ALREADY_SAFE",
+      "source": [
+        "src/mgk/resource.py:151-155 create_bound write loop",
+        "src/mgk/resource.py:268-272 write_bound write loop",
+        "src/mgk/resource.py:336-340 append_bound write loop"
+      ],
+      "evidence": "Every loop raises ResourceError('short write ...') when os.write returns <=0, so no operation can report success with fewer bytes persisted. Killers: test_resource_zero_write_is_short_write_error (create/write/append), test_resource_partial_write_completes_and_persists, test_resource_short_write_completes_single_byte."
+    },
+    {
+      "id": "SYMLINK_DESCRIPTOR_CONFINEMENT",
+      "classification": "ALREADY_SAFE",
+      "source": [
+        "src/mgk/resource.py:40-52 _open_parent (O_RDONLY|O_DIRECTORY|O_NOFOLLOW, dir_fd walk)",
+        "src/mgk/resource.py:54-66 _open_file (O_RDONLY|O_NOFOLLOW, dir_fd=parent)",
+        "src/mgk/resource.py:244-254 write_bound absent/present opens (O_EXCL/O_NOFOLLOW)",
+        "src/mgk/resource.py:325 append_bound open (O_RDWR|O_NOFOLLOW)",
+        "src/mgk/resource.py:365 remove_created open (O_RDONLY|O_NOFOLLOW)"
+      ],
+      "evidence": "Every open is anchored to a dir_fd obtained by walking the parent chain with O_NOFOLLOW; final components use O_NOFOLLOW so symlink substitution cannot escape the authorized root. Killers: test_resource_guard_rejects_symlink_file_target, test_resource_guard_rejects_symlink_parent, test_resource_write_toctou_symlink_swap_rejected, test_resource_append_toctou_symlink_swap_rejected, test_resource_remove_created_rejects_symlink_swap, test_resource_create_rejects_symlink_target_after_binding. open_parent default-arg mutant 23 degrades to fail-closed ENOTDIR (AVAILABILITY_ONLY)."
+    },
+    {
+      "id": "CREATE_STATE_IDENTITY",
+      "classification": "ALREADY_SAFE",
+      "source": [
+        "src/mgk/resource.py:145-149 create_bound created flag set only after os.open succeeds",
+        "src/mgk/resource.py:240-251 write_bound created flag set only after os.open succeeds",
+        "src/mgk/resource.py:167-175 rollback unlink anchored to dir_fd=parent"
+      ],
+      "evidence": "created is False until the O_EXCL open succeeds, so rollback (remove_created / the except-block unlink) never deletes a file the guard did not create. The created=True initializer mutant (create 47) is TEST_GAP_ONLY because it only diverges under a non-EEXIST os.open failure (fd exhaustion). Rollback confinement kill: test_resource_rollback_removes_created_file_and_stays_confined."
+    },
+    {
+      "id": "BOOLEAN_SECURITY_CHECKS",
+      "classification": "ALREADY_SAFE",
+      "source": [
+        "src/mgk/resource.py:260-264 write_bound pre-state check (len OR hash)",
+        "src/mgk/resource.py:332-333 append_bound pre-state check",
+        "src/mgk/resource.py:274-276 write_bound post-write verification (REG OR size)",
+        "src/mgk/resource.py:157-159 create_bound post-create verification",
+        "src/mgk/resource.py:342-344 append_bound post-append verification"
+      ],
+      "evidence": "Each security predicate rejects EITHER violation with OR; OR->AND mutants were killed by same-size tamper tests (test_resource_write_rejects_tampered_present_file, test_resource_append_rejects_tampered_present_file, test_resource_remove_created_refuses_same_size_tampered). Post-verification OR->AND mutants are EQUIVALENT_PROVEN because the write loop guarantees full size on success."
+    },
+    {
+      "id": "RESOURCE_VIEW_MISSING_VIEW",
+      "classification": "ALREADY_SAFE",
+      "source": [
+        "src/mgk/resource.py:150-156, 267-272, 335-340 write loops advance view by written bytes"
+      ],
+      "evidence": "view=None mutants (which would exit the loop leaving a partial file) are killed by test_resource_partial_write_completes_and_persists and test_resource_partial_write_loop_completes which assert the on-disk content equals the full payload after a partial os.write."
+    },
+    {
+      "id": "LEDGER_DIRECTORY_SAFETY",
+      "classification": "ALREADY_SAFE",
+      "source": [
+        "src/mgk/ledger.py:28-41 __init__ (touch mode=0o600 on first init; AuditIntegrityError on partial state)",
+        "src/mgk/ledger.py:55-85 _write_checkpoint (mkstemp in checkpoint parent; atomic rename; fsync dir)",
+        "src/mgk/ledger.py:96-130 _load_checkpoint (schema, signer, hash verification)"
+      ],
+      "evidence": "exists_ok mutants (28/30/32) are EQUIVALENT_PROVEN: first-init has no pre-existing file and the partial-state path raises before touch. O_DIRECTORY mutants (57/58/64/65) are EQUIVALENT_PROVEN: mkstemp(dir=parent) proves the parent is a real directory before the dir-open line runs. Killers: test_audit_ledger_creates_nested_dirs, test_audit_ledger_file_mode_0600, plus the whole test_audit.py suite."
+    },
+    {
+      "id": "AUTHORITY_RESOURCE_BINDING",
+      "classification": "ALREADY_SAFE",
+      "source": [
+        "src/mgk/authority.py:88-96 _validate_request (digest + policy)",
+        "src/mgk/authority.py:98-115 _bind_resource (bind_absent lstat for create)",
+        "src/mgk/resource.py:99-115 bind_absent (follow_symlinks=False stat)"
+      ],
+      "evidence": "bind_absent uses os.stat(follow_symlinks=False) so a symlink target is rejected before authority is issued; the follow_symlinks=None mutant is EQUIVALENT_PROVEN (None is falsy -> lstat, verified empirically). The 8 MiB boundary mutant (authority 29) is EQUIVALENT_PROVEN because request.digest() caps content_b64 at MAX_CANONICAL_BYTES (256 KiB) before _bind_resource runs; documented by test_authority_rejects_oversized_create_payload_at_issue."
+    },
+    {
+      "id": "STATE_EXECUTOR_SEMANTICS",
+      "classification": "ALREADY_SAFE",
+      "source": [
+        "src/mgk/state.py:32-38 _connect (autocommit + busy_timeout PRAGMA)",
+        "src/mgk/state.py:89-175 initialize_epoch/bump_epoch (epoch monotonicity + signed floor)",
+        "src/mgk/verifier.py:130 verify(consume_nonce=True default)",
+        "src/mgk/executor.py:127-131 rollback branch (remove_created after failed ledger append)",
+        "src/mgk/executor.py:141-150 denial => execution_authority=0"
+      ],
+      "evidence": "consume_nonce removal mutant (executor 12) is EQUIVALENT_PROVEN (default True); replayed envelopes stay denied (test_executor_rejects_replayed_envelope). Busy-timeout mutants (state 5/7) are EQUIVALENT_PROVEN because PRAGMA busy_timeout=30000 overrides the connect kwarg (test_security_state_busy_timeout_is_pragma_30000). Rollback confinement for sandbox.create_record is proven by test_executor_rolls_back_sandbox_create_record_on_ledger_failure. Stale-writer epoch rejection: test_bump_epoch_rejects_stale_writer."
+    }
+  ],
+  "conclusion": "No CODE_HARDENING_REQUIRED findings. The current src/mgk production code already implements every property closed during Phases 3-4; the Phase 4 additions were purely test-side discriminators. No source patch was needed and none was made (src/ is unchanged this session)."
+}

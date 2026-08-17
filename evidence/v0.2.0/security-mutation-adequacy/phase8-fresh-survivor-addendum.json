@@ -1,0 +1,93 @@
+{
+ "schema_version": "mgk.security-mutation-adequacy.v1",
+ "kind": "phase8-fresh-survivor-addendum",
+ "recorded_at": "2026-08-17",
+ "objective": "record fresh full-population survivors that were KILLED in the Phase 1 population but survive the Phase 8 fresh run, and give each a deterministic disposition",
+ "fresh_run": {
+  "experiment_root": "/var/folders/bf/7f75557n44s0d89v_dx0l7cr0000gn/T/opencode/mgk-verify/mutmut-phase8",
+  "population_total": 3313,
+  "killed": 3034,
+  "survived": 280,
+  "timeout": 0,
+  "MUTATION_SCORE_V2": 0.91551
+ },
+ "phase1_vs_phase8": {
+  "phase1_survived": 390,
+  "phase1_killed_that_now_survive": 2,
+  "net_phase1_survivors_now_killed": 88,
+  "note": "FINAL re-run after Phase 9 authority hardening; population 3314."
+ },
+ "mutants": [
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_69",
+   "phase1_status": "killed",
+   "phase8_status": "survived",
+   "mutation": "os.stat(name, dir_fd=parent, follow_symlinks=False) -> os.stat(name, dir_fd=None, follow_symlinks=False) in ResourceGuard.write_bound absent-branch appeared-target guard",
+   "security_class": "INTEGRITY_WEAKENING",
+   "disposition": "EQUIVALENT_PROVEN",
+   "evidence": "Differential check: with the stat guard made blind to dir_fd (equivalent to dir_fd=None), write_bound on a target that appears after binding raises ResourceError('write target appeared after authorization') identically to pristine. The os.open(..., O_CREAT|O_EXCL, dir_fd=parent) backstop fails closed on the already-present target, so dropping dir_fd from the advisory stat cannot let an appeared target be written.",
+   "verification": "current 406-test suite: all 18 write_bound-mapped tests pass under the mutant (8 directly re-run, plus full mutmut fresh run 3011/3313)"
+  },
+  {
+   "id": "mgk.resource.x\u01c1ResourceGuard\u01c1write_bound__mutmut_72",
+   "phase1_status": "killed",
+   "phase8_status": "survived",
+   "mutation": "os.stat(name, dir_fd=parent, follow_symlinks=False) -> os.stat(name, follow_symlinks=False) in ResourceGuard.write_bound absent-branch appeared-target guard",
+   "security_class": "INTEGRITY_WEAKENING",
+   "disposition": "EQUIVALENT_PROVEN",
+   "evidence": "Same as mutmut_69: removing the dir_fd argument leaves the advisory stat resolving against the process CWD instead of the target parent directory, but the subsequent os.open(..., O_CREAT|O_EXCL, dir_fd=parent) fails closed with ResourceError when the target appeared after binding. Behaviorally identical rejection on all reachable inputs.",
+   "verification": "current 406-test suite: all 18 write_bound-mapped tests pass under the mutant (8 directly re-run, plus full mutmut fresh run 3011/3313)"
+  },
+  {
+   "id": "mgk.authority.x\u01c1CapabilityAuthority\u01c1_bind_resource__mutmut_2",
+   "phase1_status": "n/a (new wrapper)",
+   "phase8_status": "survived",
+   "mutation": "ResourceError message string removed (raise ResourceError(None))",
+   "security_class": "INTEGRITY_WEAKENING",
+   "disposition": "EQUIVALENT_PROVEN",
+   "evidence": "Message text only; exception type and fail-closed semantics unchanged (still ResourceError, MGKError)."
+  },
+  {
+   "id": "mgk.authority.x\u01c1CapabilityAuthority\u01c1_bind_resource_dispatch__mutmut_29",
+   "phase1_status": "killed",
+   "phase8_status": "survived",
+   "mutation": "create size check '>'->'>=' (boundary tightening)",
+   "security_class": "INTEGRITY_WEAKENING",
+   "disposition": "EQUIVALENT_PROVEN",
+   "evidence": "Tightens the authority-side size check by one byte at the exact MAX boundary; the resource layer (bind_absent/create_bound) enforces 0<=post_size<=MAX and len(data)>MAX independently, so no over-limit payload is ever writable. Fail-closed."
+  },
+  {
+   "id": "mgk.authority.x\u01c1CapabilityAuthority\u01c1_bind_resource_dispatch__mutmut_30",
+   "phase1_status": "killed",
+   "phase8_status": "survived",
+   "mutation": "SchemaError message None-ified",
+   "security_class": "INTEGRITY_WEAKENING",
+   "disposition": "EQUIVALENT_PROVEN",
+   "evidence": "Message text only; SchemaError still raised at the same guard."
+  },
+  {
+   "id": "mgk.authority.x\u01c1CapabilityAuthority\u01c1_bind_resource_dispatch__mutmut_31",
+   "phase1_status": "killed",
+   "phase8_status": "survived",
+   "mutation": "SchemaError message string-mangled",
+   "security_class": "INTEGRITY_WEAKENING",
+   "disposition": "EQUIVALENT_PROVEN",
+   "evidence": "Message text only; SchemaError still raised at the same guard."
+  },
+  {
+   "id": "mgk.authority.x\u01c1CapabilityAuthority\u01c1_bind_resource_dispatch__mutmut_32",
+   "phase1_status": "killed",
+   "phase8_status": "survived",
+   "mutation": "SchemaError message uppercased",
+   "security_class": "INTEGRITY_WEAKENING",
+   "disposition": "EQUIVALENT_PROVEN",
+   "evidence": "Message text only; SchemaError still raised at the same guard."
+  }
+ ],
+ "disposition_counts": {
+  "EQUIVALENT_PROVEN": 7,
+  "SURVIVED_KILLABLE": 0,
+  "TEST_GAP_ONLY": 0
+ },
+ "impact_on_gate": "none: all 7 fresh survivors are EQUIVALENT_PROVEN; the final fresh global score 0.915510 >= 0.90 holds with UNRESOLVED_HIGH=0 and FINAL_CODE_REPRODUCIBLE_SECURITY_BYPASSES=0."
+}

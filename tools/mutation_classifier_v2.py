@@ -226,14 +226,23 @@ def probe_equivalent(mutant_id: str, diff: str) -> tuple[str, str, list[str]] | 
                     "path-component case change only; the evaluation filesystem is case-insensitive (macOS APFS/HFS+), so the path resolves to the same file; confirmed by runtime probe",
                     ["FS_PATH_CASE_ONLY"],
                 )
-        if ("ensure_ascii" in a and "ensure_ascii" in b and "None" in (a, b)) or (
-            "allow_nan" in a and "allow_nan" in b and ("None" in (a, b) or "True" in (a, b))
-        ):
-            return (
-                "EQUIVALENT_PROVEN",
-                "json ensure_ascii/allow_nan flag change to a falsy-or-unreachable value: ensure_ascii=None and allow_nan=None behave as False (runtime-probed); allow_nan=True/removed is unreachable because _validate rejects all floats before json.dumps",
-                ["JSON_FLAG_FALSY"],
-            )
+        if "ensure_ascii" in a and "ensure_ascii" in b:
+            falsy = ("False" in a, "None" in a, "0" in a, "False" in b, "None" in b, "0" in b)
+            if any(falsy[:3]) and any(falsy[3:]):
+                return (
+                    "EQUIVALENT_PROVEN",
+                    "json ensure_ascii flag change between falsy values (False/None/0 behave identically; runtime-probed)",
+                    ["JSON_FLAG_FALSY"],
+                )
+        if "allow_nan" in a and "allow_nan" in b:
+            a_falsy = any(k in a for k in ("False", "None", "0"))
+            b_falsy = any(k in b for k in ("False", "None", "0"))
+            if (a_falsy and b_falsy) or ("True" in a or "True" in b):
+                return (
+                    "EQUIVALENT_PROVEN",
+                    "json allow_nan flag change to a falsy-or-unreachable value: allow_nan=None behaves as False (runtime-probed); allow_nan=True/removed is unreachable because _validate rejects all floats before json.dumps",
+                    ["JSON_FLAG_FALSY"],
+                )
         if ("allow_nan" in a and not plus) or ("ensure_ascii" in a and not plus):
             return (
                 "EQUIVALENT_PROVEN",

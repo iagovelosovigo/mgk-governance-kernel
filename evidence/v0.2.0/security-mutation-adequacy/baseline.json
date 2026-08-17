@@ -1,0 +1,29 @@
+{
+  "candidate": "MGK v0.2.0 Functional Governance Runtime",
+  "phase": "security-mutation-adequacy hardening — baseline",
+  "recorded_at": "2026-08-17",
+  "baseline_commit": "1327e5e85a44b3a917a0472b7de2e6a202326c8b",
+  "baseline_tree": "716527089f40ad881520d3944c01b238d8d3e862",
+  "baseline_version": "0.2.0",
+  "baseline_branch": "mgk-autopilot/v0.2.0-security-mutation-adequacy",
+  "baseline_results": {
+    "test_count": 363,
+    "mutation_score": 0.905072,
+    "mutation_killed": 1945,
+    "mutation_evaluable": 2149,
+    "mutation_survived_killable": 204,
+    "mutation_equivalent_proven": 40,
+    "mutation_indeterminate": 0,
+    "mutation_source_equivalence": "PASS",
+    "root_of_trust": "PASS",
+    "secret_scan": "PASS",
+    "clean_install": "PASS",
+    "reproducibility": "PASS",
+    "independent_exam": "PASS",
+    "technical_candidate_ready": true,
+    "release_authorized": false
+  },
+  "baseline_verified_mechanically": true,
+  "worktree_clean_at_branch_creation": true,
+  "evidence_source": "Baseline mutation evidence cherry-picked onto hardening branch (mutation-v2-classification.json, mutation-v2-results.txt, mutation-v2-gate-report.json, mutation-v2-findings.json)."
+}

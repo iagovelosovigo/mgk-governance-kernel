@@ -1,0 +1,48 @@
+{
+ "schema_version": "mgk.release-gate.v1",
+ "kind": "human-release-gate-final",
+ "campaign": "v0.2.0-security-mutation-adequacy",
+ "phase": 16,
+ "recorded_at": "2026-08-17",
+ "git": {
+  "branch": "mgk-autopilot/v0.2.0-security-mutation-adequacy",
+  "commit": "6074b4a2865b092181d88dc2582820f991bd715a",
+  "tree": "309dcd42a677e2a461335bfe5c29024b3b11b1aa",
+  "worktree_clean": true
+ },
+ "gate": {
+  "GLOBAL_MUTATION_SCORE": 0.91551,
+  "GLOBAL_MUTATION_THRESHOLD": 0.9,
+  "GLOBAL_MUTATION_GATE": "PASS",
+  "SECURITY_MUTATION_ADEQUACY": "PASS",
+  "UNRESOLVED_HIGH": 0,
+  "UNRESOLVED_CRITICAL": 0,
+  "INDETERMINATE": 0,
+  "FINAL_BYPASSES": 0,
+  "population": {"total": 3314, "killed": 3034, "survived": 280, "timeout": 0}
+ },
+ "phase_results": {
+  "phase4_dispositions": {"KILLED": 59, "EQUIVALENT_PROVEN": 32, "TEST_GAP_ONLY": 1, "AVAILABILITY_ONLY": 1},
+  "phase6_source_audit": "PASS",
+  "phase7_functional_e2e": "PASS",
+  "phase8_fresh_score": 0.91551,
+  "phase9_redteam": {"probes": 33, "pass": 33, "fail": 0},
+  "phase10_clean_install": "407/407/407 identical trees",
+  "phase11_secrets_root_of_trust": "PASS",
+  "phase12_independent_exam": "all claims verified",
+  "phase13_freeze_signature": "valid (27 files)",
+  "phase14_15_delivery": "PASS (408 tests from installed wheel)",
+  "regression_suite": 408
+ },
+ "known_limitations": [
+  "FS_PATH_CASE_ONLY (9) EQUIVALENT_PROVEN mutants equivalent only on case-insensitive filesystems; score >= 0.90 even counting all as killable",
+  "freeze signature private key ephemeral; public key + signature embedded in freeze artifact",
+  "evidence covers documented threat model and tested corpus; not a universal security proof",
+  "authority keys generated at runtime per workspace; no committed key material"
+ ],
+ "release_decision": {
+  "NEXT_REQUIRED_ACTION": "HUMAN_RELEASE_DECISION",
+  "RELEASE_AUTHORIZED": false,
+  "STOP_HERE": true
+ }
+}

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export PYTHONPATH="${ROOT}/src${PYTHONPATH:+:${PYTHONPATH}}"
+if [[ -d "${ROOT}/.venv" && -x "${ROOT}/.venv/bin/python" ]]; then
+  exec "${ROOT}/.venv/bin/python" -m mgk.cli "$@"
+fi
+exec python3 -m mgk.cli "$@"

@@ -1,0 +1,45 @@
+{
+ "schema_version": "mgk.phase-evidence.v1",
+ "kind": "delivery-package-and-smoke",
+ "phase": 14,
+ "recorded_at": "2026-08-17",
+ "repo_commit": "0028e27",
+ "artifacts": {
+  "wheel": {
+   "path": "dist/muda_governance_kernel-0.2.0-py3-none-any.whl",
+   "sha256": "3baee4d1bad450f33bf89be71b354b69cc957c04792ec3ca5887700afe278198",
+   "bytes": 50975
+  },
+  "sdist": {
+   "path": "dist/muda_governance_kernel-0.2.0.tar.gz",
+   "sha256": "706c3473476381b5e68b30e92d0e22ec6781194c6ce845d53a8425c9e62116a0",
+   "bytes": 74997
+  },
+  "build_backend": "setuptools==75.8.0, wheel==0.45.1",
+  "wheel_workspace_phase11_hardening_present": true,
+  "wheel_workspace_sha256_matches_source": true
+ },
+ "delivery_smoke": {
+  "fresh_venv_python": "CPython 3.12.13",
+  "install_method": "pip install dist/*.whl",
+  "installed_dependency_cryptography": "46.0.0",
+  "installed_package": "muda-governance-kernel 0.2.0",
+  "mgk_help": "PASS",
+  "mgk_start": "PASS (version 0.2.0)",
+  "mgk_doctor": "PASS (7/7 checks)",
+  "mgk_test": "PASS (h14_proposal_is_not_authority: true)",
+  "mgk_h14_smoke": "PASS (0 forbidden executions)",
+  "mgk_stop": "PASS",
+  "live_perms": {
+   "mk_root": "0700",
+   "keys_dir": "0700",
+   "key_and_state_files": "0600"
+  }
+ },
+ "installed_wheel_suite": {
+  "mode": "installed-only (top-level runtime/ moved aside)",
+  "tests": 408,
+  "passed": 408
+ },
+ "conclusion": "delivery package builds from the frozen campaign tree, matches hardened source, installs with pinned deps, passes full smoke and the 408-test suite from the installed wheel."
+}

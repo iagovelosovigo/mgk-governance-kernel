@@ -1,4 +1,4 @@
-"""MUDA Governance Kernel v0.1.0 public API."""
+"""MUDA Governance Kernel v0.2.0 public API."""
 
 from .arrow import ArrowRoute, ArrowRouter
 from .authority import AuthorityPolicy, CapabilityAuthority
@@ -39,4 +39,4 @@ __all__ = [
     "SystemClock",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

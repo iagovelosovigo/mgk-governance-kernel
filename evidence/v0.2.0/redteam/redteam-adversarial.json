@@ -1,0 +1,226 @@
+{
+  "all_pass": true,
+  "findings": [
+    {
+      "attack_id": "A1-write-appeared-target",
+      "description": "write to target that appeared after binding is rejected (O_EXCL backstop)",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': 'b49c3d5aa31e3173924a292af572032ad2216c90a245fae50f8f9ebd1139b1e7', 'human_decision': 'APPROVE', 'human_signature': 'jsAoqr0yxNHHPANGngvAzHG-eVHQwjDluRuDxV5lRs5EsKTdo0-uOOdhuM4ZR-5NbCbVWwAJigo--z703zqxDQ', 'operator': 'op', 'output_digest': None, 'reason_codes': ['COHERENCE_GATE_SATISFIED', 'SIGNATURE_ERROR'], 'request': {'action': 'sandbox.write_file', 'audience': 'executor', 'parameters': {'content_b64': 'YXR0YWNrZXItcGF5bG9hZA=='}, 'principal': 'planner', 'request_id': 'a1', 'resource': 'files/appear.txt'}, 'request_digest': '26198c093bb891d99ada173ce288f3e190c316ef02f7a3cae52c5d816430458a', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A2-write-symlink-swap",
+      "description": "write to a symlink swapped in before approval does not escape sandbox",
+      "detail": "swapped=True got {'capability_id': None, 'executed': False, 'flight_hash': '0c7dce43a5a3f293af567822d65dc8d0fbb42582b69cf829d330b289dffa5eb5', 'human_decision': 'APPROVE', 'human_signature': 'lO98GnPE8cGpk_p7VRjfm_9bcD_DOyWdKFf5-6ezusyXNjYHJTQIwwWm1qvJc87RzxsmqFgzjgoD1UtcXglyBw', 'operator': 'op', 'output_digest': None, 'reason_codes': ['COHERENCE_GATE_SATISFIED', 'RESOURCE_ERROR'], 'request': {'action': 'sandbox.write_file', 'audience': 'executor', 'parameters': {'content_b64': 'bWFsaWNpb3Vz'}, 'principal': 'planner', 'request_id': 'a2', 'resource': 'files/swap.txt'}, 'request_digest': 'd6894f41c36c4387fa08733a3a924dc054faba7fd6fbe89850c0822a9beab2fc', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A3-read-dir-symlink-escape",
+      "description": "read through symlinked directory does not escape sandbox",
+      "detail": "dir_link=True got {'capability_id': None, 'executed': False, 'flight_hash': 'dadd708f417095dff1daa25a324d5dcda6754cb39604352f3d7965421cef270a', 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['COHERENCE_GATE_SATISFIED', 'RESOURCE_ERROR'], 'request': {'action': 'sandbox.read_file', 'audience': 'executor', 'parameters': {}, 'principal': 'planner', 'request_id': 'a3', 'resource': 'files/outside/etc/passwd'}, 'request_digest': '3b8f6c40174349c2f9c9349a9fd048201c7192ddc73b4c3ef648b2f16a6fce88', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A4-append-symlink-confinement",
+      "description": "append to symlink target does not escape sandbox",
+      "detail": "link=True propose=REQUIRE_HUMAN approve=DENY outside_changed=False",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A5-DOTDOT",
+      "description": "path traversal blocked: 'files/../etc/passwd'",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': 'ec730e426bacaa965515edced49e2e75801ba38c1ca844bb22bbcdc809c748fc', 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['COHERENCE_GATE_SATISFIED', 'RESOURCE_ERROR'], 'request': {'action': 'sandbox.read_file', 'audience': 'executor', 'parameters': {}, 'principal': 'planner', 'request_id': 'a5-dotdot', 'resource': 'files/../etc/passwd'}, 'request_digest': '2fb9f0fcbcc417f498c0af980c4974375cfd5631828dd350fc5911a43c9c9ca0', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A5-LEADING",
+      "description": "path traversal blocked: '/files/x'",
+      "detail": "got {'error': \"resource must live under 'files/'\", 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A5-BACKSLASH",
+      "description": "path traversal blocked: 'files\\\\..\\\\etc\\\\passwd'",
+      "detail": "got {'error': \"resource must live under 'files/'\", 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A5-ENC-SLASH",
+      "description": "path traversal blocked: 'files/..%2fetc%2fpasswd'",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': 'f7b483aaf65064cee764e9f617de788e03096088f4b85a460bce68d0e5832be2', 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['COHERENCE_GATE_SATISFIED', 'RESOURCE_ERROR'], 'request': {'action': 'sandbox.read_file', 'audience': 'executor', 'parameters': {}, 'principal': 'planner', 'request_id': 'a5-enc-slash', 'resource': 'files/..%2fetc%2fpasswd'}, 'request_digest': '646201724c0de7ec62bbd81c1c4348be01054e224c4d3864253b0b2bfc9da1f7', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A6-read-files-on-records",
+      "description": "cross-namespace denied: sandbox.read_file records/x.json",
+      "detail": "got {'error': \"resource must live under 'files/'\", 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A6-write-records-on-files",
+      "description": "cross-namespace denied: sandbox.write_file records/r.json",
+      "detail": "got {'error': \"resource must live under 'files/'\", 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A6-create-records-on-files",
+      "description": "cross-namespace denied: sandbox.create_record files/rec.json",
+      "detail": "got {'error': \"resource must live under 'records/'\", 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A6-append-records-on-files",
+      "description": "cross-namespace denied: sandbox.append_file records/y.json",
+      "detail": "got {'error': \"resource must live under 'files/'\", 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A7-UNICODE",
+      "description": "hostile resource form blocked: 'files/\\\\u202eevil.txt'",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': '550206132bfc2dee1739abac61ca011c20c238cfdfaddbacd4d7c92f267a8c41', 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['COHERENCE_GATE_SATISFIED', 'RESOURCE_ERROR'], 'request': {'action': 'sandbox.read_file', 'audience': 'executor', 'parameters': {}, 'principal': 'planner', 'request_id': 'A7-unicode', 'resource': 'files/\\\\u202eevil.txt'}, 'request_digest': 'f30cc70b4007552d257315c2d7e75fda1215ab5981033447259e3c1729a66382', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A7-NULLBYTE",
+      "description": "hostile resource form blocked: 'files/\\x00evil.txt'",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': 'c2bcc45c8abcc6f18fb0fa440db5a72345d82199cccd1205451757bdb185ed22', 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['COHERENCE_GATE_SATISFIED', 'RESOURCE_ERROR'], 'request': {'action': 'sandbox.read_file', 'audience': 'executor', 'parameters': {}, 'principal': 'planner', 'request_id': 'A7-nullbyte', 'resource': 'files/\\x00evil.txt'}, 'request_digest': '02715de38e51acbefbc2dcb5c397bfc39d49e6258dd7cb94343a8222c0bf3d67', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A7-DOT",
+      "description": "hostile resource form blocked: 'files/./x.txt'",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': '55e60bba8c4e774ab4aaa4f0681d582f051933564a2f8c3fc1e94967945b739e', 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['COHERENCE_GATE_SATISFIED', 'RESOURCE_ERROR'], 'request': {'action': 'sandbox.read_file', 'audience': 'executor', 'parameters': {}, 'principal': 'planner', 'request_id': 'A7-dot', 'resource': 'files/./x.txt'}, 'request_digest': 'e738212bb7806aff6204cd7f0bf136ce52d068c556df6a661a71afc56cf65bed', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A7-EMPTY-SEG",
+      "description": "hostile resource form blocked: 'files//x.txt'",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': '2c5810701c285bb91f2e30453bd5ddb72309eb524e0a82220c754ec5566ae722', 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['COHERENCE_GATE_SATISFIED', 'RESOURCE_ERROR'], 'request': {'action': 'sandbox.read_file', 'audience': 'executor', 'parameters': {}, 'principal': 'planner', 'request_id': 'A7-empty-seg', 'resource': 'files//x.txt'}, 'request_digest': 'e5598f6c89c37164616e5f3b5bd5d3833dc8bb6d6a8cd95adde71e7823503a27', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A8-capability-replay",
+      "description": "identical proposals get distinct single-use capabilities",
+      "detail": "c1=78287eecfbaa5a0be4ba96be35381cc0f1a1b1a583783c323833ed83fa2297f4 c2=1a58f64c44fd73061262e1435b487d0ba45541f0c6a459856572b3d5434e56e4",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A9-double-approve",
+      "description": "second human approval does not double-execute",
+      "detail": "first=ALLOW second=INDETERMINATE",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A10-human-deny-no-effect",
+      "description": "human DENY leaves no file and no side effect",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': '8142973c0cdba178daa8b74b3a5d8959456a03bef5a5c50dfdae8c5365c76427', 'human_decision': 'DENY', 'human_signature': 'PHyr62sjN8fMm8TYgUQLkAw3g5XfqRWXownU5fFNX38fhG3aEkFR6RxPigHhzYVMfDeiPfiQQbWF6gCV32EvBw', 'operator': 'op-deny', 'output_digest': None, 'reason_codes': ['HUMAN_DENIED'], 'request': {'action': 'sandbox.write_file', 'audience': 'executor', 'parameters': {'content_b64': 'bmV2ZXI='}, 'principal': 'planner', 'request_id': 'a10', 'resource': 'files/denied.txt'}, 'request_digest': 'f62b11608402c327d2ba8102dee195d1e1c5b2f75db1614c9bef44d5deec3c1a', 'state': 'DENY'} target_exists=False",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A11-approve-missing",
+      "description": "approving a nonexistent proposal fails closed",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': None, 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['PROPOSAL_NOT_FOUND'], 'request': {'request_id': 'a11-missing'}, 'request_digest': '', 'state': 'INDETERMINATE'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A12-oversize-content",
+      "description": "oversize content fails closed",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': '8cece8e11c9f1bca97d6ae111d480c71ad37ca71ed176e871dac8cf775bd1b56', 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['CANONICALIZATION_ERROR'], 'request': {'request_id': 'a12'}, 'request_digest': '', 'state': 'INDETERMINATE'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A13-PARAMS-NOT-DICT",
+      "description": "malformed parameters fail closed: A13-params-not-dict",
+      "detail": "propose=DENY approve=DENY",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A13-INVALID-B64",
+      "description": "malformed parameters fail closed: A13-invalid-b64",
+      "detail": "propose=REQUIRE_HUMAN approve=DENY",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A13-MISSING-CONTENT",
+      "description": "malformed parameters fail closed: A13-missing-content",
+      "detail": "propose=DENY approve=DENY",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A14-unknown-action",
+      "description": "unknown action denied",
+      "detail": "got {'error': 'action is not a governed sandbox actuator', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A15-audience-mismatch",
+      "description": "audience mismatch does not execute",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': 'f1bc7953b8f631fc78a731a43504c29979bf18722c42f457e393e35abf739408', 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['COHERENCE_GATE_SATISFIED', 'AUTHORIZATION_DENIED'], 'request': {'action': 'sandbox.read_file', 'audience': 'not-executor', 'parameters': {}, 'principal': 'planner', 'request_id': 'a15', 'resource': 'files/seed.txt'}, 'request_digest': '32e3ef68b8a329f24f6e9f2b7593364331c75236a34d5124be82ffd32a90d78f', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A16-cross-origin",
+      "description": "cross-origin proposal rejected",
+      "detail": "got {'error': 'cross-origin request rejected', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A17-flight-tamper",
+      "description": "flight recorder tamper detected by /api/evidence",
+      "detail": "http=500 got={'detail': 'AuditIntegrityError', 'error': 'integrity verification failed', 'state': 'INDETERMINATE'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A18-audit-tamper",
+      "description": "audit tamper detected by doctor",
+      "detail": "doctor=FAIL detail={'checks': {'epoch_initialized': 'FAIL', 'workspace_initialized': 'PASS'}, 'findings': ['runtime state error: cannot scan ledger: invalid canonical byte document'], 'status': 'FAIL'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A19-key-perms",
+      "description": "private key is mode 0600",
+      "detail": "mode=0o600",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A20-create-record-exists",
+      "description": "create_record on existing record fails closed",
+      "detail": "propose=REQUIRE_HUMAN approve=DENY",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A21-deep-path",
+      "description": "resource path depth limit enforced",
+      "detail": "got {'capability_id': None, 'executed': False, 'flight_hash': '252e0a9ae6ac0a7e6b8bf035d149e49799edb5c6c19431c57788043a4d13959c', 'human_decision': None, 'human_signature': None, 'operator': None, 'output_digest': None, 'reason_codes': ['COHERENCE_GATE_SATISFIED', 'RESOURCE_ERROR'], 'request': {'action': 'sandbox.read_file', 'audience': 'executor', 'parameters': {}, 'principal': 'planner', 'request_id': 'a21', 'resource': 'files/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/x.txt'}, 'request_digest': 'f9f996639b354c598871f9a93b7029a71a0b3c3aaa29b65687e6c86267b462ef', 'state': 'DENY'}",
+      "status": "PASS"
+    },
+    {
+      "attack_id": "A22-api-health",
+      "description": "/api/health returns 200",
+      "detail": "http=200",
+      "status": "PASS"
+    }
+  ],
+  "kind": "redteam-adversarial",
+  "phase": 9,
+  "post_attack_doctor": {
+    "checks": {
+      "actuator_registry": "PASS",
+      "audit_integrity": "PASS",
+      "epoch_initialized": "PASS",
+      "failure_ledger_integrity": "PASS",
+      "flight_integrity": "PASS",
+      "state_integrity": "PASS",
+      "workspace_initialized": "PASS"
+    },
+    "findings": [],
+    "status": "PASS"
+  },
+  "post_attack_test": {
+    "results": {
+      "h14_proposal_is_not_authority": true
+    },
+    "status": "PASS"
+  },
+  "recorded_at": "2026-08-17",
+  "schema_version": "mgk.redteam.v1"
+}

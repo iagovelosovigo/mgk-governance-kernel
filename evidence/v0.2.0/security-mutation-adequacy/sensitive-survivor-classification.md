@@ -1,0 +1,73 @@
+# Sensitive Survivor Security Classification
+
+- source: `evidence/v0.2.0/security-mutation-adequacy/sensitive-survivors.json`
+- total: **195**
+- SHA-256: `704f58145f17b25c1fe8dd925930b20b3901eabc5c16299bdf08d9cd1b05976c`
+
+## Counts by security class
+
+| class | count |
+|---|---|
+| AVAILABILITY_ONLY | 61 |
+| EQUIVALENT_PROVEN | 3 |
+| INTEGRITY_WEAKENING | 63 |
+| PERMISSION_WEAKENING | 1 |
+| SECURITY_BYPASS | 29 |
+| TEST_GAP_ONLY | 38 |
+
+## Phase 4 dispositions (93 HIGH/CRITICAL targets)
+
+| disposition | count |
+|---|---|
+| KILLED | 59 |
+| EQUIVALENT_PROVEN | 32 |
+| TEST_GAP_ONLY | 1 |
+| AVAILABILITY_ONLY | 1 |
+| UNRESOLVED | 0 |
+
+### authority
+
+- AVAILABILITY_ONLY: 2
+- EQUIVALENT_PROVEN: 1
+- SECURITY_BYPASS: 1
+
+### canonical
+
+- AVAILABILITY_ONLY: 7
+- INTEGRITY_WEAKENING: 2
+- PERMISSION_WEAKENING: 1
+- SECURITY_BYPASS: 5
+- TEST_GAP_ONLY: 19
+
+### executor
+
+- AVAILABILITY_ONLY: 9
+- INTEGRITY_WEAKENING: 1
+- SECURITY_BYPASS: 2
+
+### ledger
+
+- AVAILABILITY_ONLY: 3
+- INTEGRITY_WEAKENING: 12
+- SECURITY_BYPASS: 2
+- TEST_GAP_ONLY: 6
+
+### resource
+
+- AVAILABILITY_ONLY: 28
+- EQUIVALENT_PROVEN: 2
+- INTEGRITY_WEAKENING: 43
+- SECURITY_BYPASS: 12
+- TEST_GAP_ONLY: 9
+
+### saxp
+
+- SECURITY_BYPASS: 6
+- TEST_GAP_ONLY: 1
+
+### state
+
+- AVAILABILITY_ONLY: 12
+- INTEGRITY_WEAKENING: 5
+- SECURITY_BYPASS: 1
+- TEST_GAP_ONLY: 3

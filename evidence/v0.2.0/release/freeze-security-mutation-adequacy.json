@@ -1,0 +1,127 @@
+{
+ "manifest": {
+  "schema_version": "mgk.release-freeze.v1",
+  "kind": "release-freeze-signature",
+  "campaign": "v0.2.0-security-mutation-adequacy",
+  "recorded_at": "2026-08-17",
+  "git": {
+   "branch": "mgk-autopilot/v0.2.0-security-mutation-adequacy",
+   "commit": "2dfb4f7370816560361465e49196ab6bdfc73e03",
+   "tree": "8bfb14592141a803d47e5724c941a92888655777"
+  },
+  "files": [
+   {
+    "path": "evidence/v0.2.0/independent-exam/security-mutation-adequacy-verification.json",
+    "sha256": "c42e4e2277776ca7ee4429841cbd41ad1287b1d4c484989d2f6a8c8d73bd0bf4"
+   },
+   {
+    "path": "evidence/v0.2.0/independent-exam/security-mutation-adequacy-verification.md",
+    "sha256": "3c01ec53ab353993caea119c5ab6b26683393d6b0af8a29bfbb4ef920aa03500"
+   },
+   {
+    "path": "evidence/v0.2.0/install/clean-install-ab.json",
+    "sha256": "225cca2ae47c529ff9ca00286e061e8bf7006b333dee8e77a1b38701740458c0"
+   },
+   {
+    "path": "evidence/v0.2.0/install/clean-install-ab.md",
+    "sha256": "cddaf532aa6ed593f5ad8b42a5dd9501b5081e62575f61e7e907490bf8fc2e48"
+   },
+   {
+    "path": "evidence/v0.2.0/install/dependency-freeze-and-secret-scan.md",
+    "sha256": "8b54b3adbbf893090f786428f62649e6185333105670e97d53cbc4a7be2a2af0"
+   },
+   {
+    "path": "evidence/v0.2.0/redteam/redteam-adversarial.json",
+    "sha256": "05790d6e53677efa04cab4e950e587fb6030b571420b2fa6e50ba4e85894a73e"
+   },
+   {
+    "path": "evidence/v0.2.0/redteam/redteam.json",
+    "sha256": "f8c7b3433652bf9e3a2026d9ffcf9ec5729c7b787ac85e4088b635f2fcf479d8"
+   },
+   {
+    "path": "evidence/v0.2.0/redteam/redteam.md",
+    "sha256": "ceb97c401cff3322f144e63ed095d2be86a15d9af3645afef162edfbc2507229"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/baseline.json",
+    "sha256": "98700e4dd8d5b7cc3bdf9bf524c211e60d89995a24297e650fe761181fb2e743"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/baseline.md",
+    "sha256": "0ba06b21b6d4c49c54b1168fce764938ef730d8539428c9987794963c263b8fc"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/historical-harness.json",
+    "sha256": "348311f18c97ba611a02a6009108ca702c818a936c80e2400f9eba36dbe9944c"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/phase11-secrets-root-of-trust.json",
+    "sha256": "cca90421ef699b77156c18b6e4fc7dd1a926f41651f18e91d1e41b98b2cca5c3"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/phase11-secrets-root-of-trust.md",
+    "sha256": "8a8a9e692aa1b987e428a4c0fa51562dbd39d92f4e6817dfa7941de7bd8bb985"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/phase4-completion.json",
+    "sha256": "b557417ef72c03db378540b24cf4a1e46701247bf8180d9ff08d289c113eb51b"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/phase4-discriminating-test-verification.json",
+    "sha256": "1b488f7c8781492f9cabf6bac01f3d9c2266571dcdace6dffe802365fe43e71d"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/phase6-source-audit.json",
+    "sha256": "cbd978d2b496609a83b0bb7895daeadbab585a566662bf1f532fceb67ed51e0f"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/phase7-functional-e2e.json",
+    "sha256": "6c611febe79fb47683ed0cff46a5ff60ffb8a5e66f64d7f26db4e24751d42e61"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/phase8-fresh-survivor-addendum.json",
+    "sha256": "b3f2749c57a1c488f14e7470084541ea37c5207dd563e420da24c18f2e7c04ec"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/population-classification-full.json",
+    "sha256": "0a7ef08a82e7203bd9946caf2d404da4d81f79eb8fb9a83636290c77fac61680"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/population-experiment-results.txt",
+    "sha256": "b4a5deb8b9854a071194cdd9a679991c24a2b207066198c2c3e11d8675d1059c"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/population-experiment.json",
+    "sha256": "4fa341530474985dd1a0a5a2ed3c879547aaf5f7d0a127381cad3b38f38c2030"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/population-fresh.json",
+    "sha256": "c36de7a06ddb7486fbbb82712bcaebec2db0e8fec2a2258de2432676af2a6a16"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/security-adequacy-gate.json",
+    "sha256": "d7f5a5642f3cc82a2f12bce1bb8e362b9010421111c4111afd216cbb46304d4d"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/sensitive-survivor-classification.json",
+    "sha256": "704f58145f17b25c1fe8dd925930b20b3901eabc5c16299bdf08d9cd1b05976c"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/sensitive-survivor-classification.md",
+    "sha256": "fb01af2e8a92d44f298052216e0a120ff7e72bb65e460b2a5bdd5f8bdc91674b"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/sensitive-survivors.json",
+    "sha256": "9aa77eeecf0bff3b093590e1277bfbb0db8910b871abd15a26059663269ba04a"
+   },
+   {
+    "path": "evidence/v0.2.0/security-mutation-adequacy/sensitive-survivors.md",
+    "sha256": "71002af84fa1fbdddc835563d92f19dd9dd60cee9141399e8a5d0938a48b6b8b"
+   }
+  ]
+ },
+ "signer_public_key": "ed25519:7acf7dbe2cb322198251fed710e39f686bedf7af28e1bab34b672c86b950edcc",
+ "signer_public_key_bytes": "58c1141c406a30bc64f6a6911df48a9e26915e590989488a247ee627f8ea7dab",
+ "signature": "hDVovZW35LCNm0vskR7YxWeq-BH_j6mjBayMqggh2FYgHnCFEH42OnUWSuTclDLzcjwDCsQQUcCtnvIZLMnaDQ",
+ "signature_verified": true
+}

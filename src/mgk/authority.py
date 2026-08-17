@@ -12,13 +12,23 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from .canonical import canonicalize, digest
 from .clock import SystemClock
 from .crypto import CAPABILITY_DOMAIN, b64u_decode, key_id, sign
-from .errors import AuthorizationDenied, SchemaError
+from .errors import AuthorizationDenied, ResourceError, SchemaError
 from .models import ActionRequest, IssueResult, SAXPContext
 from .resource import MAX_RESOURCE_BYTES, ResourceGuard
 from .saxp import SAXPEvaluator, SAXPResult
 from .state import SecurityState
 
 _IDENTIFIER = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$")
+
+SANDBOX_ACTIONS = frozenset(
+    {
+        "sandbox.read_file",
+        "sandbox.write_file",
+        "sandbox.append_file",
+        "sandbox.create_record",
+        "sandbox.read_record",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -86,6 +96,12 @@ class CapabilityAuthority:
             raise AuthorizationDenied("resource is outside authority policy")
 
     def _bind_resource(self, request: ActionRequest) -> dict[str, object]:
+        try:
+            return self._bind_resource_dispatch(request)
+        except OSError as exc:
+            raise ResourceError(f"resource unavailable: {exc}") from exc
+
+    def _bind_resource_dispatch(self, request: ActionRequest) -> dict[str, object]:
         parameters = dict(request.parameters)
         if request.action == "resource.read":
             if parameters:
@@ -104,11 +120,42 @@ class CapabilityAuthority:
                 hashlib.sha256(data).hexdigest(),
                 len(data),
             )
+        if request.action == "sandbox.read_file" or request.action == "sandbox.read_record":
+            if parameters:
+                raise SchemaError(f"{request.action} takes no parameters")
+            return self.resource_guard.bind_present(request.resource)
+        if request.action == "sandbox.write_file":
+            if set(parameters) != {"content_b64"} or type(parameters["content_b64"]) is not str:
+                raise SchemaError("sandbox.write_file requires canonical content_b64")
+            data = b64u_decode(parameters["content_b64"])
+            return self.resource_guard.bind_write(request.resource, data)
+        if request.action == "sandbox.append_file":
+            if set(parameters) != {"content_b64"} or type(parameters["content_b64"]) is not str:
+                raise SchemaError("sandbox.append_file requires canonical content_b64")
+            data = b64u_decode(parameters["content_b64"])
+            return self.resource_guard.bind_append(request.resource, data)
+        if request.action == "sandbox.create_record":
+            if set(parameters) != {"content_b64"} or type(parameters["content_b64"]) is not str:
+                raise SchemaError("sandbox.create_record requires canonical content_b64")
+            data = b64u_decode(parameters["content_b64"])
+            import hashlib
+
+            return self.resource_guard.bind_absent(
+                request.resource,
+                hashlib.sha256(data).hexdigest(),
+                len(data),
+            )
         raise AuthorizationDenied("unsupported action")
 
-    def issue(self, request: ActionRequest, ttl_seconds: int | None = None) -> IssueResult:
+    def issue(
+        self,
+        request: ActionRequest,
+        ttl_seconds: int | None = None,
+        context: SAXPContext | None = None,
+    ) -> IssueResult:
         self._validate_request(request)
-        context = self.context_provider(request)
+        if context is None:
+            context = self.context_provider(request)
         if not isinstance(context, SAXPContext):
             raise SchemaError("trusted context provider returned an invalid context")
         decision = self.saxp.evaluate(request, context)

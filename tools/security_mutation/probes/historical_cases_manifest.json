@@ -1,0 +1,76 @@
+{
+  "schema_version": "mgk.security-mutation-adequacy.v1",
+  "kind": "historical-survivor-manifest",
+  "cases": [
+    {
+      "test_id": "HIST-01",
+      "mutant_id": "mgk.authority.x\u01c1CapabilityAuthority\u01c1__init____mutmut_14",
+      "file": "authority.py",
+      "old_fragment": "policy or AuthorityPolicy()",
+      "new_fragment": "policy and AuthorityPolicy()",
+      "probe": "tools/security_mutation/probes/historical/authority_14_policy_default.py",
+      "affected_invariant": "POLICY_PRESERVATION",
+      "extra_fields": { "status_in_v020": "KILLED" }
+    },
+    {
+      "test_id": "HIST-02",
+      "mutant_id": "mgk.state.x\u01c1SecurityState\u01c1bump_epoch__mutmut_36",
+      "file": "state.py",
+      "old_fragment": "row is None or self._decode_epoch(row[0]) != current",
+      "new_fragment": "row is None and self._decode_epoch(row[0]) != current",
+      "probe": "tools/security_mutation/probes/historical/bump_epoch_36_stale_writer.py",
+      "affected_invariant": "EPOCH_MONOTONICITY",
+      "extra_fields": { "status_in_v020": "SURVIVED_KILLABLE" }
+    },
+    {
+      "test_id": "HIST-03",
+      "mutant_id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_105",
+      "file": "resource.py",
+      "old_fragment": "os.unlink(name, dir_fd=parent)",
+      "new_fragment": "os.unlink(name, dir_fd=None)",
+      "probe": "tools/security_mutation/probes/historical/create_bound_rollback_confinement.py",
+      "affected_invariant": "ROLLBACK_CONFINEMENT",
+      "extra_fields": { "status_in_v020": "SURVIVED_KILLABLE" }
+    },
+    {
+      "test_id": "HIST-04",
+      "mutant_id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_107",
+      "file": "resource.py",
+      "old_fragment": "os.unlink(name, dir_fd=parent)",
+      "new_fragment": "os.unlink(name, )",
+      "probe": "tools/security_mutation/probes/historical/create_bound_rollback_confinement.py",
+      "affected_invariant": "ROLLBACK_CONFINEMENT",
+      "extra_fields": { "status_in_v020": "SURVIVED_KILLABLE" }
+    },
+    {
+      "test_id": "HIST-05",
+      "mutant_id": "mgk.resource.x\u01c1ResourceGuard\u01c1remove_created__mutmut_42",
+      "file": "resource.py",
+      "old_fragment": "len(data) != binding[\"post_size\"] or hashlib.sha256(data).hexdigest() != digest",
+      "new_fragment": "len(data) != binding[\"post_size\"] and hashlib.sha256(data).hexdigest() != digest",
+      "probe": "tools/security_mutation/probes/historical/remove_created_42_digest_identity.py",
+      "affected_invariant": "RESOURCE_IDENTITY",
+      "extra_fields": { "status_in_v020": "KILLED" }
+    },
+    {
+      "test_id": "HIST-06",
+      "mutant_id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_68",
+      "file": "resource.py",
+      "old_fragment": "descriptor = os.open(name, flags, 0o600, dir_fd=parent)",
+      "new_fragment": "descriptor = os.open(name, flags, dir_fd=parent)",
+      "probe": "tools/security_mutation/probes/historical/create_bound_umask_permissions.py",
+      "affected_invariant": "RESOURCE_PERMISSIONS",
+      "extra_fields": { "status_in_v020": "SURVIVED_KILLABLE" }
+    },
+    {
+      "test_id": "HIST-07",
+      "mutant_id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_70",
+      "file": "resource.py",
+      "old_fragment": "descriptor = os.open(name, flags, 0o600, dir_fd=parent)",
+      "new_fragment": "descriptor = os.open(name, flags, 385, dir_fd=parent)",
+      "probe": "tools/security_mutation/probes/historical/create_bound_umask_permissions.py",
+      "affected_invariant": "RESOURCE_PERMISSIONS",
+      "extra_fields": { "status_in_v020": "SURVIVED_KILLABLE" }
+    }
+  ]
+}

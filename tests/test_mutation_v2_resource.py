@@ -160,3 +160,308 @@ def test_b64u_create_end_to_end(tmp_path):
     raw = b64u_decode(request_params["content_b64"])
     assert guard.create_bound(binding, raw) == sha
     assert (root / "workspace" / "b64.txt").read_bytes() == data
+
+
+def test_bind_write_absent_exact_dict(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b"new bytes\n"
+    binding = guard.bind_write("workspace/w.txt", data)
+    assert binding == {
+        "path": "workspace/w.txt",
+        "post_sha256": hashlib.sha256(data).hexdigest(),
+        "post_size": len(data),
+        "pre_sha256": "",
+        "pre_size": 0,
+        "pre_state": "absent",
+        "state": "write",
+    }
+
+
+def test_bind_write_present_exact_dict(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b"replacement\n"
+    pre = b"hello\n"
+    binding = guard.bind_write("workspace/file.txt", data)
+    assert binding == {
+        "path": "workspace/file.txt",
+        "post_sha256": hashlib.sha256(data).hexdigest(),
+        "post_size": len(data),
+        "pre_sha256": hashlib.sha256(pre).hexdigest(),
+        "pre_size": len(pre),
+        "pre_state": "present",
+        "state": "write",
+    }
+
+
+def test_bind_write_rejects_oversize_and_non_bytes(tmp_path):
+    from mgk.resource import MAX_RESOURCE_BYTES
+
+    guard, root = make_guard(tmp_path)
+    with pytest.raises(ResourceError, match="^invalid write payload size$"):
+        guard.bind_write("workspace/big.txt", b"x" * (MAX_RESOURCE_BYTES + 1))
+    with pytest.raises(ResourceError, match="^invalid write payload size$"):
+        guard.bind_write("workspace/big.txt", "text")
+
+
+def test_write_bound_absent_creates_exact(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b"created via write\n"
+    binding = guard.bind_write("workspace/wc.txt", data)
+    assert guard.write_bound(binding, data) == binding["post_sha256"]
+    target = root / "workspace" / "wc.txt"
+    assert target.read_bytes() == data
+    assert target.stat().st_mode & 0o777 == 0o600
+
+
+def test_write_bound_absent_race_fails_closed(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b"abc"
+    binding = guard.bind_write("workspace/wr.txt", data)
+    (root / "workspace" / "wr.txt").write_bytes(b"racer")
+    with pytest.raises(ResourceError, match="^write target appeared after authorization$"):
+        guard.write_bound(binding, data)
+    assert (root / "workspace" / "wr.txt").read_bytes() == b"racer"
+
+
+def test_write_bound_present_overwrites_exact(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b"overwritten\n"
+    binding = guard.bind_write("workspace/file.txt", data)
+    assert guard.write_bound(binding, data) == binding["post_sha256"]
+    assert (root / "workspace" / "file.txt").read_bytes() == data
+    assert (root / "workspace" / "file.txt").read_bytes() == b"overwritten\n"
+
+
+def test_write_bound_present_changed_pre_fails(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b"x"
+    binding = guard.bind_write("workspace/file.txt", data)
+    (root / "workspace" / "file.txt").write_bytes(b"tampered\n")
+    with pytest.raises(ResourceError, match="^write target changed after authorization$"):
+        guard.write_bound(binding, data)
+
+
+def test_write_bound_rejects_invalid_binding_and_payload(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b"x"
+    binding = guard.bind_write("workspace/wb.txt", data)
+    with pytest.raises(ResourceError, match="^invalid write-resource binding$"):
+        bad = dict(binding)
+        bad.pop("state")
+        guard.write_bound(bad, data)
+    with pytest.raises(ResourceError, match="^invalid write-resource binding$"):
+        bad = dict(binding)
+        bad["state"] = "append"
+        guard.write_bound(bad, data)
+    with pytest.raises(ResourceError, match="^invalid write pre-state$"):
+        bad = dict(binding)
+        bad["pre_state"] = "bogus"
+        guard.write_bound(bad, data)
+    with pytest.raises(ResourceError, match="^write payload does not match capability binding$"):
+        guard.write_bound(binding, b"y")
+    with pytest.raises(ResourceError, match="^write payload exceeds size limit$"):
+        from mgk.resource import MAX_RESOURCE_BYTES
+
+        guard.write_bound(binding, b"y" * (MAX_RESOURCE_BYTES + 1))
+
+
+def test_bind_append_exact_dict(tmp_path):
+    guard, root = make_guard(tmp_path)
+    pre = b"hello\n"
+    data = b"appended\n"
+    binding = guard.bind_append("workspace/file.txt", data)
+    assert binding == {
+        "path": "workspace/file.txt",
+        "post_sha256": hashlib.sha256(pre + data).hexdigest(),
+        "post_size": len(pre + data),
+        "pre_sha256": hashlib.sha256(pre).hexdigest(),
+        "pre_size": len(pre),
+        "state": "append",
+    }
+
+
+def test_bind_append_rejects_oversize(tmp_path):
+    from mgk.resource import MAX_RESOURCE_BYTES
+
+    guard, root = make_guard(tmp_path)
+    with pytest.raises(ResourceError, match="^invalid append payload size$"):
+        guard.bind_append("workspace/file.txt", b"x" * (MAX_RESOURCE_BYTES + 1))
+
+
+def test_append_bound_appends_exact(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b"more\n"
+    binding = guard.bind_append("workspace/file.txt", data)
+    assert guard.append_bound(binding, data) == binding["post_sha256"]
+    assert (root / "workspace" / "file.txt").read_bytes() == b"hello\nmore\n"
+
+
+def test_append_bound_missing_target_fails(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b"x"
+    binding = guard.bind_append("workspace/file.txt", data)
+    (root / "workspace" / "file.txt").unlink()
+    with pytest.raises(ResourceError, match="^append target is missing$"):
+        guard.append_bound(binding, data)
+
+
+def test_append_bound_changed_pre_fails(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b"x"
+    binding = guard.bind_append("workspace/file.txt", data)
+    (root / "workspace" / "file.txt").write_bytes(b"changed\n")
+    with pytest.raises(ResourceError, match="^append target changed after authorization$"):
+        guard.append_bound(binding, data)
+
+
+def test_append_bound_rejects_invalid_binding(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b"x"
+    binding = guard.bind_append("workspace/file.txt", data)
+    with pytest.raises(ResourceError, match="^invalid append-resource binding$"):
+        bad = dict(binding)
+        bad.pop("path")
+        guard.append_bound(bad, data)
+    with pytest.raises(ResourceError, match="^invalid append-resource binding$"):
+        bad = dict(binding)
+        bad["state"] = "write"
+        guard.append_bound(bad, data)
+    with pytest.raises(ResourceError, match="^append payload exceeds size limit$"):
+        from mgk.resource import MAX_RESOURCE_BYTES
+
+        guard.append_bound(binding, b"x" * (MAX_RESOURCE_BYTES + 1))
+
+
+def test_bind_write_target_directory_rejects_exact_error(tmp_path):
+    guard, root = make_guard(tmp_path)
+    with pytest.raises(ResourceError, match="^write target is not a regular file$"):
+        guard.bind_write("workspace", b"x")
+
+
+def test_bind_write_broken_symlink_target_rejects(tmp_path):
+    guard, root = make_guard(tmp_path)
+    (root / "workspace" / "link.txt").symlink_to("missing-target")
+    with pytest.raises(OSError):
+        guard.bind_write("workspace/link.txt", b"x")
+
+
+def test_bind_append_pre_plus_data_over_limit_rejects_exact_error(tmp_path):
+    from mgk.resource import MAX_RESOURCE_BYTES
+
+    guard, root = make_guard(tmp_path)
+    (root / "workspace" / "big.txt").write_bytes(b"x" * MAX_RESOURCE_BYTES)
+    with pytest.raises(ResourceError, match="^append result exceeds size limit$"):
+        guard.bind_append("workspace/big.txt", b"y")
+
+
+def test_bind_append_exact_limit_succeeds(tmp_path):
+    from mgk.resource import MAX_RESOURCE_BYTES
+
+    guard, root = make_guard(tmp_path)
+    (root / "workspace" / "empty.txt").write_bytes(b"")
+    binding = guard.bind_append("workspace/empty.txt", b"x" * MAX_RESOURCE_BYTES)
+    assert binding["post_size"] == MAX_RESOURCE_BYTES
+    assert binding["pre_size"] == 0
+
+
+def test_bind_write_exact_limit_succeeds(tmp_path):
+    from mgk.resource import MAX_RESOURCE_BYTES
+
+    guard, root = make_guard(tmp_path)
+    binding = guard.bind_write("workspace/big.txt", b"x" * MAX_RESOURCE_BYTES)
+    assert binding["post_size"] == MAX_RESOURCE_BYTES
+    assert binding["pre_state"] == "absent"
+
+
+def test_bind_present_exact_limit_succeeds(tmp_path):
+    from mgk.resource import MAX_RESOURCE_BYTES
+
+    guard, root = make_guard(tmp_path)
+    (root / "workspace" / "big.txt").write_bytes(b"x" * MAX_RESOURCE_BYTES)
+    binding = guard.bind_present("workspace/big.txt")
+    assert binding["size"] == MAX_RESOURCE_BYTES
+
+
+def test_bind_absent_max_size_succeeds(tmp_path):
+    from mgk.resource import MAX_RESOURCE_BYTES
+
+    guard, root = make_guard(tmp_path)
+    data = b"x" * MAX_RESOURCE_BYTES
+    binding = guard.bind_absent("workspace/max.txt", hashlib.sha256(data).hexdigest(), len(data))
+    assert binding["post_size"] == MAX_RESOURCE_BYTES
+
+
+def test_write_bound_exact_limit_succeeds(tmp_path):
+    from mgk.resource import MAX_RESOURCE_BYTES
+
+    guard, root = make_guard(tmp_path)
+    data = b"x" * MAX_RESOURCE_BYTES
+    binding = guard.bind_write("workspace/big.txt", data)
+    assert guard.write_bound(binding, data) == binding["post_sha256"]
+    assert (root / "workspace" / "big.txt").stat().st_size == MAX_RESOURCE_BYTES
+
+
+def test_append_bound_exact_limit_succeeds(tmp_path):
+    from mgk.resource import MAX_RESOURCE_BYTES
+
+    guard, root = make_guard(tmp_path)
+    (root / "workspace" / "empty.txt").write_bytes(b"")
+    data = b"x" * MAX_RESOURCE_BYTES
+    binding = guard.bind_append("workspace/empty.txt", data)
+    assert guard.append_bound(binding, data) == binding["post_sha256"]
+    assert (root / "workspace" / "empty.txt").stat().st_size == MAX_RESOURCE_BYTES
+
+
+def test_write_bound_present_empty_data_truncates(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b""
+    binding = guard.bind_write("workspace/file.txt", data)
+    assert guard.write_bound(binding, data) == binding["post_sha256"]
+    assert (root / "workspace" / "file.txt").read_bytes() == b""
+
+
+def test_write_bound_present_target_deleted_rejects(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b"x"
+    binding = guard.bind_write("workspace/file.txt", data)
+    (root / "workspace" / "file.txt").unlink()
+    with pytest.raises(OSError):
+        guard.write_bound(binding, data)
+
+
+def test_bind_absent_broken_symlink_target_rejects_exact_error(tmp_path):
+    guard, root = make_guard(tmp_path)
+    (root / "workspace" / "link.txt").symlink_to("missing-target")
+    with pytest.raises(ResourceError, match="^create target already exists$"):
+        guard.bind_absent("workspace/link.txt", hashlib.sha256(b"x").hexdigest(), 1)
+
+
+def test_open_parent_midwalk_file_rejects(tmp_path):
+    guard, root = make_guard(tmp_path)
+    with pytest.raises(OSError):
+        guard.bind_present("workspace/file.txt/child")
+
+
+def test_remove_created_directory_target_returns_false(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b"content\n"
+    sha = hashlib.sha256(data).hexdigest()
+    binding = guard.bind_absent("workspace/dir.txt", sha, len(data))
+    guard.create_bound(binding, data)
+    target = root / "workspace" / "dir.txt"
+    target.unlink()
+    target.mkdir()
+    assert guard.remove_created(binding, sha) is False
+    assert target.is_dir()
+
+
+def test_remove_created_changed_content_returns_false(tmp_path):
+    guard, root = make_guard(tmp_path)
+    data = b"hello\n"
+    sha = hashlib.sha256(data).hexdigest()
+    binding = guard.bind_absent("workspace/swap.txt", sha, len(data))
+    guard.create_bound(binding, data)
+    target = root / "workspace" / "swap.txt"
+    target.write_bytes(b"hallo\n")
+    assert guard.remove_created(binding, sha) is False
+    assert target.read_bytes() == b"hallo\n"

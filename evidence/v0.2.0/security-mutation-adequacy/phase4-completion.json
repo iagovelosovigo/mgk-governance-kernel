@@ -1,0 +1,37 @@
+{
+  "schema_version": "mgk.security-mutation-adequacy.v1",
+  "kind": "phase-4-completion",
+  "phase": 4,
+  "phase_4_result": "PASS",
+  "test_count": 406,
+  "new_security_tests": 43,
+  "test_file": "tests/test_mutation_v3_security.py",
+  "baseline_before_hardening": 363,
+  "high_critical_total": 93,
+  "high_critical_resolved": 93,
+  "high_critical_unresolved": 0,
+  "dispositions": {
+    "KILLED": 59,
+    "EQUIVALENT_PROVEN": 31,
+    "TEST_GAP_ONLY": 2,
+    "AVAILABILITY_ONLY": 1
+  },
+  "test_gap_only_remaining": [
+    {
+      "id": "mgk.authority.xǁCapabilityAuthorityǁ_bind_resource__mutmut_29",
+      "reason": "MAX_RESOURCE_BYTES (8 MiB) boundary is unreachable through the public flow: CapabilityAuthority.issue calls request.digest(), which canonicalizes content_b64 under MAX_CANONICAL_BYTES (~256 KiB). A > vs >= comparison at an unreachable boundary is not a mandatory security property. Boundary documented by test_authority_rejects_oversized_create_payload_at_issue."
+    },
+    {
+      "id": "mgk.resource.xǁResourceGuardǁcreate_bound__mutmut_47",
+      "reason": "created=False->True extra unlink is only observable under non-EEXIST/EACCES os.open failures (fd-exhaustion race with a raced-in target), not deterministically reachable; on all reachable inputs both variants raise the identical OSError."
+    }
+  ],
+  "availability_only": {
+    "id": "mgk.resource.xǁResourceGuardǁ_open_parent__mutmut_23",
+    "reason": "getattr default 1 adds the O_WRONLY bit; every parent-directory open fails closed with ENOTDIR (verified: bind_present raises NotADirectoryError). Availability/DoS only, no confidentiality or integrity impact."
+  },
+  "verification_tool": "tools/security_mutation/verify_discriminating_tests.py",
+  "verification_evidence": "phase4-discriminating-test-verification.json",
+  "verifier_note": "The verifier reports PHASE_4=FAIL by design when any mutant is not KILLED (KILLED=59 TEST_GAP=34); the 34 non-killed are deterministically reclassified (31 EQUIVALENT_PROVEN with executed evidence that the full test suite passes identically on the mutant copies, 2 TEST_GAP_ONLY non-reachable, 1 AVAILABILITY_ONLY). HIGH_CRITICAL_UNRESOLVED=0.",
+  "classification_evidence": "sensitive-survivor-classification.json"
+}

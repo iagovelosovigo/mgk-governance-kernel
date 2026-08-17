@@ -1,0 +1,23 @@
+{
+  "candidate": "MGK v0.2.0 Functional Governance Runtime",
+  "version": "0.2.0",
+  "branch": "mgk-autopilot/v0.2.0-functional-runtime",
+  "commit_sha": "1327e5e85a44b3a917a0472b7de2e6a202326c8b",
+  "tree_sha": "716527089f40ad881520d3944c01b238d8d3e862",
+  "parent_commits": ["bd36870e03f337ff567dd285e9c83685d650d3e9"],
+  "timestamp": "2026-08-17",
+  "versioned_worktree_clean": true,
+  "untracked_ephemeral_files": [],
+  "baseline_v0_1_0_commit": "130606b3f403e22e5c9b85a467a3012fe83da381",
+  "baseline_v0_1_0_tree": "70fcc64e27d4db541d7f874fba038689e7eb8373",
+  "candidate_provenance": [
+    "d3e1a6d chore(v0.2.0): capture discovery evidence for functional governance runtime",
+    "2d0ae14 chore(v0.2.0): record baseline snapshot and root-of-trust verification",
+    "edd3ea6 feat(v0.2.0): implement functional governance runtime",
+    "9bc5e84 test(v0.2.0): add scenario A-J and browser acceptance evidence",
+    "5f069ad security(v0.2.0): red team v0.2.0, all 14 attacks pass",
+    "bd36870 fix: reconcile tested v0.2.0 resource runtime candidate",
+    "1327e5e chore: set MGK candidate version to 0.2.0"
+  ],
+  "notes": "FINAL_COMMIT_SHA is the last commit that changes candidate code/metadata (the version bump). Later evidence/documentation commits reference this identity."
+}

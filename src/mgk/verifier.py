@@ -98,13 +98,31 @@ class CapabilityVerifier:
         binding = payload["resource_binding"]
         if type(binding) is not dict or binding.get("path") != request.resource:
             raise ScopeError("resource binding mismatch")
-        if action == "resource.read":
+        if action in {"resource.read", "sandbox.read_file", "sandbox.read_record"}:
             if set(binding) != {"path", "sha256", "size", "state"} or binding["state"] != "present":
                 raise ScopeError("invalid read resource binding")
-        elif action == "resource.create":
+        elif action in {"resource.create", "sandbox.create_record"}:
             expected = {"path", "post_sha256", "post_size", "state"}
             if set(binding) != expected or binding["state"] != "absent":
                 raise ScopeError("invalid create resource binding")
+        elif action == "sandbox.write_file":
+            expected = {
+                "path",
+                "post_sha256",
+                "post_size",
+                "pre_sha256",
+                "pre_size",
+                "pre_state",
+                "state",
+            }
+            if set(binding) != expected or binding["state"] != "write":
+                raise ScopeError("invalid write resource binding")
+            if binding["pre_state"] not in {"present", "absent"}:
+                raise ScopeError("invalid write pre-state")
+        elif action == "sandbox.append_file":
+            expected = {"path", "post_sha256", "post_size", "pre_sha256", "pre_size", "state"}
+            if set(binding) != expected or binding["state"] != "append":
+                raise ScopeError("invalid append resource binding")
         else:
             raise ScopeError("unsupported capability action")
         return payload

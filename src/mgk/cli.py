@@ -107,6 +107,20 @@ def main(argv: list[str] | None = None) -> int:
     subparsers = parser.add_subparsers(dest="command", required=True)
     smoke = subparsers.add_parser("h14-smoke")
     smoke.add_argument("--workdir")
+    runtime_group = subparsers.add_parser("start")
+    runtime_group.add_argument("--workdir", required=True)
+    runtime_group.add_argument("--host", default="127.0.0.1")
+    runtime_group.add_argument("--port", type=int, default=8787)
+    runtime_group.add_argument("--ttl", type=int, default=60)
+    runtime_group.add_argument("--foreground", action="store_true")
+    stop = subparsers.add_parser("stop")
+    stop.add_argument("--workdir", required=True)
+    status = subparsers.add_parser("status")
+    status.add_argument("--workdir", required=True)
+    doctor = subparsers.add_parser("doctor")
+    doctor.add_argument("--workdir", required=True)
+    test = subparsers.add_parser("test")
+    test.add_argument("--workdir", required=True)
     arguments = parser.parse_args(argv)
     if arguments.command == "h14-smoke":
         if arguments.workdir:
@@ -116,7 +130,9 @@ def main(argv: list[str] | None = None) -> int:
                 result = h14_smoke(Path(temporary))
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0 if result["result"] == "PASS" else 1
-    return 2
+    from runtime.server import main as runtime_main
+
+    return runtime_main(argv)
 
 
 if __name__ == "__main__":

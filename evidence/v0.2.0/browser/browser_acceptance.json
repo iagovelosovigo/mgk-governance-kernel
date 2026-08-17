@@ -1,0 +1,48 @@
+[
+  {
+    "page": "index",
+    "path": "/",
+    "title": "MGK Governance Runtime",
+    "ok": true,
+    "shot": "/Users/iagoveloso/mgk-governance-kernel/evidence/v0.2.0/browser/index.png"
+  },
+  {
+    "page": "propose",
+    "path": "/propose",
+    "title": "MGK Governance Runtime",
+    "ok": true,
+    "shot": "/Users/iagoveloso/mgk-governance-kernel/evidence/v0.2.0/browser/propose.png"
+  },
+  {
+    "page": "human_gate",
+    "path": "/human-gate",
+    "title": "MGK Governance Runtime",
+    "ok": true,
+    "shot": "/Users/iagoveloso/mgk-governance-kernel/evidence/v0.2.0/browser/human_gate.png"
+  },
+  {
+    "page": "flight_recorder",
+    "path": "/flight-recorder",
+    "title": "MGK Governance Runtime",
+    "ok": true,
+    "shot": "/Users/iagoveloso/mgk-governance-kernel/evidence/v0.2.0/browser/flight_recorder.png"
+  },
+  {
+    "page": "evidence",
+    "path": "/evidence",
+    "title": "MGK Governance Runtime",
+    "ok": true,
+    "shot": "/Users/iagoveloso/mgk-governance-kernel/evidence/v0.2.0/browser/evidence.png"
+  },
+  {
+    "page": "propose_result",
+    "ok": true,
+    "shot": "/Users/iagoveloso/mgk-governance-kernel/evidence/v0.2.0/browser/propose_result_require_human.png",
+    "result": "{\n  \"capability_id\": null,\n  \"executed\": false,\n  \"flight_hash\": \"fdf827089b85f397033d591cf3333f48022c6e319ac8b738e3194c64076d18cf\",\n  \"human_decision\": null,\n  \"human_signature\": null,\n  \"operator\": null,\n  \"output_digest\": null,\n  \"reason_codes\": [\n    \"CRITICAL_UNCERTAINTY\",\n    \"INFORMATION_INCOMPLETE\"\n  ],\n  \"request\": {\n    \"action\": \"sandbox.write_file\",\n    \"audience\": \"executor\",\n    \"parameters\": {\n      \"content_b64\": \"YnJvd3Nlci1oZWxsbw\"\n    },\n    \"principal\": \"planner\",\n    \"request_id\": \"browser-write\",\n    \"resource\": \"files/browser.txt\"\n  },\n  \"request_digest\": \"941a1b965419f55591b35110b12ce1ff84db38eff0d640ff8876f2afb4168186\",\n  \"state\": \"REQUIRE_HUMAN\"\n}"
+  },
+  {
+    "page": "human_gate_pending",
+    "ok": true,
+    "shot": "/Users/iagoveloso/mgk-governance-kernel/evidence/v0.2.0/browser/human_gate_pending.png"
+  }
+]

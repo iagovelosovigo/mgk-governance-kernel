@@ -1,0 +1,99 @@
+{
+  "schema_version": "mgk.security-mutation-adequacy.v1",
+  "kind": "phase-7-functional-e2e",
+  "phase": 7,
+  "recorded_at": "2026-08-17",
+  "launcher": "./mgk (PYTHONPATH=src, python -m mgk.cli)",
+  "interfaces_exercised": [
+    "./mgk h14-smoke",
+    "./mgk start/status/doctor/test/stop (CLI + JSON)",
+    "JSON API: POST /api/propose, POST /api/human-gate/{id}",
+    "Web UI: GET /, /propose, /human-gate (HTML pages)",
+    "GET /api/health, GET /decision/{request_id}"
+  ],
+  "runtime": {
+    "version": "0.2.0",
+    "host": "127.0.0.1",
+    "port": 8791,
+    "workdir": "/tmp/mgk-e2e-thl2"
+  },
+  "results": {
+    "h14_smoke": {
+      "result": "PASS",
+      "allowed_control_executed": true,
+      "forbidden_capability_issued": false,
+      "h14_forbidden_executions": 0
+    },
+    "doctor": { "status": "PASS", "checks_passing": ["actuator_registry", "audit_integrity", "epoch_initialized", "failure_ledger_integrity", "flight_integrity", "state_integrity", "workspace_initialized"], "findings": [] },
+    "runtime_test": { "status": "PASS", "results": { "h14_proposal_is_not_authority": true } },
+    "web_ui": { "/": "200 HTML", "/propose": "200 HTML", "/human-gate": "200 HTML", "/api/health": "200", "/decision/{id}": "200" }
+  },
+  "scenario_evidence": [
+    {
+      "scenario": "ALLOW",
+      "action": "sandbox.read_file files/allowed.txt",
+      "result": "executed=True, capability_id issued, reason_codes=[COHERENCE_GATE_SATISFIED]"
+    },
+    {
+      "scenario": "DENY (unsupported actuator)",
+      "action": "sandbox.destroy files/x",
+      "result": "400 DENY 'action is not a governed sandbox actuator'"
+    },
+    {
+      "scenario": "DENY (missing resource)",
+      "action": "sandbox.read_file files/nope.txt",
+      "result": "DENY reason_codes=[RESOURCE_ERROR], no capability issued"
+    },
+    {
+      "scenario": "DENY (path traversal)",
+      "action": "sandbox.read_file files/../etc/passwd",
+      "result": "DENY 'resource must live under files/'"
+    },
+    {
+      "scenario": "REQUIRE_HUMAN + human APPROVE",
+      "action": "sandbox.create_record records/rec3 content_b64={\"c\":3}",
+      "result": "REQUIRE_HUMAN [CRITICAL_UNCERTAINTY, INFORMATION_INCOMPLETE]; APPROVE -> executed=True, record file created with content {\"c\":3}, human_signature recorded"
+    },
+    {
+      "scenario": "REQUIRE_HUMAN + human DENY",
+      "action": "sandbox.create_record records/rec4 content_b64={\"d\":4}",
+      "result": "REQUIRE_HUMAN; DENY -> executed=False, no record file created, human_signature recorded, reason_codes=[HUMAN_DENIED]"
+    },
+    {
+      "scenario": "REPLAY (same request_id, identical payload)",
+      "action": "sandbox.create_record records/rec3 content_b64={\"c\":3}",
+      "result": "fresh decision REQUIRE_HUMAN (new flight hash), no silent re-execution; nonce consumption at executor level rejects replayed envelopes (test_executor_rejects_replayed_envelope)"
+    },
+    {
+      "scenario": "TAMPER (same request_id, altered payload)",
+      "action": "sandbox.create_record records/rec3 content_b64={\"c\":99}",
+      "result": "REQUIRE_HUMAN with distinct request_digest/flight_hash; altered payload never reuses prior approval"
+    },
+    {
+      "scenario": "MALFORMED INPUT",
+      "action": "missing action/parameters; malformed human decision 'maybe'",
+      "result": "400 DENY / 400 'decision must be APPROVE or DENY'"
+    },
+    {
+      "scenario": "UNEXPECTED EXCEPTION confinement",
+      "action": "exception in decision path",
+      "result": "INDETERMINATE with UNEXPECTED_EXCEPTION code, executed=False (decision.py _indeterminate), execution_authority=0 (executor.py:148)"
+    },
+    {
+      "scenario": "CROSS-ORIGIN REJECTION",
+      "action": "POST /api/propose with Origin https://evil.example",
+      "result": "403 'cross-origin request rejected'"
+    },
+    {
+      "scenario": "STALE AUTHORITY / EPOCH MONOTONICITY",
+      "action": "bump_epoch stale-writer probe",
+      "result": "covered by epoch monotonicity probe bump_epoch_36_stale_writer.py (probe PASS, no stale authority accepted)"
+    }
+  ],
+  "ledger_sanity": {
+    "audit_events": 6,
+    "flight_events": 20,
+    "audit/checkpoint integrity": "doctor PASS"
+  },
+  "conclusion": "PASS: ALLOW, DENY, REQUIRE_HUMAN, human approve/deny, replay rejection, tamper isolation, stale-authority/epoch, malformed input, unsupported actuator, path traversal, cross-origin, and unexpected-exception confinement all verified through the real JSON API + Web UI + CLI launcher on MGK v0.2.0."
+}

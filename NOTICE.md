@@ -1,6 +1,6 @@
 # Notice
 
-MGK v0.1.0 is an engineering implementation derived from the conceptual and normative
+MGK v0.2.0 is an engineering implementation derived from the conceptual and normative
 MUDA corpus authored by Roberto Iglesias Gonzalez (2026). The corpus is treated as design
 intent, not as independently validated scientific evidence.
 

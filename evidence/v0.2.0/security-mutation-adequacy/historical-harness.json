@@ -1,0 +1,185 @@
+{
+ "schema_version": "mgk.security-mutation-adequacy.v1",
+ "kind": "survivor-harness",
+ "cases": [
+  {
+   "test_id": "HIST-01",
+   "mutant_id": "mgk.authority.x\u01c1CapabilityAuthority\u01c1__init____mutmut_14",
+   "command": "/var/folders/bf/7f75557n44s0d89v_dx0l7cr0000gn/T/opencode/mgk-verify/venv/bin/python tools/security_mutation/probes/historical/authority_14_policy_default.py",
+   "exit_code_original": 0,
+   "exit_code_mutant": 0,
+   "stdout_original": "RESULT_JSON={\"policy_preserved\": true, \"policy_id\": \"mgk-authority-v1\"}\n",
+   "stderr_original": "",
+   "stdout_mutant": "RESULT_JSON={\"policy_preserved\": false, \"error\": \"AttributeError: 'NoneType' object has no attribute 'validate'\"}\n",
+   "stderr_mutant": "",
+   "original_result": {
+    "policy_preserved": true,
+    "policy_id": "mgk-authority-v1"
+   },
+   "mutant_result": {
+    "policy_preserved": false,
+    "error": "AttributeError: 'NoneType' object has no attribute 'validate'"
+   },
+   "affected_invariant": "POLICY_PRESERVATION",
+   "reproducible": true,
+   "classification": "SECURITY_BYPASS",
+   "status_in_v020": "KILLED"
+  },
+  {
+   "test_id": "HIST-02",
+   "mutant_id": "mgk.state.x\u01c1SecurityState\u01c1bump_epoch__mutmut_36",
+   "command": "/var/folders/bf/7f75557n44s0d89v_dx0l7cr0000gn/T/opencode/mgk-verify/venv/bin/python tools/security_mutation/probes/historical/bump_epoch_36_stale_writer.py",
+   "exit_code_original": 0,
+   "exit_code_mutant": 0,
+   "stdout_original": "RESULT_JSON={\"committed_before\": 3, \"committed_after\": 3, \"stale_writer_outcome\": \"rejected:epoch changed concurrently\", \"epoch_monotonic\": true}\n",
+   "stderr_original": "",
+   "stdout_mutant": "RESULT_JSON={\"committed_before\": 3, \"committed_after\": 2, \"stale_writer_outcome\": \"accepted:2\", \"epoch_monotonic\": false}\n",
+   "stderr_mutant": "",
+   "original_result": {
+    "committed_before": 3,
+    "committed_after": 3,
+    "stale_writer_outcome": "rejected:epoch changed concurrently",
+    "epoch_monotonic": true
+   },
+   "mutant_result": {
+    "committed_before": 3,
+    "committed_after": 2,
+    "stale_writer_outcome": "accepted:2",
+    "epoch_monotonic": false
+   },
+   "affected_invariant": "EPOCH_MONOTONICITY",
+   "reproducible": true,
+   "classification": "SECURITY_BYPASS",
+   "status_in_v020": "SURVIVED_KILLABLE"
+  },
+  {
+   "test_id": "HIST-03",
+   "mutant_id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_105",
+   "command": "/var/folders/bf/7f75557n44s0d89v_dx0l7cr0000gn/T/opencode/mgk-verify/venv/bin/python tools/security_mutation/probes/historical/create_bound_rollback_confinement.py",
+   "exit_code_original": 0,
+   "exit_code_mutant": 0,
+   "stdout_original": "RESULT_JSON={\"outcome\": \"OSError:injected short-write failure\", \"resource_file_after_rollback_exists\": false, \"cwd_decoy_after_rollback_exists\": true, \"cwd_decoy_mode\": 420, \"rollback_confined\": true}\n",
+   "stderr_original": "",
+   "stdout_mutant": "RESULT_JSON={\"outcome\": \"OSError:injected short-write failure\", \"resource_file_after_rollback_exists\": true, \"cwd_decoy_after_rollback_exists\": true, \"cwd_decoy_mode\": 420, \"rollback_confined\": false}\n",
+   "stderr_mutant": "",
+   "original_result": {
+    "outcome": "OSError:injected short-write failure",
+    "resource_file_after_rollback_exists": false,
+    "cwd_decoy_after_rollback_exists": true,
+    "cwd_decoy_mode": 420,
+    "rollback_confined": true
+   },
+   "mutant_result": {
+    "outcome": "OSError:injected short-write failure",
+    "resource_file_after_rollback_exists": true,
+    "cwd_decoy_after_rollback_exists": true,
+    "cwd_decoy_mode": 420,
+    "rollback_confined": false
+   },
+   "affected_invariant": "ROLLBACK_CONFINEMENT",
+   "reproducible": true,
+   "classification": "SECURITY_BYPASS",
+   "status_in_v020": "SURVIVED_KILLABLE"
+  },
+  {
+   "test_id": "HIST-04",
+   "mutant_id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_107",
+   "command": "/var/folders/bf/7f75557n44s0d89v_dx0l7cr0000gn/T/opencode/mgk-verify/venv/bin/python tools/security_mutation/probes/historical/create_bound_rollback_confinement.py",
+   "exit_code_original": 0,
+   "exit_code_mutant": 0,
+   "stdout_original": "RESULT_JSON={\"outcome\": \"OSError:injected short-write failure\", \"resource_file_after_rollback_exists\": false, \"cwd_decoy_after_rollback_exists\": true, \"cwd_decoy_mode\": 420, \"rollback_confined\": true}\n",
+   "stderr_original": "",
+   "stdout_mutant": "RESULT_JSON={\"outcome\": \"OSError:injected short-write failure\", \"resource_file_after_rollback_exists\": true, \"cwd_decoy_after_rollback_exists\": true, \"cwd_decoy_mode\": 420, \"rollback_confined\": false}\n",
+   "stderr_mutant": "",
+   "original_result": {
+    "outcome": "OSError:injected short-write failure",
+    "resource_file_after_rollback_exists": false,
+    "cwd_decoy_after_rollback_exists": true,
+    "cwd_decoy_mode": 420,
+    "rollback_confined": true
+   },
+   "mutant_result": {
+    "outcome": "OSError:injected short-write failure",
+    "resource_file_after_rollback_exists": true,
+    "cwd_decoy_after_rollback_exists": true,
+    "cwd_decoy_mode": 420,
+    "rollback_confined": false
+   },
+   "affected_invariant": "ROLLBACK_CONFINEMENT",
+   "reproducible": true,
+   "classification": "SECURITY_BYPASS",
+   "status_in_v020": "SURVIVED_KILLABLE"
+  },
+  {
+   "test_id": "HIST-05",
+   "mutant_id": "mgk.resource.x\u01c1ResourceGuard\u01c1remove_created__mutmut_42",
+   "command": "/var/folders/bf/7f75557n44s0d89v_dx0l7cr0000gn/T/opencode/mgk-verify/venv/bin/python tools/security_mutation/probes/historical/remove_created_42_digest_identity.py",
+   "exit_code_original": 0,
+   "exit_code_mutant": 0,
+   "stdout_original": "RESULT_JSON={\"remove_created_result\": false, \"tampered_file_exists\": true, \"digest_identity_enforced\": true}\n",
+   "stderr_original": "",
+   "stdout_mutant": "RESULT_JSON={\"remove_created_result\": true, \"tampered_file_exists\": false, \"digest_identity_enforced\": false}\n",
+   "stderr_mutant": "",
+   "original_result": {
+    "remove_created_result": false,
+    "tampered_file_exists": true,
+    "digest_identity_enforced": true
+   },
+   "mutant_result": {
+    "remove_created_result": true,
+    "tampered_file_exists": false,
+    "digest_identity_enforced": false
+   },
+   "affected_invariant": "RESOURCE_IDENTITY",
+   "reproducible": true,
+   "classification": "SECURITY_BYPASS",
+   "status_in_v020": "KILLED"
+  },
+  {
+   "test_id": "HIST-06",
+   "mutant_id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_68",
+   "command": "/var/folders/bf/7f75557n44s0d89v_dx0l7cr0000gn/T/opencode/mgk-verify/venv/bin/python tools/security_mutation/probes/historical/create_bound_umask_permissions.py",
+   "exit_code_original": 0,
+   "exit_code_mutant": 0,
+   "stdout_original": "RESULT_JSON={\"file_mode_octal\": \"0o600\", \"protected_0600\": true}\n",
+   "stderr_original": "",
+   "stdout_mutant": "RESULT_JSON={\"file_mode_octal\": \"0o777\", \"protected_0600\": false}\n",
+   "stderr_mutant": "",
+   "original_result": {
+    "file_mode_octal": "0o600",
+    "protected_0600": true
+   },
+   "mutant_result": {
+    "file_mode_octal": "0o777",
+    "protected_0600": false
+   },
+   "affected_invariant": "RESOURCE_PERMISSIONS",
+   "reproducible": true,
+   "classification": "SECURITY_BYPASS",
+   "status_in_v020": "SURVIVED_KILLABLE"
+  },
+  {
+   "test_id": "HIST-07",
+   "mutant_id": "mgk.resource.x\u01c1ResourceGuard\u01c1create_bound__mutmut_70",
+   "command": "/var/folders/bf/7f75557n44s0d89v_dx0l7cr0000gn/T/opencode/mgk-verify/venv/bin/python tools/security_mutation/probes/historical/create_bound_umask_permissions.py",
+   "exit_code_original": 0,
+   "exit_code_mutant": 0,
+   "stdout_original": "RESULT_JSON={\"file_mode_octal\": \"0o600\", \"protected_0600\": true}\n",
+   "stderr_original": "",
+   "stdout_mutant": "RESULT_JSON={\"file_mode_octal\": \"0o601\", \"protected_0600\": false}\n",
+   "stderr_mutant": "",
+   "original_result": {
+    "file_mode_octal": "0o600",
+    "protected_0600": true
+   },
+   "mutant_result": {
+    "file_mode_octal": "0o601",
+    "protected_0600": false
+   },
+   "affected_invariant": "RESOURCE_PERMISSIONS",
+   "reproducible": true,
+   "classification": "SECURITY_BYPASS",
+   "status_in_v020": "SURVIVED_KILLABLE"
+  }
+ ]
+}

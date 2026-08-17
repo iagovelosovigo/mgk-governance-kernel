@@ -1,0 +1,22 @@
+{
+ "schema_version": "mgk.phase-evidence.v1",
+ "kind": "independent-verification",
+ "phase": 12,
+ "recorded_at": "2026-08-17",
+ "all_claims_verified": true,
+ "claims": {
+  "C1": "mutation population/score recomputed from raw results",
+  "C2": "addendum EQUIVALENT_PROVEN consistency",
+  "C3": "red-team adversarial all-pass evidence",
+  "C4": "clean install A/B reproducibility",
+  "C5": "phase11 permission hardening evidence"
+ },
+ "verification_notes": [
+  "C1 recomputed total=3314 killed=3034 survived=280 timeout=0 other=0 score=0.915510",
+  "C2 addendum entries verified=7",
+  "C3 red-team findings=33 pass=33 fail=0",
+  "C4 clean install suite=407 mgk_files=17 runtime_files=10",
+  "C5 phase11 hardening verified"
+ ],
+ "failures": []
+}

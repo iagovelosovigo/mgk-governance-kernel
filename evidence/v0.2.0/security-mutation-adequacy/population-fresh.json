@@ -1,0 +1,112 @@
+{
+ "schema_version": "mgk.security-mutation-adequacy.v1",
+ "kind": "population-experiment-fresh-final",
+ "recorded_at": "2026-08-17",
+ "objective": "FINAL full-population mutation run on the post-Phase-9-remediation code (authority symlink-swap hardening + 407-test suite); authoritative gate score",
+ "experiment_root": "/var/folders/bf/7f75557n44s0d89v_dx0l7cr0000gn/T/opencode/mgk-verify/mutmut-phase8",
+ "mutator": "mutmut 3.3.1 (setproctitle shim for fork-safety on macOS)",
+ "config": "paths_to_mutate=[\"src/mgk\"]; no do_not_mutate; also_copy=[contracts, orchestrator, runtime, candidate_adapter.py]; max_children=8",
+ "run_notes": "Re-run after Phase 9 authority.py hardening (OSError->ResourceError wrapper). Population is now 3314 (wrapper added one mutation site). Final authoritative score.",
+ "population_total": 3314,
+ "killed": 3034,
+ "survived": 280,
+ "timeout": 0,
+ "MUTATION_SCORE_V2": 0.91551,
+ "threshold": 0.9,
+ "meets_threshold": true,
+ "vs_phase1_population": {
+  "phase1_killed": 2922,
+  "phase1_survived": 390,
+  "fresh_killed": 3034,
+  "fresh_survived": 280,
+  "additional_killed": 112,
+  "net_survivor_reduction": 110,
+  "note": "Phase 4 discriminating tests + Phase 9 symlink-swap regression test kill 112 more mutants than Phase 1; remaining survivors are proven-equivalent (see addendum)."
+ },
+ "per_module": [
+  {
+   "module": "arrow",
+   "total": 35,
+   "survived": 0,
+   "killed": 35
+  },
+  {
+   "module": "authority",
+   "total": 268,
+   "survived": 5,
+   "killed": 263
+  },
+  {
+   "module": "canonical",
+   "total": 178,
+   "survived": 28,
+   "killed": 150
+  },
+  {
+   "module": "cha",
+   "total": 84,
+   "survived": 11,
+   "killed": 73
+  },
+  {
+   "module": "cli",
+   "total": 370,
+   "survived": 103,
+   "killed": 267
+  },
+  {
+   "module": "clock",
+   "total": 1,
+   "survived": 0,
+   "killed": 1
+  },
+  {
+   "module": "crypto",
+   "total": 107,
+   "survived": 5,
+   "killed": 102
+  },
+  {
+   "module": "executor",
+   "total": 281,
+   "survived": 10,
+   "killed": 271
+  },
+  {
+   "module": "ledger",
+   "total": 418,
+   "survived": 22,
+   "killed": 396
+  },
+  {
+   "module": "models",
+   "total": 5,
+   "survived": 0,
+   "killed": 5
+  },
+  {
+   "module": "resource",
+   "total": 772,
+   "survived": 51,
+   "killed": 721
+  },
+  {
+   "module": "saxp",
+   "total": 69,
+   "survived": 1,
+   "killed": 68
+  },
+  {
+   "module": "state",
+   "total": 334,
+   "survived": 44,
+   "killed": 290
+  },
+  {
+   "module": "verifier",
+   "total": 392,
+   "survived": 0,
+   "killed": 392
+  }
+ ]
+}

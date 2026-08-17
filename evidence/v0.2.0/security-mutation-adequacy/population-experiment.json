@@ -1,0 +1,120 @@
+{
+ "schema_version": "mgk.security-mutation-adequacy.v1",
+ "kind": "population-experiment",
+ "recorded_at": "2026-08-17",
+ "objective": "measure mutation score over the FULL src/mgk population (no do_not_mutate exclusions)",
+ "experiment_root": "/var/folders/bf/7f75557n44s0d89v_dx0l7cr0000gn/T/opencode/mgk-verify/mutmut-adeq-exp",
+ "mutator": "mutmut 3.3.1",
+ "config": "paths_to_mutate=[\"src/mgk\"]; no do_not_mutate; also_copy=[contracts, orchestrator, runtime, candidate_adapter.py]",
+ "population_total": 3313,
+ "killed": 2922,
+ "survived": 390,
+ "timeout": 1,
+ "MUTATION_SCORE_V2": 0.882246,
+ "threshold": 0.9,
+ "meets_threshold": false,
+ "vs_official_gate": {
+  "official_population": 2189,
+  "official_score": 0.905072,
+  "official_config": "mutmut-v2/pyproject.toml do_not_mutate excluded __init__, arrow, canonical, cha, clock, errors, feedback, ledger, models, saxp, state (not disclosed in evidence/v0.2.0/mutation/mutation-v2-findings.json)",
+  "true_population": 3313,
+  "true_score": 0.882246,
+  "delta_population": 1124,
+  "delta_score": 0.022826
+ },
+ "per_module": [
+  {
+   "module": "arrow",
+   "total": 35,
+   "survived": 0,
+   "killed": 35
+  },
+  {
+   "module": "authority",
+   "total": 266,
+   "survived": 4,
+   "killed": 262
+  },
+  {
+   "module": "canonical",
+   "total": 178,
+   "survived": 42,
+   "killed": 136
+  },
+  {
+   "module": "cha",
+   "total": 84,
+   "survived": 11,
+   "killed": 73
+  },
+  {
+   "module": "cli",
+   "total": 370,
+   "survived": 103,
+   "killed": 267
+  },
+  {
+   "module": "clock",
+   "total": 1,
+   "survived": 0,
+   "killed": 1
+  },
+  {
+   "module": "crypto",
+   "total": 107,
+   "survived": 5,
+   "killed": 102
+  },
+  {
+   "module": "executor",
+   "total": 281,
+   "survived": 12,
+   "killed": 269
+  },
+  {
+   "module": "ledger",
+   "total": 418,
+   "survived": 33,
+   "killed": 385
+  },
+  {
+   "module": "models",
+   "total": 5,
+   "survived": 0,
+   "killed": 5
+  },
+  {
+   "module": "resource",
+   "total": 773,
+   "survived": 120,
+   "killed": 653
+  },
+  {
+   "module": "saxp",
+   "total": 69,
+   "survived": 7,
+   "killed": 62
+  },
+  {
+   "module": "state",
+   "total": 334,
+   "survived": 53,
+   "killed": 281
+  },
+  {
+   "module": "verifier",
+   "total": 392,
+   "survived": 0,
+   "killed": 392
+  }
+ ],
+ "security_sensitive_unmutated_before": [
+  "canonical",
+  "ledger",
+  "models",
+  "saxp",
+  "state"
+ ],
+ "source_sha256": "b4a5deb8b9854a071194cdd9a679991c24a2b207066198c2c3e11d8675d1059c",
+ "conclusion": "The official v0.2.0 mutation gate excluded 11 src/mgk modules; over the full population the candidate does NOT currently meet the 0.90 threshold (0.8821). Security-critical state/canonical/ledger/saxp survivors are new adequacy work items for phases 3-4."
+}
