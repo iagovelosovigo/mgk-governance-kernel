@@ -1,0 +1,17 @@
+{
+  "artifacts": {
+    "MGK-v0.1.0-EVIDENCE.tar.gz": "a180bbf5e3239a389ee109f516028eb6af2234121d04e7a0f0f16efd1680a6c6",
+    "MGK-v0.1.0-FAILURE-LEDGER.jsonl": "ab05398ed640de59c5485c0a1a19f4a585d2ff5fa511105dded8503cdec6fb21",
+    "MGK-v0.1.0-RED-TEAM-REPORT.md": "f0aaf80b6b16391c98f899b7a77e5e912cb078ffcb7a5d098dc433077c0af4ab",
+    "MGK-v0.1.0-SBOM.json": "e7a386f4ce91c7e6b14343c24e255be5eb352cac8a3f3234d11690c0287768f1",
+    "MGK-v0.1.0-TEST-REPORT.md": "ba1240b911cad0331bacba6ef49f290dac0eb3a3837e74029135c01cc083d087",
+    "MGK-v0.1.0.zip": "4fc99f24428e479c1a0500a7fd59c1e76070c03dabeb9ddef452c0ab8edb2533",
+    "MGK-v0.1.0.zip.sha256": "eba64971fd0cde7fd9c251f61d2213ade46eb6fe4ab963ca5e8aa21a27852bfe"
+  },
+  "candidate": "MGK-v0.1.0",
+  "generated_by_exam": [
+    "MGK-v0.1.0-FUNCTIONAL-VERDICT.json",
+    "MGK-v0.1.0-FUNCTIONAL-VERDICT.md"
+  ],
+  "schema_version": "mgk.artifact-manifest.v1"
+}
