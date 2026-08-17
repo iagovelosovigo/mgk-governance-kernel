@@ -1,0 +1,19 @@
+{
+  "EVALUABLE": 2149,
+  "INDETERMINATE_COUNT": 0,
+  "MUTATION_SCORE_V2": 0.905072,
+  "classified_not_in_results": [],
+  "contract_id": "MGK-v0.1.0-mutation-gate-2",
+  "counts": {
+    "EQUIVALENT_PROVEN": 40,
+    "INDETERMINATE": 0,
+    "INVALID_MUTANT": 0,
+    "KILLED": 1945,
+    "SURVIVED_KILLABLE": 204,
+    "UNREACHABLE_PROVEN": 0
+  },
+  "schema_version": "mgk.mutation-gate.v2",
+  "threshold": 0.9,
+  "unclassified_in_results": [],
+  "verdict": "PASS"
+}

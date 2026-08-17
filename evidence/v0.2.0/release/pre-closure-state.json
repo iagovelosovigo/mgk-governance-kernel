@@ -1,0 +1,82 @@
+{
+  "phase": "pre-closure-state",
+  "candidate": "MGK v0.2.0 Functional Governance Runtime",
+  "recorded_at": "2026-08-17",
+  "branch": "mgk-autopilot/v0.2.0-functional-runtime",
+  "head_sha": "5f069ada2174ef3375bf90b66fa338d440121238",
+  "head_tree_sha": "c53b9257034b64d60097f5a7c4e07c00de2d5894",
+  "staged_diff": "none",
+  "unstaged_changes": [
+    {"file": "src/mgk/resource.py", "kind": "functional", "diff": "write_bound present-target open flags os.O_WRONLY -> os.O_RDWR (line ~253)"},
+    {"file": "tests/test_mutation_v2_cli.py", "kind": "test"},
+    {"file": "tests/test_mutation_v2_crypto.py", "kind": "test"},
+    {"file": "tests/test_mutation_v2_executor.py", "kind": "test"},
+    {"file": "tests/test_mutation_v2_resource.py", "kind": "test"},
+    {"file": "tests/test_runtime.py", "kind": "test"}
+  ],
+  "untracked_files": [
+    "evidence/v0.2.0/independent-exam/FINDINGS.md",
+    "evidence/v0.2.0/install/clean-install-ab.md",
+    "evidence/v0.2.0/install/dependency-freeze-and-secret-scan.md",
+    "evidence/v0.2.0/mutation/mutation-v2-classification.json",
+    "evidence/v0.2.0/mutation/mutation-v2-classification.md",
+    "evidence/v0.2.0/mutation/mutation-v2-findings.json",
+    "evidence/v0.2.0/mutation/mutation-v2-gate-report.json",
+    "evidence/v0.2.0/mutation/mutation-v2-results.txt",
+    "evidence/v0.2.0/release/HUMAN-RELEASE-GATE.md",
+    "tests/test_mutation_v2_schema_errors.py",
+    "tests/test_mutation_v2_verifier.py"
+  ],
+  "version_declarations": {
+    "pyproject.toml": {"version": "0.1.0", "class": "CURRENT_SOFTWARE_VERSION"},
+    "src/mgk/__init__.py": {"__version__": "0.1.0", "docstring": "MUDA Governance Kernel v0.1.0 public API.", "class": "CURRENT_SOFTWARE_VERSION"},
+    "runtime/__init__.py": {"RUNTIME_VERSION": "0.2.0"},
+    "runtime/web.py": {"server_version": "MGK-Runtime/0.2.0", "api_version_field": "0.2.0"},
+    "runtime/workspace.py": {"manifest_version_field": "0.2.0"},
+    "README-MGK.md": {"title": "MUDA Governance Kernel v0.1.0", "class": "DOCUMENTATION_CURRENT_VERSION"},
+    "NOTICE.md": {"text": "MGK v0.1.0 is an engineering implementation...", "class": "AMBIGUOUS"},
+    "contracts/MGK-MUTATION-GATE-V2.yaml": {"contract_id": "MGK-v0.1.0-mutation-gate-2", "class": "CONTRACT_OR_SCHEMA_VERSION"},
+    "contracts/MGK-FUNCTIONAL-ACCEPTANCE.yaml": {"class": "CONTRACT_OR_SCHEMA_VERSION"},
+    "tools/mutation_gate_v2.py": {"contract_id": "MGK-v0.1.0-mutation-gate-2", "class": "CONTRACT_OR_SCHEMA_VERSION"},
+    "tools/build_classification.py": {"contract_id": "MGK-v0.1.0-mutation-gate-2", "class": "CONTRACT_OR_SCHEMA_VERSION"}
+  },
+  "mutation_tested_source_population": {
+    "mutmut_paths_to_mutate": ["src/mgk"],
+    "mutant_copy_root": "mgk-verify/mutmut-v2",
+    "modules_with_mutants": {
+      "authority": 266,
+      "cli": 370,
+      "crypto": 107,
+      "executor": 281,
+      "resource": 773,
+      "verifier": 392
+    },
+    "modules_with_zero_mutants": ["__init__", "arrow", "canonical", "cha", "clock", "errors", "feedback", "ledger", "models", "saxp", "state"],
+    "src_vs_mutmut_copy_sha256": "MATCH for __init__.py, authority.py, cli.py, crypto.py, executor.py, resource.py, verifier.py (7/7 checked)"
+  },
+  "known_owronly_to_ordwr_change": {
+    "file": "src/mgk/resource.py",
+    "function": "ResourceGuard.write_bound (present-target branch)",
+    "diff": "flags = os.O_WRONLY | getattr(os, \"O_NOFOLLOW\", 0) -> flags = os.O_RDWR | getattr(os, \"O_NOFOLLOW\", 0)",
+    "why_required": "present-target branch reads descriptor via _read_descriptor to verify pre_sha256/pre_size before ftruncate; O_WRONLY would raise EBADF on that read",
+    "file_mtime": "2026-08-17 01:51:47",
+    "mutation_results_dump_mtime": "2026-08-17 02:59:27",
+    "present_in_tested_tree": "yes",
+    "present_in_mutated_tree": "yes (mutmut-v2/src/mgk/resource.py sha256 == working tree)"
+  },
+  "known_completed_technical_results": {
+    "regression": "363 passed",
+    "mutation_score": 0.905072,
+    "killed": 1945,
+    "evaluable": 2149,
+    "survived_killable": 204,
+    "equivalent_proven": 40,
+    "indeterminate": 0,
+    "clean_install_a": "PASS",
+    "clean_install_b": "PASS",
+    "reproducibility": "PASS",
+    "secret_scan": "PASS",
+    "independent_exam": "VERIFIED",
+    "release_authorized": false
+  }
+}
