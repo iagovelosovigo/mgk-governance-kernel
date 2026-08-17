@@ -1,0 +1,88 @@
+{
+  "candidate": "MGK v0.2.0 Functional Governance Runtime",
+  "final_commit_sha": "1327e5e85a44b3a917a0472b7de2e6a202326c8b",
+  "final_tree_sha": "716527089f40ad881520d3944c01b238d8d3e862",
+  "recorded_at": "2026-08-17",
+  "entries": [
+    {
+      "path": "evidence/v0.2.0/mutation/mutation-v2-classification.md",
+      "class": "CORRECTION",
+      "note": "Already corrected during closure: added explicit statement that the gate measured a tree containing the uncommitted O_WRONLY->O_RDWR change vs HEAD (not 'no source changes'). No further change."
+    },
+    {
+      "path": "evidence/v0.2.0/mutation/mutation-v2-findings.json",
+      "class": "HISTORICAL OBSERVATION",
+      "note": "source_manifest_sha256[src/mgk/__init__.py] = e3c974210971e6c3 (mutation-tested tree). FINAL candidate __init__.py hash = 4fc01d49a470e7a291ea6f466f25f9ad1fd1c9bcc8d747a9b09aa2cd8eb21a8e due to version bump. Preserved as-is; FINAL hash documented here."
+    },
+    {
+      "path": "evidence/v0.2.0/mutation/mutation-v2-gate-report.json",
+      "class": "FINAL CANDIDATE FACT",
+      "note": "Score 0.905072 (1945/2149), threshold 0.90, PASS. Transferred to FINAL candidate via mutation source equivalence (see mutation-source-equivalence.md)."
+    },
+    {
+      "path": "evidence/v0.2.0/mutation/mutation-v2-results.txt",
+      "class": "HISTORICAL OBSERVATION",
+      "note": "Raw run-5 mutmut dump; unchanged."
+    },
+    {
+      "path": "evidence/v0.2.0/install/clean-install-ab.md",
+      "class": "HISTORICAL OBSERVATION",
+      "note": "A/B for the pre-version-bump tree. FINAL candidate A/B recorded in final-candidate-revalidation.md (ab-final): 363/363, byte-identical installs, installed version 0.2.0."
+    },
+    {
+      "path": "evidence/v0.2.0/install/dependency-freeze-and-secret-scan.md",
+      "class": "FINAL CANDIDATE FACT",
+      "note": "Pins unchanged and match final pyproject; secret scan re-run on FINAL tree (PASS). Minor transitive Pygments 2.20.0->2.21.0 drift noted in revalidation (not pinned, not a package dep)."
+    },
+    {
+      "path": "evidence/v0.2.0/independent-exam/FINDINGS.md",
+      "class": "HISTORICAL OBSERVATION",
+      "note": "Verified the pre-version-bump tree and correctly flagged the O_WRONLY->O_RDWR change. Superseded for FINAL identity by the final independent exam (Phase 8)."
+    },
+    {
+      "path": "evidence/v0.2.0/release/HUMAN-RELEASE-GATE.md",
+      "class": "SUPERSEDED",
+      "note": "Pre-closure gate report (HEAD 5f069ad, version 0.1.0, working tree uncommitted). Preserved; superseded by HUMAN-RELEASE-GATE-FINAL.md/.json bound to FINAL commit/tree."
+    },
+    {
+      "path": "evidence/v0.2.0/release/pre-closure-state.json",
+      "class": "HISTORICAL OBSERVATION",
+      "note": "Accurate at capture (pre-reconciliation)."
+    },
+    {
+      "path": "evidence/v0.2.0/release/pre-closure-state.md",
+      "class": "HISTORICAL OBSERVATION",
+      "note": "Accurate at capture (pre-reconciliation)."
+    },
+    {
+      "path": "evidence/v0.2.0/release/candidate-identity.json",
+      "class": "FINAL CANDIDATE FACT",
+      "note": "FINAL identity: 1327e5e / 716527089f40ad881520d3944c01b238d8d3e862, version 0.2.0, clean worktree."
+    },
+    {
+      "path": "evidence/v0.2.0/release/candidate-identity.md",
+      "class": "FINAL CANDIDATE FACT",
+      "note": "FINAL identity (human-readable)."
+    },
+    {
+      "path": "evidence/v0.2.0/release/final-candidate-revalidation.md",
+      "class": "FINAL CANDIDATE FACT",
+      "note": "Phase 5 revalidation against FINAL tree."
+    },
+    {
+      "path": "evidence/v0.2.0/release/mutation-source-equivalence.md",
+      "class": "FINAL CANDIDATE FACT",
+      "note": "Phase 6 mutation binding."
+    },
+    {
+      "path": "evidence/v0.2.0/browser/browser_acceptance.json",
+      "class": "HISTORICAL OBSERVATION",
+      "note": "Playwright browser acceptance from completed pipeline (commit 9bc5e84). Version bump did not alter runtime web behavior; API re-verified on FINAL tree via scenarios A-J and red-team."
+    },
+    {
+      "path": "pyproject.toml / src/mgk/__init__.py / README-MGK.md / NOTICE.md",
+      "class": "FINAL CANDIDATE FACT",
+      "note": "Current candidate metadata now identifies 0.2.0. Historical v0.1.0 references preserved in README.md (line 50), contracts (MGK-v0.1.0-mutation-gate-2, MGK-v0.1.0-independent-exam-1), tools contract_id, and frozen v0.1.0 evidence."
+    }
+  ]
+}
